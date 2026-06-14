@@ -16,8 +16,10 @@ function formatTime(s: number) {
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 }
 
+const eqBars: number[] = [60, 100, 40, 80, 55]
+
 function initPlayer() {
-  if (!process.client || !(window as any).YT) return
+  if (!import.meta.client || !(window as any).YT) return
 
   player = new (window as any).YT.Player('yt-player', {
     height: '100%',
@@ -74,11 +76,24 @@ onMounted(async () => {
 
 onUnmounted(() => clearInterval(progressInterval))
 
-watch(currentSong, (song) => {
-  if (song && player && playerReady.value) {
-    player.loadVideoById(song.videoId)
-    currentTime.value = 0
-    totalDuration.value = 0
+// Watch only the song ID — fires solely when the track actually changes,
+// not when other session fields (queue, votes) are updated.
+watch(
+  () => currentSong.value?.id,
+  (newId) => {
+    if (!newId) return
+    if (player && playerReady.value) {
+      player.loadVideoById(currentSong.value!.videoId)
+      currentTime.value = 0
+      totalDuration.value = 0
+    }
+  }
+)
+
+// Load song as soon as the player is ready (handles first song after page load).
+watch(playerReady, (ready) => {
+  if (ready && currentSong.value) {
+    player.loadVideoById(currentSong.value.videoId)
   }
 })
 </script>
@@ -91,7 +106,7 @@ watch(currentSong, (song) => {
       <nav class="flex items-center justify-between px-6 py-3 bg-panel/60 border-b border-dim/10 flex-shrink-0">
         <div class="flex items-center gap-2">
           <span class="text-neon-pink">🎤</span>
-          <span class="font-black tracking-widest text-sm">KARAOKELIVE</span>
+          <span class="font-black tracking-widest text-sm">VIDEOKÉ</span>
         </div>
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-1.5 text-neon-cyan text-xs">
@@ -113,7 +128,7 @@ watch(currentSong, (song) => {
           <!-- Equalizer + label -->
           <div class="flex items-center gap-2 mb-2">
             <div class="flex gap-0.5 items-end h-4">
-              <div v-for="(h, i) in [60, 100, 40, 80, 55]" :key="i"
+              <div v-for="(h, i) in eqBars" :key="i"
                 class="w-1 bg-neon-pink rounded-sm animate-pulse"
                 :style="{ height: `${h}%`, animationDelay: `${i * 0.1}s` }"
               />
@@ -129,7 +144,7 @@ watch(currentSong, (song) => {
           <!-- Singer badge -->
           <div class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-panel/80 border border-dim/20">
             <div class="w-7 h-7 rounded-full bg-neon-pink/20 border border-neon-pink/40 flex items-center justify-center text-xs font-bold text-neon-pink">
-              {{ currentSong.addedBy[0].toUpperCase() }}
+              {{ currentSong?.addedBy.charAt(0).toUpperCase() }}
             </div>
             <span class="text-sm text-white/90">{{ currentSong.addedBy }}</span>
             <span>🎤</span>

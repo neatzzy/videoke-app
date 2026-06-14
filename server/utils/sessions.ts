@@ -79,7 +79,14 @@ export function addToQueue(peerId: string, item: Omit<QueueItem, 'id' | 'addedBy
     addedBy: peerToName.get(peerId) ?? 'Anônimo',
   }
 
-  session.queue.push(queueItem)
+  if (!session.currentSong) {
+    session.currentSong = queueItem
+    session.status = 'playing'
+    session.votes = { likes: 0, dislikes: 0, voters: [] }
+  } else {
+    session.queue.push(queueItem)
+  }
+
   return session
 }
 

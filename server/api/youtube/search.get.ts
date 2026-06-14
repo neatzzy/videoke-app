@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const url = new URL('https://www.googleapis.com/youtube/v3/search')
   url.searchParams.set('part', 'snippet')
   url.searchParams.set('type', 'video')
-  url.searchParams.set('q', q)
+  url.searchParams.set('q', `${q} karaoke`)
   url.searchParams.set('key', apiKey)
   url.searchParams.set('maxResults', '10')
   url.searchParams.set('videoCategoryId', '10') // Music category
