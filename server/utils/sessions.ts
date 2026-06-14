@@ -1,3 +1,5 @@
+import type { Redis } from '@upstash/redis'
+
 export interface QueueItem {
   id: string
   videoId: string
@@ -15,7 +17,7 @@ export interface SessionClient {
 
 export interface Session {
   code: string
-  hostPeerId: string | null
+  hostClientId: string
   clients: Record<string, SessionClient>
   queue: QueueItem[]
   currentSong: QueueItem | null
@@ -23,60 +25,64 @@ export interface Session {
   votes: { likes: number; dislikes: number; voters: string[] }
 }
 
-export const sessions = new Map<string, Session>()
-export const peerToSession = new Map<string, string>()
-export const peerToName = new Map<string, string>()
+const SESSION_TTL = 60 * 60 * 6 // 6 hours
+
+function sessionKey(code: string) {
+  return `session:${code}`
+}
 
 function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
   return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
-export function createSession(hostPeerId: string, hostName: string): Session {
-  let code: string
-  do {
+export async function getSession(redis: Redis, code: string): Promise<Session | null> {
+  return redis.get<Session>(sessionKey(code))
+}
+
+export async function saveSession(redis: Redis, session: Session): Promise<void> {
+  await redis.set(sessionKey(session.code), session, { ex: SESSION_TTL })
+}
+
+export async function createSession(redis: Redis, clientId: string, hostName: string): Promise<Session> {
+  let code = generateCode()
+  let attempts = 0
+  while (attempts < 10 && (await redis.exists(sessionKey(code)))) {
     code = generateCode()
-  } while (sessions.has(code))
+    attempts++
+  }
 
   const session: Session = {
     code,
-    hostPeerId,
-    clients: { [hostPeerId]: { name: hostName, isHost: true } },
+    hostClientId: clientId,
+    clients: { [clientId]: { name: hostName, isHost: true } },
     queue: [],
     currentSong: null,
     status: 'waiting',
     votes: { likes: 0, dislikes: 0, voters: [] },
   }
 
-  sessions.set(code, session)
-  peerToSession.set(hostPeerId, code)
-  peerToName.set(hostPeerId, hostName)
-
+  await saveSession(redis, session)
   return session
 }
 
-export function joinSession(peerId: string, code: string, name: string): Session | null {
-  const session = sessions.get(code)
+export async function joinSession(redis: Redis, clientId: string, code: string, name: string): Promise<Session | null> {
+  const session = await getSession(redis, code)
   if (!session) return null
 
-  session.clients[peerId] = { name, isHost: false }
-  peerToSession.set(peerId, code)
-  peerToName.set(peerId, name)
-
+  session.clients[clientId] = { name, isHost: false }
+  await saveSession(redis, session)
   return session
 }
 
-export function addToQueue(peerId: string, item: Omit<QueueItem, 'id' | 'addedBy'>): Session | null {
-  const code = peerToSession.get(peerId)
-  if (!code) return null
-
-  const session = sessions.get(code)
-  if (!session) return null
+export async function addToQueue(redis: Redis, clientId: string, code: string, item: Omit<QueueItem, 'id' | 'addedBy'>): Promise<Session | null> {
+  const session = await getSession(redis, code)
+  if (!session || !session.clients[clientId]) return null
 
   const queueItem: QueueItem = {
     ...item,
     id: crypto.randomUUID(),
-    addedBy: peerToName.get(peerId) ?? 'Anônimo',
+    addedBy: session.clients[clientId].name,
   }
 
   if (!session.currentSong) {
@@ -87,15 +93,13 @@ export function addToQueue(peerId: string, item: Omit<QueueItem, 'id' | 'addedBy
     session.queue.push(queueItem)
   }
 
+  await saveSession(redis, session)
   return session
 }
 
-export function advanceQueue(peerId: string): { session: Session | null; previousVotes: Session['votes'] | null } {
-  const code = peerToSession.get(peerId)
-  if (!code) return { session: null, previousVotes: null }
-
-  const session = sessions.get(code)
-  if (!session || session.hostPeerId !== peerId) return { session: null, previousVotes: null }
+export async function advanceQueue(redis: Redis, clientId: string, code: string): Promise<{ session: Session | null; previousVotes: Session['votes'] | null }> {
+  const session = await getSession(redis, code)
+  if (!session || session.hostClientId !== clientId) return { session: null, previousVotes: null }
 
   const previousVotes = session.currentSong ? { ...session.votes } : null
 
@@ -109,44 +113,21 @@ export function advanceQueue(peerId: string): { session: Session | null; previou
     session.votes = { likes: 0, dislikes: 0, voters: [] }
   }
 
+  await saveSession(redis, session)
   return { session, previousVotes }
 }
 
-export function castVote(peerId: string, vote: 'like' | 'dislike'): Session | null {
-  const code = peerToSession.get(peerId)
-  if (!code) return null
+export async function castVote(redis: Redis, clientId: string, code: string, vote: 'like' | 'dislike'): Promise<Session | null> {
+  const session = await getSession(redis, code)
+  if (!session || !session.currentSong || !session.clients[clientId]) return null
+  if (session.votes.voters.includes(clientId)) return session
 
-  const session = sessions.get(code)
-  if (!session || !session.currentSong) return null
-
-  if (session.votes.voters.includes(peerId)) return session
-
-  session.votes.voters.push(peerId)
+  session.votes.voters.push(clientId)
   if (vote === 'like') session.votes.likes++
   else session.votes.dislikes++
 
+  await saveSession(redis, session)
   return session
-}
-
-export function removeClient(peerId: string): { session: Session | null; wasHost: boolean } {
-  const code = peerToSession.get(peerId)
-  peerToSession.delete(peerId)
-  peerToName.delete(peerId)
-
-  if (!code) return { session: null, wasHost: false }
-
-  const session = sessions.get(code)
-  if (!session) return { session: null, wasHost: false }
-
-  const wasHost = session.hostPeerId === peerId
-  delete session.clients[peerId]
-
-  if (wasHost) {
-    sessions.delete(code)
-    return { session: null, wasHost: true }
-  }
-
-  return { session, wasHost: false }
 }
 
 export function serializeSession(session: Session) {

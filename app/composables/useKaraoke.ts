@@ -1,3 +1,5 @@
+import PusherClient from 'pusher-js'
+
 export interface QueueItem {
   id: string
   videoId: string
@@ -17,14 +19,22 @@ export interface KaraokeSession {
   votes: { likes: number; dislikes: number; total: number }
 }
 
-// Module-level singletons so state survives page navigation
-let ws: WebSocket | null = null
-let reconnectTimer: ReturnType<typeof setTimeout> | null = null
-let lastPayload: object | null = null
+// Module-level singletons — survive page navigation
+let pusherClient: PusherClient | null = null
+let subscribedCode: string | null = null
+
+function getOrCreateClientId(): string {
+  let id = localStorage.getItem('karaoke:clientId')
+  if (!id) {
+    id = crypto.randomUUID()
+    localStorage.setItem('karaoke:clientId', id)
+  }
+  return id
+}
 
 export const useKaraoke = () => {
+  const config = useRuntimeConfig()
   const session = useState<KaraokeSession | null>('karaoke:session', () => null)
-  const connected = useState('karaoke:connected', () => false)
   const error = useState<string | null>('karaoke:error', () => null)
   const previousVotes = useState<{ likes: number; dislikes: number } | null>('karaoke:previousVotes', () => null)
 
@@ -33,96 +43,101 @@ export const useKaraoke = () => {
   const votes = computed(() => session.value?.votes ?? { likes: 0, dislikes: 0, total: 0 })
   const clientCount = computed(() => Object.keys(session.value?.clients ?? {}).length)
 
-  function handleMessage(data: any) {
+  function subscribe(code: string) {
+    if (typeof window === 'undefined') return
+    if (subscribedCode === code) return
+
+    if (!pusherClient) {
+      pusherClient = new PusherClient(config.public.pusherKey as string, {
+        cluster: config.public.pusherCluster as string,
+      })
+    }
+
+    if (subscribedCode && subscribedCode !== code) {
+      pusherClient.unsubscribe(`session-${subscribedCode}`)
+    }
+
+    subscribedCode = code
+    const channel = pusherClient.subscribe(`session-${code}`)
+
+    channel.bind('session-update', (data: { session: KaraokeSession; previousVotes?: { likes: number; dislikes: number } }) => {
+      session.value = data.session
+      if (data.previousVotes) {
+        previousVotes.value = data.previousVotes
+        setTimeout(() => { previousVotes.value = null }, 5000)
+      }
+    })
+  }
+
+  async function createSession(hostName: string) {
+    const clientId = getOrCreateClientId()
+    const data = await $fetch<{ code: string; session: KaraokeSession }>('/api/session/create', {
+      method: 'POST',
+      body: { clientId, hostName },
+    })
+    session.value = data.session
+    subscribe(data.code)
+  }
+
+  async function joinSession(code: string, name: string) {
     error.value = null
-
-    switch (data.type) {
-      case 'SESSION_CREATED':
-      case 'SESSION_JOINED':
-      case 'SESSION_UPDATE':
-        session.value = data.session
-        if (data.previousVotes) {
-          previousVotes.value = data.previousVotes
-          setTimeout(() => { previousVotes.value = null }, 5000)
-        }
-        break
-
-      case 'ERROR':
-        error.value = data.message
-        break
+    const clientId = getOrCreateClientId()
+    try {
+      const data = await $fetch<{ session: KaraokeSession }>('/api/session/join', {
+        method: 'POST',
+        body: { clientId, code: code.toUpperCase(), name },
+      })
+      session.value = data.session
+      subscribe(data.session.code)
+    } catch (err: any) {
+      error.value = err.data?.message ?? 'Sala não encontrada'
     }
   }
 
-  function send(payload: object) {
-    if (ws?.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(payload))
+  async function addSong(item: Omit<QueueItem, 'id' | 'addedBy'>) {
+    if (!session.value) return
+    const clientId = getOrCreateClientId()
+    await $fetch('/api/session/add-song', {
+      method: 'POST',
+      body: { clientId, code: session.value.code, ...item },
+    })
+  }
+
+  async function nextSong() {
+    if (!session.value) return
+    const clientId = getOrCreateClientId()
+    await $fetch('/api/session/next-song', {
+      method: 'POST',
+      body: { clientId, code: session.value.code },
+    })
+  }
+
+  async function vote(v: 'like' | 'dislike') {
+    if (!session.value) return
+    const clientId = getOrCreateClientId()
+    await $fetch('/api/session/vote', {
+      method: 'POST',
+      body: { clientId, code: session.value.code, vote: v },
+    })
+  }
+
+  async function resumeSession(code: string) {
+    try {
+      const data = await $fetch<{ session: KaraokeSession }>(`/api/session/${code}`)
+      session.value = data.session
+      subscribe(code)
+      return true
+    } catch {
+      return false
     }
   }
 
-  function connect() {
-    if (!process.client) return
-    if (ws && ws.readyState !== WebSocket.CLOSED) return
-
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    ws = new WebSocket(`${protocol}//${window.location.host}/_ws`)
-
-    ws.onopen = () => {
-      connected.value = true
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer)
-        reconnectTimer = null
-      }
-      if (lastPayload) send(lastPayload)
-    }
-
-    ws.onmessage = (event) => {
-      try {
-        handleMessage(JSON.parse(event.data))
-      } catch {
-        // ignore malformed messages
-      }
-    }
-
-    ws.onclose = () => {
-      connected.value = false
-      ws = null
-      reconnectTimer = setTimeout(connect, 2500)
-    }
-
-    ws.onerror = () => {
-      ws?.close()
-    }
-  }
-
-  function createSession(hostName: string) {
-    lastPayload = { type: 'CREATE_SESSION', hostName }
-    send(lastPayload)
-  }
-
-  function joinSession(code: string, name: string) {
-    lastPayload = { type: 'JOIN_SESSION', code: code.toUpperCase(), name }
-    send(lastPayload)
-  }
-
-  function addSong(item: Omit<QueueItem, 'id' | 'addedBy'>) {
-    send({ type: 'ADD_SONG', ...item })
-  }
-
-  function nextSong() {
-    send({ type: 'NEXT_SONG' })
-  }
-
-  function vote(v: 'like' | 'dislike') {
-    send({ type: 'VOTE', vote: v })
-  }
-
-  function sync() {
-    send({ type: 'SYNC' })
-  }
+  // kept for API compatibility with existing pages
+  function connect() {}
+  function sync() {}
 
   return {
     session,
-    connected,
     error,
     previousVotes,
     currentSong,
@@ -130,11 +145,13 @@ export const useKaraoke = () => {
     votes,
     clientCount,
     connect,
+    sync,
+    subscribe,
     createSession,
     joinSession,
     addSong,
     nextSong,
     vote,
-    sync,
+    resumeSession,
   }
 }
