@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { connect, createSession, nextSong, session, currentSong, queue, votes, clientCount } = useKaraoke()
+const { createSession, nextSong, session, currentSong, queue, votes, clientCount } = useKaraoke()
 
 // YouTube IFrame Player
 let player: any = null
@@ -41,20 +41,7 @@ function initPlayer() {
 let progressInterval: ReturnType<typeof setInterval>
 
 onMounted(async () => {
-  connect()
-
-  // Wait for WS connection then create session
-  await new Promise<void>((resolve) => {
-    const interval = setInterval(() => {
-      const k = useKaraoke()
-      if (k.connected.value) {
-        clearInterval(interval)
-        resolve()
-      }
-    }, 100)
-  })
-
-  createSession('Host')
+  await createSession('Host')
 
   // Load YouTube IFrame API
   if (!(window as any).YT) {
