@@ -62,7 +62,10 @@ function castVote(v: 'like' | 'dislike') {
     <!-- Top bar -->
     <header class="flex items-center justify-between px-4 pt-6 pb-3 flex-shrink-0">
       <div class="flex items-center gap-2">
-        <span class="text-neon-pink">🎤</span>
+        <div class="w-6 h-6 rounded-md bg-gradient-to-br from-button-gradient-start to-button-gradient-end
+                    border border-neon-pink/40 flex items-center justify-center shrink-0">
+          <svg width="9" height="9" viewBox="0 0 13 13"><polygon points="3,1 12,6.5 3,12" fill="#FF007F" /></svg>
+        </div>
         <span class="font-black tracking-widest text-sm">VIDEOKÉ</span>
       </div>
       <div v-if="session?.code" class="px-3 py-1 rounded-full bg-panel text-xs font-mono font-bold tracking-widest neon-border-pink">
@@ -82,10 +85,16 @@ function castVote(v: 'like' | 'dislike') {
             v-if="previousVotes"
             class="mb-4 p-4 rounded-xl bg-panel border border-dim/20 flex items-center justify-between"
           >
-            <div class="text-xs text-dim uppercase tracking-wider">Última performance</div>
+            <div class="text-xs text-dim uppercase tracking-[0.15em]">Última performance</div>
             <div class="flex gap-4">
-              <span class="text-green-400 font-bold text-sm">👍 {{ previousVotes.likes }}</span>
-              <span class="text-red-400 font-bold text-sm">👎 {{ previousVotes.dislikes }}</span>
+              <span class="flex items-center gap-1.5 text-green-400 font-bold text-sm">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                {{ previousVotes.likes }}
+              </span>
+              <span class="flex items-center gap-1.5 text-red-400 font-bold text-sm">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                {{ previousVotes.dislikes }}
+              </span>
             </div>
           </div>
         </Transition>
@@ -99,7 +108,7 @@ function castVote(v: 'like' | 'dislike') {
                 :style="{ height: `${h}%`, animationDelay: `${i * 0.1}s` }"
               />
             </div>
-            <span class="text-[10px] text-dim uppercase tracking-widest">Agora Cantando</span>
+            <span class="text-[10px] text-dim uppercase tracking-[0.15em]">Agora Cantando</span>
           </div>
 
           <!-- Thumbnail + info -->
@@ -119,16 +128,22 @@ function castVote(v: 'like' | 'dislike') {
                 <div class="w-6 h-6 rounded-full bg-neon-pink/20 border border-neon-pink/40 flex items-center justify-center text-[10px] font-bold">
                   {{ currentSong.addedBy[0].toUpperCase() }}
                 </div>
-                <span class="text-xs text-white/80">{{ currentSong.addedBy }} 🎤</span>
+                <span class="text-xs text-white/80">{{ currentSong.addedBy }}</span>
               </div>
             </div>
           </div>
 
           <!-- Live vote tally -->
           <div class="mt-3 flex items-center justify-center gap-6 text-sm">
-            <span class="text-green-400 font-bold">👍 {{ votes.likes }}</span>
+            <span class="flex items-center gap-1.5 text-green-400 font-bold">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              {{ votes.likes }}
+            </span>
             <span class="text-dim text-xs">{{ votes.total }} votos</span>
-            <span class="text-red-400 font-bold">{{ votes.dislikes }} 👎</span>
+            <span class="flex items-center gap-1.5 text-red-400 font-bold">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              {{ votes.dislikes }}
+            </span>
           </div>
 
           <!-- Vote buttons -->
@@ -138,7 +153,7 @@ function castVote(v: 'like' | 'dislike') {
               :disabled="!!myVote"
               aria-label="Curtir"
               :class="[
-                'py-5 rounded-2xl text-3xl font-bold transition-all border-2',
+                'py-5 rounded-2xl text-sm font-bold transition-all border-2 flex flex-col items-center gap-1.5',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
                 myVote === 'like'
                   ? 'bg-green-500/30 border-green-400 scale-95'
@@ -147,14 +162,15 @@ function castVote(v: 'like' | 'dislike') {
                     : 'bg-panel border-green-500/40 hover:bg-green-500/20 active:scale-95'
               ]"
             >
-              👍
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="#34D399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              Curtir
             </button>
             <button
               @click="castVote('dislike')"
               :disabled="!!myVote"
               aria-label="Não curtir"
               :class="[
-                'py-5 rounded-2xl text-3xl font-bold transition-all border-2',
+                'py-5 rounded-2xl text-sm font-bold transition-all border-2 flex flex-col items-center gap-1.5',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
                 myVote === 'dislike'
                   ? 'bg-red-500/30 border-red-400 scale-95'
@@ -163,7 +179,8 @@ function castVote(v: 'like' | 'dislike') {
                     : 'bg-panel border-red-500/40 hover:bg-red-500/20 active:scale-95'
               ]"
             >
-              👎
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="#F87171" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              Não curtir
             </button>
           </div>
 
@@ -172,7 +189,10 @@ function castVote(v: 'like' | 'dislike') {
 
         <!-- No song playing -->
         <div v-else class="flex flex-col items-center justify-center py-16 text-center gap-3">
-          <span class="text-6xl opacity-30">🎵</span>
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" class="opacity-40">
+            <rect x="3" y="6" width="14" height="12" rx="2" stroke="#8B7DA5" stroke-width="1.5" />
+            <path d="M21 8.5v7l-4-2.3v-2.4l4-2.3z" fill="#8B7DA5" />
+          </svg>
           <p class="text-dim text-sm">Nenhuma música tocando</p>
           <p class="text-dim/70 text-xs">Adicione uma música na fila!</p>
           <button
@@ -201,11 +221,14 @@ function castVote(v: 'like' | 'dislike') {
             type="submit"
             :disabled="searching"
             aria-label="Buscar música"
-            class="px-4 py-3 rounded-xl bg-panel border border-neon-cyan/40 text-neon-cyan text-sm
-                   hover:bg-neon-cyan/10 disabled:opacity-50 transition-colors
-                   focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+            :class="[
+              'px-4 py-3 rounded-xl bg-panel border border-neon-cyan/40 text-neon-cyan',
+              'hover:bg-neon-cyan/10 disabled:opacity-50 transition-colors',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
+              searching && 'animate-pulse'
+            ]"
           >
-            {{ searching ? '⏳' : '🔍' }}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
           </button>
         </form>
 
@@ -253,7 +276,7 @@ function castVote(v: 'like' | 'dislike') {
         <div class="space-y-3">
           <!-- Currently playing -->
           <div v-if="currentSong" class="p-3 rounded-xl bg-neon-pink/10 border border-neon-pink/30">
-            <p class="text-[10px] text-neon-pink uppercase tracking-widest font-bold mb-1">Tocando agora</p>
+            <p class="text-[10px] text-neon-pink uppercase tracking-[0.15em] font-bold mb-1">Tocando agora</p>
             <p class="text-sm font-bold text-white truncate">{{ currentSong.title }}</p>
             <p class="text-[10px] text-dim truncate">{{ currentSong.addedBy }} · {{ currentSong.artist }}</p>
           </div>
@@ -286,22 +309,20 @@ function castVote(v: 'like' | 'dislike') {
     <!-- Bottom Navigation -->
     <nav class="flex-shrink-0 flex border-t border-dim/15 bg-panel/50">
       <button
-        v-for="tab in ([
-          { id: 'live', icon: '🔴', label: 'Ao Vivo' },
-          { id: 'search', icon: '🔍', label: 'Buscar' },
-          { id: 'queue', icon: '📋', label: 'Fila' },
-        ] as const)"
-        :key="tab.id"
-        @click="activeTab = tab.id"
-        :aria-current="activeTab === tab.id ? 'true' : undefined"
+        v-for="tab in (['live', 'search', 'queue'] as const)"
+        :key="tab"
+        @click="activeTab = tab"
+        :aria-current="activeTab === tab ? 'true' : undefined"
         :class="[
-          'flex-1 flex flex-col items-center py-3 gap-1 text-[10px] font-semibold tracking-wide transition-colors',
+          'flex-1 flex flex-col items-center py-3 gap-1.5 text-[10px] font-semibold tracking-wide transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-pink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-panel',
-          activeTab === tab.id ? 'text-neon-pink' : 'text-dim hover:text-white'
+          activeTab === tab ? 'text-neon-pink' : 'text-dim hover:text-white'
         ]"
       >
-        <span class="text-lg leading-none">{{ tab.icon }}</span>
-        <span>{{ tab.label }}</span>
+        <span v-if="tab === 'live'" class="w-2 h-2 rounded-full bg-current" />
+        <svg v-else-if="tab === 'search'" width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <svg v-else width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <span>{{ tab === 'live' ? 'Ao Vivo' : tab === 'search' ? 'Buscar' : 'Fila' }}</span>
       </button>
     </nav>
   </div>

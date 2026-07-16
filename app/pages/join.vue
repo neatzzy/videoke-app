@@ -26,8 +26,11 @@ function submit() {
 <template>
   <div class="h-screen flex flex-col bg-void overflow-y-auto">
     <!-- Header -->
-    <header class="flex items-center gap-2 px-6 pt-8 pb-4">
-      <span class="text-neon-pink text-2xl">🎤</span>
+    <header class="flex items-center gap-2.5 px-6 pt-8 pb-4">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-button-gradient-start to-button-gradient-end
+                  border border-neon-pink/40 flex items-center justify-center shrink-0">
+        <svg width="10" height="10" viewBox="0 0 13 13"><polygon points="3,1 12,6.5 3,12" fill="#FF007F" /></svg>
+      </div>
       <span class="font-black text-lg tracking-widest">VIDEOKÉ</span>
     </header>
 
@@ -39,7 +42,7 @@ function submit() {
       <form class="flex flex-col gap-6" @submit.prevent="submit">
         <!-- Name -->
         <div>
-          <label class="block text-xs font-bold tracking-widest text-dim uppercase mb-2">
+          <label class="block text-xs font-bold tracking-[0.15em] text-dim uppercase mb-2">
             Seu Nome
           </label>
           <input
@@ -56,7 +59,7 @@ function submit() {
 
         <!-- Room code -->
         <div>
-          <label class="block text-xs font-bold tracking-widest text-dim uppercase mb-2">
+          <label class="block text-xs font-bold tracking-[0.15em] text-dim uppercase mb-2">
             Código da Sala
           </label>
           <input

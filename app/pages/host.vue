@@ -92,12 +92,15 @@ watch(playerReady, (ready) => {
       <!-- Navbar -->
       <nav class="flex items-center justify-between px-6 py-3 bg-panel/60 border-b border-dim/10 flex-shrink-0">
         <div class="flex items-center gap-2">
-          <span class="text-neon-pink">🎤</span>
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-button-gradient-start to-button-gradient-end
+                      border border-neon-pink/40 flex items-center justify-center shrink-0">
+            <svg width="10" height="10" viewBox="0 0 13 13"><polygon points="3,1 12,6.5 3,12" fill="#FF007F" /></svg>
+          </div>
           <span class="font-black tracking-widest text-sm">VIDEOKÉ</span>
         </div>
         <div class="flex items-center gap-4">
-          <div class="flex items-center gap-1.5 text-neon-cyan text-xs">
-            <span>📶</span>
+          <div class="flex items-center gap-2 text-neon-cyan text-xs">
+            <span class="w-2 h-2 rounded-full bg-neon-cyan" style="box-shadow: 0 0 0 3px rgba(0,240,255,0.18)" />
             <span>{{ clientCount }} online</span>
           </div>
           <div
@@ -120,7 +123,7 @@ watch(playerReady, (ready) => {
                 :style="{ height: `${h}%`, animationDelay: `${i * 0.1}s` }"
               />
             </div>
-            <span class="text-[10px] text-dim uppercase tracking-[0.3em] font-semibold">Agora Cantando</span>
+            <span class="text-[10px] text-dim uppercase tracking-[0.15em] font-semibold">Agora Cantando</span>
           </div>
 
           <h1 class="text-5xl font-black text-white text-glow-pink leading-tight truncate">
@@ -134,16 +137,17 @@ watch(playerReady, (ready) => {
               {{ currentSong?.addedBy.charAt(0).toUpperCase() }}
             </div>
             <span class="text-sm text-white/90">{{ currentSong.addedBy }}</span>
-            <span>🎤</span>
           </div>
 
           <!-- Live votes -->
           <div class="mt-2 flex items-center gap-4 ml-1">
-            <span class="text-sm">
-              <span class="text-green-400 font-bold">👍 {{ votes.likes }}</span>
+            <span class="flex items-center gap-1.5 text-green-400 font-bold text-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              {{ votes.likes }}
             </span>
-            <span class="text-sm">
-              <span class="text-red-400 font-bold">👎 {{ votes.dislikes }}</span>
+            <span class="flex items-center gap-1.5 text-red-400 font-bold text-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              {{ votes.dislikes }}
             </span>
           </div>
         </template>
@@ -167,8 +171,11 @@ watch(playerReady, (ready) => {
           v-if="!currentSong"
           class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-dim"
         >
-          <span class="text-8xl opacity-20">🎵</span>
-          <p class="text-sm tracking-wider opacity-50">NENHUMA MÚSICA TOCANDO</p>
+          <svg width="72" height="72" viewBox="0 0 24 24" fill="none" class="opacity-30">
+            <rect x="3" y="6" width="14" height="12" rx="2" stroke="#8B7DA5" stroke-width="1.5" />
+            <path d="M21 8.5v7l-4-2.3v-2.4l4-2.3z" fill="#8B7DA5" />
+          </svg>
+          <p class="text-sm tracking-[0.15em] opacity-50">NENHUMA MÚSICA TOCANDO</p>
         </div>
       </div>
 
@@ -194,12 +201,13 @@ watch(playerReady, (ready) => {
         <button
           v-if="queue.length > 0 || currentSong"
           @click="nextSong()"
-          class="px-5 py-2 rounded-xl bg-panel border border-dim/30 text-xs font-semibold
+          class="flex items-center gap-2 px-5 py-2 rounded-xl bg-panel border border-dim/30 text-xs font-semibold
                  hover:border-neon-pink/50 hover:text-neon-pink transition-colors
                  focus:outline-none focus-visible:border-neon-pink/50 focus-visible:text-neon-pink
                  focus-visible:ring-2 focus-visible:ring-neon-pink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
         >
-          Próxima ▶
+          Próxima
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
         </button>
       </div>
     </div>
@@ -208,8 +216,8 @@ watch(playerReady, (ready) => {
     <div class="flex flex-col bg-sidebar-void border-l border-dim/10" style="width: 18%">
       <!-- Header -->
       <div class="flex items-center gap-2 px-4 py-4 border-b border-dim/10 flex-shrink-0">
-        <span class="text-dim text-sm">☰</span>
-        <span class="text-xs font-bold uppercase tracking-[0.25em] text-dim">Fila</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="#8B7DA5" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <span class="text-xs font-bold uppercase tracking-[0.15em] text-dim">Fila</span>
         <span
           v-if="queue.length > 0"
           class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-neon-pink/20 text-neon-pink font-bold"
@@ -224,17 +232,31 @@ watch(playerReady, (ready) => {
           v-if="queue.length === 0"
           class="flex flex-col items-center justify-center h-full text-center text-dim/50 gap-2"
         >
-          <span class="text-3xl">🎶</span>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" class="opacity-60">
+            <path d="M9 18V5l12-2v13" stroke="#8B7DA5" stroke-width="1.6" />
+            <circle cx="6" cy="18" r="3" stroke="#8B7DA5" stroke-width="1.6" />
+            <circle cx="18" cy="16" r="3" stroke="#8B7DA5" stroke-width="1.6" />
+          </svg>
           <p class="text-[10px] leading-relaxed">Nenhuma música<br>adicionada ainda</p>
         </div>
 
+        <!-- Next up: highlighted -->
         <div
-          v-for="(item, idx) in queue"
+          v-if="queue.length > 0"
+          class="p-3.5 rounded-2xl bg-gradient-to-br from-neon-pink/15 to-neon-pink/5 border border-neon-pink/30"
+        >
+          <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-neon-pink">Próxima</span>
+          <p class="text-sm font-bold text-white mt-1.5 mb-0.5 leading-tight truncate">{{ queue[0].title }}</p>
+          <p class="text-[11px] text-dim truncate">{{ queue[0].addedBy }} · {{ queue[0].artist }}</p>
+        </div>
+
+        <div
+          v-for="(item, idx) in queue.slice(1)"
           :key="item.id"
           class="flex items-start gap-2 p-2.5 rounded-lg bg-void/60 hover:bg-void/80 transition-colors"
         >
           <div class="w-5 h-5 rounded-full bg-neon-pink/15 border border-neon-pink/30 flex items-center justify-center text-[10px] font-bold text-neon-pink flex-shrink-0 mt-0.5">
-            {{ idx + 1 }}
+            {{ idx + 2 }}
           </div>
           <div class="min-w-0">
             <p class="text-[11px] font-bold text-white truncate leading-tight">{{ item.title }}</p>
