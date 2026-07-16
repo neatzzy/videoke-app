@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-16T11:51:36Z",
+  "title": "Design System: Videoké",
+  "extensions": {
+    "colorMeta": {
+      "void": { "role": "neutral", "displayName": "Void", "canonical": "#060211", "tonalRamp": ["#010003", "#020107", "#04010B", "#05020F", "#060211", "#44414D", "#838188", "#C1C0C4"] },
+      "sidebar-void": { "role": "neutral", "displayName": "Sidebar Void", "canonical": "#0A0618", "tonalRamp": ["#020104", "#04020A", "#070410", "#090516", "#0A0618", "#474452", "#85838C", "#C2C1C5"] },
+      "panel": { "role": "neutral", "displayName": "Panel", "canonical": "#130924", "tonalRamp": ["#030105", "#08040E", "#0C0617", "#110820", "#130924", "#4E475B", "#898492", "#C4C2C8"] },
+      "neon-pink": { "role": "primary", "displayName": "Neon Pink", "canonical": "#FF007F", "tonalRamp": ["#260013", "#660033", "#A60053", "#E60072", "#FF007F", "#FF409F", "#FF80BF", "#FFBFDF"] },
+      "neon-cyan": { "role": "secondary", "displayName": "Neon Cyan", "canonical": "#00F0FF", "tonalRamp": ["#002426", "#006066", "#009CA6", "#00D8E6", "#00F0FF", "#40F4FF", "#80F8FF", "#BFFBFF"] },
+      "violet-glow": { "role": "tertiary", "displayName": "Violet Glow", "canonical": "#8B00FF", "tonalRamp": ["#150026", "#380066", "#5A00A6", "#7D00E6", "#8B00FF", "#A840FF", "#C580FF", "#E2BFFF"] },
+      "dim": { "role": "neutral", "displayName": "Dim", "canonical": "#7E6E9B", "tonalRamp": ["#131117", "#322C3E", "#524865", "#71638C", "#7E6E9B", "#9E92B4", "#BFB7CD", "#DFDBE6"] },
+      "button-gradient-start": { "role": "neutral", "displayName": "Button Gradient Start", "canonical": "#2A0A3E" },
+      "button-gradient-end": { "role": "neutral", "displayName": "Button Gradient End", "canonical": "#3D0A2A" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Now-playing song title on the host screen. The single largest, glow-paired text in the system." },
+      "headline": { "displayName": "Headline", "purpose": "Page-level headings on the guest flow (e.g. 'Entre na sala')." },
+      "title": { "displayName": "Title", "purpose": "Secondary state headings, e.g. host screen's empty/waiting state." },
+      "body": { "displayName": "Body", "purpose": "Supporting text — singer names, hint copy, queue metadata." },
+      "label": { "displayName": "Label", "purpose": "Uppercase, wide-tracked kickers and form labels. The system's one recurring eyebrow style — used only for genuine labels." }
+    },
+    "shadows": [
+      { "name": "glow-pink", "value": "text-shadow: 0 0 20px rgba(255,0,127,0.9), 0 0 40px rgba(255,0,127,0.5), 0 0 80px rgba(255,0,127,0.2)", "purpose": "Applied to the primary/live song title. Signals 'this is live/primary.'" },
+      { "name": "glow-cyan", "value": "text-shadow: 0 0 20px rgba(0,240,255,0.9), 0 0 40px rgba(0,240,255,0.5)", "purpose": "Applied to artist names and status/hint text. Signals 'this is status/secondary.'" },
+      { "name": "border-glow-pink", "value": "border: 1px solid rgba(255,0,127,0.5); box-shadow: 0 0 10px rgba(255,0,127,0.2), inset 0 0 10px rgba(255,0,127,0.05)", "purpose": "The only shadow-like value on a container — a glow standing in for elevation, never a drop shadow." },
+      { "name": "border-glow-cyan", "value": "border: 1px solid rgba(0,240,255,0.5); box-shadow: 0 0 10px rgba(0,240,255,0.2), inset 0 0 10px rgba(0,240,255,0.05)", "purpose": "Cyan variant of the border-glow, for secondary/status-active containers." }
+    ],
+    "motion": [
+      { "name": "transition-color", "value": "transition: color 0.2s, border-color 0.2s, background-color 0.2s", "purpose": "Default hover/focus transition on buttons and inputs — color-only, no movement." },
+      { "name": "transition-progress", "value": "transition: width 1s linear", "purpose": "Progress-bar fill advances smoothly as the song plays." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Full-width join/submit CTA. Muted plum-to-maroon gradient, deliberately calmer than the neon accents.",
+      "html": "<button class=\"ds-btn-primary\">Entrar</button>",
+      "css": ".ds-btn-primary { width: 100%; padding: 16px 24px; border-radius: 12px; font-weight: 700; font-size: 0.875rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.9); background: linear-gradient(to right, #2A0A3E, #3D0A2A); border: 1px solid rgba(255,0,127,0.3); transition: border-color 0.2s, color 0.2s; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { border-color: rgba(255,0,127,0.7); color: #FFFFFF; outline: none; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Panel-colored secondary action, e.g. the host screen's 'Próxima' control or the mode-select links.",
+      "html": "<button class=\"ds-btn-ghost\">Próxima ▶</button>",
+      "css": ".ds-btn-ghost { padding: 8px 20px; border-radius: 12px; background: #130924; border: 1px solid rgba(126,110,155,0.3); color: #FFFFFF; font-size: 0.75rem; font-weight: 600; transition: border-color 0.2s, color 0.2s; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { border-color: rgba(255,0,127,0.5); color: #FF007F; outline: none; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Join-flow name/room-code field. Panel background, pink low-opacity border, border brightens on focus.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Ex: Marina\" />",
+      "css": ".ds-input { width: 100%; padding: 14px 16px; border-radius: 12px; background: #130924; color: #FFFFFF; border: 1px solid rgba(255,0,127,0.2); font-size: 0.875rem; transition: border-color 0.2s; } .ds-input::placeholder { color: rgba(126,110,155,0.5); } .ds-input:focus { border-color: rgba(255,0,127,0.6); outline: none; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "badge-pill",
+      "description": "Room-code badge in the host navbar — black pill with a neon-pink border-glow.",
+      "html": "<span class=\"ds-pill\">SALA NEON</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; background: #000000; color: #FF007F; font-family: 'Inter', 'Poppins', system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; border: 1px solid rgba(255,0,127,0.5); box-shadow: 0 0 10px rgba(255,0,127,0.2), inset 0 0 10px rgba(255,0,127,0.05); }"
+    },
+    {
+      "name": "Queue Item",
+      "kind": "custom",
+      "refersTo": "queue-item",
+      "description": "Signature component: a compact queue row with a pink position badge, bold title, and muted secondary line.",
+      "html": "<div class=\"ds-queue-item\"><span class=\"ds-queue-badge\">1</span><div><p class=\"ds-queue-title\">Sweet Caroline</p><p class=\"ds-queue-meta\">Carlos · Neil Diamond</p></div></div>",
+      "css": ".ds-queue-item { display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 8px; background: rgba(6,2,17,0.6); transition: background-color 0.2s; } .ds-queue-item:hover { background: rgba(6,2,17,0.8); } .ds-queue-badge { flex-shrink: 0; width: 20px; height: 20px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #FF007F; background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); } .ds-queue-title { font-size: 11px; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-queue-meta { font-size: 10px; color: #7E6E9B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Living Room Rave",
+    "overview": "Videoké takes the neon lighting rig of a real karaoke venue and installs it in someone's living room. The palette is the same deep-purple-black and pink/cyan glow you'd find in a proper show, but the tone stays domestic and playful — this is friends passing a phone around, not a nightclub console. Glow is the string-lights-and-spotlights of the party, never a mood the copy or interactions need to match. The system explicitly rejects the generic-karaoke-app look: no cheap bordered lists, no default form-library styling, no stock microphone clip-art. It also stays out of corporate-SaaS territory — no dashboard card-grids, no admin-tool chrome. Every surface is either the show (host screen) or the invite (guest phone flow), never a settings page.",
+    "keyCharacteristics": [
+      "Deep near-black purple as the base, never a neutral gray or white canvas.",
+      "Two-color neon signal system: pink for primary/active/singing-now, cyan for status/secondary info.",
+      "Text glow (text-shadow) substitutes for elevation — depth comes from light, not shadow.",
+      "Heavy, geometric sans throughout; no serif, no script.",
+      "Generous corner rounding (8–12px) and pill shapes for anything touchable."
+    ],
+    "rules": [
+      { "name": "The Two-Signal Rule", "body": "Only pink and cyan carry meaning. Pink = primary/active/live-now. Cyan = status/secondary/connected. Never swap their roles, never introduce a third signal color.", "section": "colors" },
+      { "name": "The No-True-Neutral Rule", "body": "There is no plain gray or plain white-on-dark in this system. Every 'neutral' (Dim, Panel, Void, Sidebar Void) carries the same purple hue at a different depth. A gray that doesn't lean purple is a bug, not a shortcut.", "section": "colors" },
+      { "name": "The One Weight Rule", "body": "Headings are always 900 (black) or nothing close to it — no medium-weight headlines. If it's a heading, it's the heaviest weight in the stack.", "section": "typography" },
+      { "name": "The Glow-Not-Shadow Rule", "body": "Never add a conventional dark drop-shadow to imply elevation. If something needs to feel 'lifted,' lighten its background one step (Void → Panel) or give it a border-glow, never a black shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every background a step on the purple-black ramp (Void → Sidebar Void → Panel) — never introduce a true gray or white surface.",
+      "Do use text-glow and border-glow as the only 'elevation' — a lighter background step is the fallback when glow isn't appropriate.",
+      "Do keep primary actions on the muted plum-to-maroon gradient, reserving full-saturation neon pink for live/active state, not button fills.",
+      "Do keep labels/kickers uppercase and wide-tracked, but only on genuine labels (form fields, section headers like 'FILA') — not decoratively above every section.",
+      "Do keep the tone playful and domestic in copy and motion even though the palette is venue-grade neon — this is a house party, not a nightclub console."
+    ],
+    "donts": [
+      "Don't build generic-karaoke-app UI: bordered list rows, default form-library styling, stock microphone clip-art. That's the explicit anti-reference.",
+      "Don't drift toward corporate SaaS: no dashboard card-grids, no admin-tool chrome, no settings-page density.",
+      "Don't add conventional dark drop-shadows anywhere; this system has no shadow-based elevation.",
+      "Don't introduce a third accent color. Pink and cyan are the only signal colors — anything else (green/red for votes) stays a narrow, literal exception, never a new brand color.",
+      "Don't use a plain gray. If something needs to be muted, it's Dim (#7E6E9B) or a low-opacity version of an existing token, always purple-tinted.",
+      "Don't let the mood tip nightclub-serious — no cold, austere, console-like styling; warmth comes through in copy, pacing, and rounded, tactile shapes, not just color."
+    ]
+  }
+}
