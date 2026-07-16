@@ -1,75 +1,66 @@
-# Nuxt Minimal Starter
+# Videoké
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Karaoke de casa: um telão (host, PC/TV via Electron) mostra a música tocando e a fila em tempo real, enquanto os convidados buscam músicas e entram na fila pelo próprio celular — sem instalar nada, só um código de sala.
 
-## Setup
+## Stack
 
-Make sure to install dependencies:
+- [Nuxt 4](https://nuxt.com/) + Vue 3 + Tailwind CSS
+- [Electron](https://www.electronjs.org/) empacotando a tela do host como app desktop
+- [Pusher](https://pusher.com/) para realtime (sincroniza host e convidados)
+- [Upstash Redis](https://upstash.com/) para persistência de sessão
+- YouTube Data API para busca de músicas
+
+## Rodando localmente
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+Crie um `.env` na raiz com:
 
 ```bash
-# npm
-npm run dev
+# YouTube Data API (busca de músicas)
+API_KEY=
 
-# pnpm
-pnpm dev
+# Upstash Redis (persistência da sessão)
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
 
-# yarn
-yarn dev
+# Pusher (realtime — server-side)
+PUSHER_APP_ID=
+PUSHER_KEY=
+PUSHER_SECRET=
+PUSHER_CLUSTER=mt1
 
-# bun
-bun run dev
+# Pusher (client-side, expostas ao browser)
+NUXT_PUBLIC_PUSHER_KEY=
+NUXT_PUBLIC_PUSHER_CLUSTER=mt1
 ```
-
-## Production
-
-Build the application for production:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run dev          # servidor web em http://localhost:3000
+npm run electron:dev # web + janela Electron do host
 ```
 
-Locally preview production build:
+## Build
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+npm run build           # build web (Nuxt)
+npm run generate        # build estático
+npm run electron:build  # empacota o app desktop (dist-electron/)
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Fluxo
+
+- `/` — escolha entre modo Host ou Cliente
+- `/host` — telão: música tocando, letra/player do YouTube, fila lateral
+- `/join` — convidado entra com nome + código da sala
+- `/room/[code]` — convidado busca músicas, vota e acompanha a fila pelo celular
+
+## Design
+
+`PRODUCT.md` e `DESIGN.md` documentam o contexto estratégico e o sistema visual (paleta neon, tipografia, componentes) do projeto — mantidos via a skill "Impeccable" do Claude Code.
+
+## Sobre o desenvolvimento
+
+Este projeto foi desenvolvido com o auxílio do [Claude Code](https://claude.com/claude-code), usado tanto na implementação de funcionalidades quanto nas passadas de design/polish da interface.
