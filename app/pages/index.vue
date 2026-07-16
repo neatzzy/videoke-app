@@ -15,7 +15,8 @@
       <NuxtLink
         to="/host"
         class="block text-center py-4 px-6 rounded-xl font-bold text-sm tracking-wider transition-all
-               bg-panel neon-border-pink hover:bg-neon-pink/10"
+               bg-panel neon-border-pink hover:bg-neon-pink/10
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-pink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void"
       >
         🖥️ &nbsp; MODO HOST (PC)
       </NuxtLink>
@@ -23,7 +24,8 @@
       <NuxtLink
         to="/join"
         class="block text-center py-4 px-6 rounded-xl font-bold text-sm tracking-wider transition-all
-               bg-panel neon-border-cyan hover:bg-neon-cyan/10"
+               bg-panel neon-border-cyan hover:bg-neon-cyan/10
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void"
       >
         📱 &nbsp; ENTRAR COMO CLIENT
       </NuxtLink>

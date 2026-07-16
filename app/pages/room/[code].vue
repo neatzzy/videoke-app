@@ -136,8 +136,10 @@ function castVote(v: 'like' | 'dislike') {
             <button
               @click="castVote('like')"
               :disabled="!!myVote"
+              aria-label="Curtir"
               :class="[
                 'py-5 rounded-2xl text-3xl font-bold transition-all border-2',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
                 myVote === 'like'
                   ? 'bg-green-500/30 border-green-400 scale-95'
                   : myVote
@@ -150,8 +152,10 @@ function castVote(v: 'like' | 'dislike') {
             <button
               @click="castVote('dislike')"
               :disabled="!!myVote"
+              aria-label="Não curtir"
               :class="[
                 'py-5 rounded-2xl text-3xl font-bold transition-all border-2',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
                 myVote === 'dislike'
                   ? 'bg-red-500/30 border-red-400 scale-95'
                   : myVote
@@ -170,10 +174,11 @@ function castVote(v: 'like' | 'dislike') {
         <div v-else class="flex flex-col items-center justify-center py-16 text-center gap-3">
           <span class="text-6xl opacity-30">🎵</span>
           <p class="text-dim text-sm">Nenhuma música tocando</p>
-          <p class="text-dim/50 text-xs">Adicione uma música na fila!</p>
+          <p class="text-dim/70 text-xs">Adicione uma música na fila!</p>
           <button
             @click="activeTab = 'search'"
-            class="mt-4 px-6 py-3 rounded-xl text-sm font-bold neon-border-cyan text-neon-cyan hover:bg-neon-cyan/10 transition-colors"
+            class="mt-4 px-6 py-3 rounded-xl text-sm font-bold neon-border-cyan text-neon-cyan hover:bg-neon-cyan/10 transition-colors
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void"
           >
             Buscar música
           </button>
@@ -187,14 +192,18 @@ function castVote(v: 'like' | 'dislike') {
             v-model="searchQuery"
             type="text"
             placeholder="Buscar música no YouTube..."
-            class="flex-1 px-4 py-3 rounded-xl bg-panel text-white placeholder-dim/50 text-sm
-                   border border-dim/20 focus:border-neon-cyan/50 focus:outline-none transition-colors"
+            class="flex-1 px-4 py-3 rounded-xl bg-panel text-white placeholder-dim text-sm
+                   border border-dim/20 focus:border-neon-cyan/50 focus:outline-none
+                   focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void
+                   transition-colors"
           />
           <button
             type="submit"
             :disabled="searching"
+            aria-label="Buscar música"
             class="px-4 py-3 rounded-xl bg-panel border border-neon-cyan/40 text-neon-cyan text-sm
-                   hover:bg-neon-cyan/10 disabled:opacity-50 transition-colors"
+                   hover:bg-neon-cyan/10 disabled:opacity-50 transition-colors
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void"
           >
             {{ searching ? '⏳' : '🔍' }}
           </button>
@@ -219,7 +228,9 @@ function castVote(v: 'like' | 'dislike') {
             <button
               @click="addToQueue(item)"
               :disabled="addedIds.has(item.videoId)"
-              class="flex-shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+              :aria-label="addedIds.has(item.videoId) ? `${item.title} já está na fila` : `Adicionar ${item.title} à fila`"
+              class="flex-shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
               :class="addedIds.has(item.videoId)
                 ? 'bg-neon-pink/20 text-neon-pink border border-neon-pink/30 opacity-60'
                 : 'bg-panel border border-neon-cyan/40 text-neon-cyan hover:bg-neon-cyan/10'"
@@ -230,7 +241,7 @@ function castVote(v: 'like' | 'dislike') {
 
           <div
             v-if="searchResults.length === 0 && !searching && searchQuery"
-            class="text-center text-dim/50 text-sm py-8"
+            class="text-center text-dim/70 text-sm py-8"
           >
             Nenhum resultado
           </div>
@@ -264,7 +275,7 @@ function castVote(v: 'like' | 'dislike') {
 
           <div
             v-if="queue.length === 0 && !currentSong"
-            class="text-center text-dim/50 text-sm py-12"
+            class="text-center text-dim/70 text-sm py-12"
           >
             Fila vazia
           </div>
@@ -282,9 +293,11 @@ function castVote(v: 'like' | 'dislike') {
         ] as const)"
         :key="tab.id"
         @click="activeTab = tab.id"
+        :aria-current="activeTab === tab.id ? 'true' : undefined"
         :class="[
           'flex-1 flex flex-col items-center py-3 gap-1 text-[10px] font-semibold tracking-wide transition-colors',
-          activeTab === tab.id ? 'text-neon-pink' : 'text-dim/70 hover:text-dim'
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-pink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-panel',
+          activeTab === tab.id ? 'text-neon-pink' : 'text-dim hover:text-white'
         ]"
       >
         <span class="text-lg leading-none">{{ tab.icon }}</span>

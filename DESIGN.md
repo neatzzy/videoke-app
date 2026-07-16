@@ -8,7 +8,7 @@ colors:
   neon-pink: "#FF007F"
   neon-cyan: "#00F0FF"
   violet-glow: "#8B00FF"
-  dim: "#7E6E9B"
+  dim: "#8B7DA5"
   button-gradient-start: "#2A0A3E"
   button-gradient-end: "#3D0A2A"
 typography:
@@ -113,7 +113,7 @@ A near-black purple stage lit by two neon signal colors, with a warm violet-to-m
 - **Void** (#060211): The base background for every full-screen surface (host stage, join screen). Near-black with a purple cast, never true `#000`.
 - **Sidebar Void** (#0A0618): A slightly deeper variant of Void, used only to separate the host screen's queue sidebar from the main stage.
 - **Panel** (#130924): Card/container background — form fields, the navbar strip, badges. One step lighter than Void so containers read as physically raised without a shadow.
-- **Dim** (#7E6E9B): Muted purple-gray for secondary text, placeholders, dividers, and inactive borders. This is the *only* gray in the system; it always carries the brand's purple hue, never a true neutral gray.
+- **Dim** (#8B7DA5): Muted purple-gray for secondary text, placeholders, dividers, and inactive borders. This is the *only* gray in the system; it always carries the brand's purple hue, never a true neutral gray. Lightened from an earlier #7E6E9B during polish — the original only hit 4.48:1 on Void and 4.20:1 on Panel, both under the 4.5:1 AA floor for body text; this value clears both with margin.
 - **Button Gradient** (#2A0A3E → #3D0A2A): A muted plum-to-maroon gradient used exclusively for the primary CTA button background — deliberately calmer than the neon accents so the one action that matters doesn't have to compete with the show's own lighting.
 
 ### Named Rules
@@ -198,5 +198,6 @@ The right-hand sidebar on the host screen: a vertically stacked list of compact 
 - **Don't** drift toward corporate SaaS: no dashboard card-grids, no admin-tool chrome, no settings-page density.
 - **Don't** add conventional dark drop-shadows anywhere; this system has no shadow-based elevation.
 - **Don't** introduce a third accent color. Pink and cyan are the only signal colors — anything else (green/red for votes) stays a narrow, literal exception, never a new brand color.
-- **Don't** use a plain gray. If something needs to be muted, it's Dim (#7E6E9B) or a low-opacity version of an existing token, always purple-tinted.
+- **Don't** use a plain gray. If something needs to be muted, it's Dim (#8B7DA5) or a low-opacity version of an existing token, always purple-tinted.
+- **Don't** drop Dim below ~90% opacity for text that carries real information (labels, nav state, placeholders) — anything more transparent falls under the 4.5:1 AA floor on both Void and Panel. Reserve low-opacity Dim for genuinely decorative/supporting copy only.
 - **Don't** let the mood tip nightclub-serious — no cold, austere, console-like styling; warmth comes through in copy, pacing, and rounded, tactile shapes, not just color.

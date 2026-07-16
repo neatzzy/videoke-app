@@ -150,7 +150,7 @@ watch(playerReady, (ready) => {
 
         <template v-else>
           <h2 class="text-3xl font-black text-dim">Aguardando músicas...</h2>
-          <p class="text-sm text-dim/60 mt-1">
+          <p class="text-sm text-dim/80 mt-1">
             Compartilhe o código
             <span class="text-neon-cyan font-mono font-bold text-glow-cyan">{{ session?.code }}</span>
             com seus amigos
@@ -176,12 +176,11 @@ watch(playerReady, (ready) => {
       <div v-if="currentSong" class="px-5 py-2 bg-panel/40 flex-shrink-0">
         <div class="relative h-1 bg-dim/20 rounded-full overflow-hidden">
           <div
-            class="absolute left-0 top-0 h-full rounded-full transition-all duration-1000"
-            style="background: linear-gradient(to right, #FF007F, #8B00FF)"
+            class="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-neon-pink to-violet-glow transition-all duration-1000"
             :style="{ width: `${progress}%` }"
           />
         </div>
-        <div class="flex justify-between text-[10px] text-dim/60 mt-1">
+        <div class="flex justify-between text-[10px] text-dim/80 mt-1">
           <span>{{ formatTime(currentTime) }}</span>
           <span>{{ formatTime(totalDuration) }}</span>
         </div>
@@ -196,7 +195,9 @@ watch(playerReady, (ready) => {
           v-if="queue.length > 0 || currentSong"
           @click="nextSong()"
           class="px-5 py-2 rounded-xl bg-panel border border-dim/30 text-xs font-semibold
-                 hover:border-neon-pink/50 hover:text-neon-pink transition-colors"
+                 hover:border-neon-pink/50 hover:text-neon-pink transition-colors
+                 focus:outline-none focus-visible:border-neon-pink/50 focus-visible:text-neon-pink
+                 focus-visible:ring-2 focus-visible:ring-neon-pink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
         >
           Próxima ▶
         </button>
@@ -204,7 +205,7 @@ watch(playerReady, (ready) => {
     </div>
 
     <!-- ═══ RIGHT COLUMN: Queue Sidebar (18%) ═══ -->
-    <div class="flex flex-col bg-[#0A0618] border-l border-dim/10" style="width: 18%">
+    <div class="flex flex-col bg-sidebar-void border-l border-dim/10" style="width: 18%">
       <!-- Header -->
       <div class="flex items-center gap-2 px-4 py-4 border-b border-dim/10 flex-shrink-0">
         <span class="text-dim text-sm">☰</span>

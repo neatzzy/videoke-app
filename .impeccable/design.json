@@ -10,7 +10,7 @@
       "neon-pink": { "role": "primary", "displayName": "Neon Pink", "canonical": "#FF007F", "tonalRamp": ["#260013", "#660033", "#A60053", "#E60072", "#FF007F", "#FF409F", "#FF80BF", "#FFBFDF"] },
       "neon-cyan": { "role": "secondary", "displayName": "Neon Cyan", "canonical": "#00F0FF", "tonalRamp": ["#002426", "#006066", "#009CA6", "#00D8E6", "#00F0FF", "#40F4FF", "#80F8FF", "#BFFBFF"] },
       "violet-glow": { "role": "tertiary", "displayName": "Violet Glow", "canonical": "#8B00FF", "tonalRamp": ["#150026", "#380066", "#5A00A6", "#7D00E6", "#8B00FF", "#A840FF", "#C580FF", "#E2BFFF"] },
-      "dim": { "role": "neutral", "displayName": "Dim", "canonical": "#7E6E9B", "tonalRamp": ["#131117", "#322C3E", "#524865", "#71638C", "#7E6E9B", "#9E92B4", "#BFB7CD", "#DFDBE6"] },
+      "dim": { "role": "neutral", "displayName": "Dim", "canonical": "#8B7DA5", "tonalRamp": ["#151319", "#383242", "#5A516B", "#7D7195", "#8B7DA5", "#A89EBC", "#C5BED2", "#E2DFE9"] },
       "button-gradient-start": { "role": "neutral", "displayName": "Button Gradient Start", "canonical": "#2A0A3E" },
       "button-gradient-end": { "role": "neutral", "displayName": "Button Gradient End", "canonical": "#3D0A2A" }
     },
@@ -102,7 +102,8 @@
       "Don't drift toward corporate SaaS: no dashboard card-grids, no admin-tool chrome, no settings-page density.",
       "Don't add conventional dark drop-shadows anywhere; this system has no shadow-based elevation.",
       "Don't introduce a third accent color. Pink and cyan are the only signal colors — anything else (green/red for votes) stays a narrow, literal exception, never a new brand color.",
-      "Don't use a plain gray. If something needs to be muted, it's Dim (#7E6E9B) or a low-opacity version of an existing token, always purple-tinted.",
+      "Don't use a plain gray. If something needs to be muted, it's Dim (#8B7DA5) or a low-opacity version of an existing token, always purple-tinted.",
+      "Don't drop Dim below ~90% opacity for text that carries real information (labels, nav state, placeholders) — anything more transparent falls under the 4.5:1 AA floor on both Void and Panel. Reserve low-opacity Dim for genuinely decorative/supporting copy only.",
       "Don't let the mood tip nightclub-serious — no cold, austere, console-like styling; warmth comes through in copy, pacing, and rounded, tactile shapes, not just color."
     ]
   }
