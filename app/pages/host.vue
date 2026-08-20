@@ -1,7 +1,9 @@
 <script setup lang="ts">
-const { createSession, nextSong, session, currentSong, queue, votes, clientCount } = useKaraoke()
+const { createSession, nextSong, session, currentSong, queue, clientCount } = useKaraoke()
 
 const sessionFailed = ref(false)
+const showIntro = ref(false)
+let introTimer: ReturnType<typeof setTimeout>
 
 // YouTube IFrame Player
 let player: any = null
@@ -68,10 +70,14 @@ onMounted(async () => {
   }, 1000)
 })
 
-onUnmounted(() => clearInterval(progressInterval))
+onUnmounted(() => {
+  clearInterval(progressInterval)
+  clearTimeout(introTimer)
+})
 
 // Watch only the song ID — fires solely when the track actually changes,
 // not when other session fields (queue, votes) are updated.
+// `immediate` so the intro also plays for a song already in progress on load.
 watch(
   () => currentSong.value?.id,
   (newId) => {
@@ -81,7 +87,11 @@ watch(
       currentTime.value = 0
       totalDuration.value = 0
     }
-  }
+    clearTimeout(introTimer)
+    showIntro.value = true
+    introTimer = setTimeout(() => { showIntro.value = false }, 4000)
+  },
+  { immediate: true }
 )
 
 // Load song as soon as the player is ready (handles first song after page load).
@@ -119,75 +129,66 @@ watch(playerReady, (ready) => {
         </div>
       </nav>
 
-      <!-- Song Header -->
-      <div class="px-8 py-4 flex-shrink-0">
-        <template v-if="currentSong">
-          <!-- Equalizer + label -->
-          <div class="flex items-center gap-2 mb-2">
-            <div class="flex gap-0.5 items-end h-4">
-              <div v-for="(h, i) in eqBars" :key="i"
-                class="w-1 bg-neon-pink rounded-sm animate-pulse"
-                :style="{ height: `${h}%`, animationDelay: `${i * 0.1}s` }"
-              />
-            </div>
-            <span class="text-[10px] text-dim uppercase tracking-[0.15em] font-semibold">Agora Cantando</span>
-          </div>
-
-          <h1 class="text-5xl font-black text-white text-glow-pink leading-tight truncate">
-            {{ currentSong.title }}
-          </h1>
-          <p class="text-xl text-neon-cyan mt-1 text-glow-cyan truncate">{{ currentSong.artist }}</p>
-
-          <!-- Singer badge -->
-          <div class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-panel/80 border border-dim/20">
-            <div class="w-7 h-7 rounded-full bg-neon-pink/20 border border-neon-pink/40 flex items-center justify-center text-xs font-bold text-neon-pink">
-              {{ currentSong?.addedBy.charAt(0).toUpperCase() }}
-            </div>
-            <span class="text-sm text-white/90">{{ currentSong.addedBy }}</span>
-          </div>
-
-          <!-- Live votes -->
-          <div class="mt-2 flex items-center gap-4 ml-1">
-            <span class="flex items-center gap-1.5 text-green-400 font-bold text-sm">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-              {{ votes.likes }}
-            </span>
-            <span class="flex items-center gap-1.5 text-red-400 font-bold text-sm">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-              {{ votes.dislikes }}
-            </span>
-          </div>
-        </template>
-
-        <template v-else-if="sessionFailed">
-          <h2 class="text-3xl font-black text-neon-pink">Não foi possível criar a sala</h2>
-          <p class="text-sm text-dim/80 mt-1">Verifique sua conexão e recarregue a página.</p>
-        </template>
-
-        <template v-else>
-          <h2 class="text-3xl font-black text-dim">Aguardando músicas...</h2>
-          <p class="text-sm text-dim/80 mt-1">
-            Compartilhe o código
-            <span class="text-neon-cyan font-mono font-bold text-lg text-glow-cyan">{{ session?.code }}</span>
-            com seus amigos
-          </p>
-        </template>
-      </div>
-
       <!-- YouTube Player Area -->
       <div class="flex-1 bg-black relative min-h-0">
         <div id="yt-player" class="absolute inset-0 w-full h-full" />
 
-        <!-- Placeholder when no song -->
+        <!-- Intro overlay: title/artist/singer shown big on song change, then fades so the player takes over -->
+        <Transition
+          enter-active-class="transition-opacity duration-700"
+          leave-active-class="transition-opacity duration-700"
+          enter-from-class="opacity-0"
+          leave-to-class="opacity-0"
+        >
+          <div
+            v-if="currentSong && showIntro"
+            class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/85 text-center px-8"
+          >
+            <div class="flex items-center gap-2">
+              <div class="flex gap-0.5 items-end h-5">
+                <div v-for="(h, i) in eqBars" :key="i"
+                  class="w-1.5 bg-neon-pink rounded-sm animate-pulse"
+                  :style="{ height: `${h}%`, animationDelay: `${i * 0.1}s` }"
+                />
+              </div>
+              <span class="text-xs text-dim uppercase tracking-[0.2em] font-semibold">Agora Cantando</span>
+            </div>
+
+            <h1 class="text-7xl font-black text-white text-glow-pink leading-tight max-w-full truncate">
+              {{ currentSong.title }}
+            </h1>
+            <p class="text-3xl text-neon-cyan text-glow-cyan truncate max-w-full">{{ currentSong.artist }}</p>
+
+            <div class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-panel/80 border border-dim/20">
+              <div class="w-8 h-8 rounded-full bg-neon-pink/20 border border-neon-pink/40 flex items-center justify-center text-sm font-bold text-neon-pink">
+                {{ currentSong.addedBy.charAt(0).toUpperCase() }}
+              </div>
+              <span class="text-base text-white/90">{{ currentSong.addedBy }}</span>
+            </div>
+          </div>
+        </Transition>
+
+        <!-- Placeholder when no song is playing -->
         <div
           v-if="!currentSong"
-          class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-dim"
+          class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-dim text-center px-8"
         >
-          <svg width="72" height="72" viewBox="0 0 24 24" fill="none" class="opacity-30">
-            <rect x="3" y="6" width="14" height="12" rx="2" stroke="#8B7DA5" stroke-width="1.5" />
-            <path d="M21 8.5v7l-4-2.3v-2.4l4-2.3z" fill="#8B7DA5" />
-          </svg>
-          <p class="text-sm tracking-[0.15em] opacity-50">NENHUMA MÚSICA TOCANDO</p>
+          <template v-if="sessionFailed">
+            <h2 class="text-3xl font-black text-neon-pink">Não foi possível criar a sala</h2>
+            <p class="text-sm text-dim/80 mt-1">Verifique sua conexão e recarregue a página.</p>
+          </template>
+          <template v-else>
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" class="opacity-30">
+              <rect x="3" y="6" width="14" height="12" rx="2" stroke="#8B7DA5" stroke-width="1.5" />
+              <path d="M21 8.5v7l-4-2.3v-2.4l4-2.3z" fill="#8B7DA5" />
+            </svg>
+            <p class="text-sm tracking-[0.15em] opacity-50">NENHUMA MÚSICA TOCANDO</p>
+            <p v-if="session?.code" class="text-sm text-dim/80">
+              Compartilhe o código
+              <span class="text-neon-cyan font-mono font-bold text-lg text-glow-cyan">{{ session.code }}</span>
+              com seus amigos
+            </p>
+          </template>
         </div>
       </div>
 
