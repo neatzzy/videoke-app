@@ -112,7 +112,7 @@ watch(playerReady, (ready) => {
           </div>
           <div
             v-if="session?.code"
-            class="px-3 py-1 rounded-full bg-black text-xs font-mono font-bold tracking-widest neon-border-pink"
+            class="px-4 py-1.5 rounded-full bg-black text-lg font-mono font-bold tracking-widest neon-border-pink"
           >
             SALA&nbsp;{{ session.code }}
           </div>
@@ -168,7 +168,7 @@ watch(playerReady, (ready) => {
           <h2 class="text-3xl font-black text-dim">Aguardando músicas...</h2>
           <p class="text-sm text-dim/80 mt-1">
             Compartilhe o código
-            <span class="text-neon-cyan font-mono font-bold text-glow-cyan">{{ session?.code }}</span>
+            <span class="text-neon-cyan font-mono font-bold text-lg text-glow-cyan">{{ session?.code }}</span>
             com seus amigos
           </p>
         </template>
@@ -254,12 +254,12 @@ watch(playerReady, (ready) => {
 
         <!-- Next up: highlighted -->
         <div
-          v-if="queue.length > 0"
+          v-if="queue[0]"
           class="p-3.5 rounded-2xl bg-gradient-to-br from-neon-pink/15 to-neon-pink/5 border border-neon-pink/30"
         >
           <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-neon-pink">Próxima</span>
-          <p class="text-sm font-bold text-white mt-1.5 mb-0.5 leading-tight truncate">{{ queue[0].title }}</p>
-          <p class="text-[11px] text-dim truncate">{{ queue[0].addedBy }} · {{ queue[0].artist }}</p>
+          <p class="text-sm font-bold text-white mt-1.5 mb-0.5 leading-tight truncate">{{ queue[0]?.title ?? '' }}</p>
+          <p class="text-[11px] text-dim truncate">{{ queue[0]?.addedBy ?? '' }} · {{ queue[0]?.artist ?? '' }}</p>
         </div>
 
         <div
