@@ -1,5 +1,7 @@
 # Product
 
+<!-- impeccable:product-schema 1 -->
+
 ## Register
 
 product
@@ -24,6 +26,14 @@ Turns a laptop plugged into a TV into a real karaoke show — a live now-playing
 
 Playful house party, not nightclub. The codebase's existing neon/cyberpunk visual system (pink/cyan glow, deep purple-black) stays as the foundation, but the voice and feel should read warmer and friendlier — fun with friends, not moody venue-serious. Glow and neon are the show's lighting rig, not a mood the copy or interactions need to match.
 
+## Operating Context
+
+Host runs the show on a laptop/TV via the Electron `/host` window, full-screen, party-facing. Guests never install anything — they open `/join` on their own phone browser, enter a name + 4-letter room code, then work from `/room/[code]` to search YouTube and queue songs. Session state lives server-side (Redis, 6-hour TTL) and syncs both screens in real time over Pusher — the host screen and every guest phone update live as the queue, vote, and now-playing state change.
+
+## Capabilities and Constraints
+
+Confirmed: room creation/join by code, YouTube song search, queue add, like/dislike voting on the current song, host-only "next song" advance. Access control is a `localStorage` client id plus the room code — no accounts, no passwords. No formal test suite or linter is set up yet.
+
 ## Anti-references
 
 Generic karaoke apps: cheap bordered list UIs, default Bootstrap-y form styling, stock "microphone clip-art" karaoke visuals. Also avoid drifting toward corporate SaaS — no dashboard card-grids or admin-tool feel; this is a party screen, not a settings page.
@@ -34,6 +44,10 @@ Generic karaoke apps: cheap bordered list UIs, default Bootstrap-y form styling,
 - Zero-friction join: the guest phone flow (room code → name → queue) can never stall the party waiting on installs, accounts, or host bottlenecks.
 - Warm neon, not cold venue: keep the pink/cyan glow system, but let copy, micro-interactions, and pacing feel like friends messing around, not a nightclub console.
 - Don't reach for enterprise defaults: no card grids, no dashboard chrome — every surface should feel like it belongs to a living-room party, not a tool.
+
+## Evidence on Hand
+
+None — no real testimonials, case studies, press, or customer content exist. Do not fabricate any.
 
 ## Accessibility & Inclusion
 

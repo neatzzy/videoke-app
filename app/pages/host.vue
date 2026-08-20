@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const { createSession, nextSong, session, currentSong, queue, votes, clientCount } = useKaraoke()
 
+const sessionFailed = ref(false)
+
 // YouTube IFrame Player
 let player: any = null
 const playerReady = ref(false)
@@ -41,7 +43,12 @@ function initPlayer() {
 let progressInterval: ReturnType<typeof setInterval>
 
 onMounted(async () => {
-  await createSession('Host')
+  try {
+    await createSession('Host')
+  } catch {
+    sessionFailed.value = true
+    return
+  }
 
   // Load YouTube IFrame API
   if (!(window as any).YT) {
@@ -152,6 +159,11 @@ watch(playerReady, (ready) => {
           </div>
         </template>
 
+        <template v-else-if="sessionFailed">
+          <h2 class="text-3xl font-black text-neon-pink">Não foi possível criar a sala</h2>
+          <p class="text-sm text-dim/80 mt-1">Verifique sua conexão e recarregue a página.</p>
+        </template>
+
         <template v-else>
           <h2 class="text-3xl font-black text-dim">Aguardando músicas...</h2>
           <p class="text-sm text-dim/80 mt-1">
@@ -187,7 +199,7 @@ watch(playerReady, (ready) => {
             :style="{ width: `${progress}%` }"
           />
         </div>
-        <div class="flex justify-between text-[10px] text-dim/80 mt-1">
+        <div class="flex justify-between text-[10px] text-dim mt-1">
           <span>{{ formatTime(currentTime) }}</span>
           <span>{{ formatTime(totalDuration) }}</span>
         </div>
@@ -230,7 +242,7 @@ watch(playerReady, (ready) => {
       <div class="flex-1 overflow-y-auto scrollbar-thin p-3 space-y-2">
         <div
           v-if="queue.length === 0"
-          class="flex flex-col items-center justify-center h-full text-center text-dim/50 gap-2"
+          class="flex flex-col items-center justify-center h-full text-center text-dim/90 gap-2"
         >
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" class="opacity-60">
             <path d="M9 18V5l12-2v13" stroke="#8B7DA5" stroke-width="1.6" />

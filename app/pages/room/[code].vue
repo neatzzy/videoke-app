@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
-const { connect, session, currentSong, queue, votes, previousVotes, error, addSong, nextSong, vote, sync } = useKaraoke()
+const { session, currentSong, queue, votes, previousVotes, error, addSong, nextSong, vote, resumeSession } = useKaraoke()
 
 type Tab = 'live' | 'search' | 'queue'
 const activeTab = ref<Tab>('live')
@@ -14,16 +14,12 @@ const searchResults = ref<{ videoId: string; title: string; artist: string; thum
 const searching = ref(false)
 const addedIds = ref<Set<string>>(new Set())
 
-onMounted(() => {
-  connect()
-  // If no session in state yet, this page was opened directly — sync or redirect
-  setTimeout(() => {
-    if (!session.value) {
-      navigateTo('/join')
-    } else {
-      sync()
-    }
-  }, 1500)
+onMounted(async () => {
+  // Session survives client-side navigation (module-level useState) but not a
+  // hard reload — resume it from the URL's room code before giving up on it.
+  if (session.value) return
+  const ok = await resumeSession(route.params.code as string)
+  if (!ok) navigateTo('/join')
 })
 
 // Reset vote when song changes
@@ -44,16 +40,30 @@ async function search() {
   }
 }
 
-function addToQueue(item: (typeof searchResults.value)[number]) {
-  addSong({ videoId: item.videoId, title: item.title, artist: item.artist, thumbnail: item.thumbnail, duration: '' })
-  addedIds.value.add(item.videoId)
-  activeTab.value = 'queue'
+function flashError(message: string) {
+  error.value = message
+  setTimeout(() => { error.value = null }, 4000)
 }
 
-function castVote(v: 'like' | 'dislike') {
+async function addToQueue(item: (typeof searchResults.value)[number]) {
+  try {
+    await addSong({ videoId: item.videoId, title: item.title, artist: item.artist, thumbnail: item.thumbnail, duration: '' })
+    addedIds.value.add(item.videoId)
+    activeTab.value = 'queue'
+  } catch {
+    flashError('Não foi possível adicionar a música. Tente de novo.')
+  }
+}
+
+async function castVote(v: 'like' | 'dislike') {
   if (myVote.value) return
   myVote.value = v
-  vote(v)
+  try {
+    await vote(v)
+  } catch {
+    myVote.value = null
+    flashError('Não foi possível registrar seu voto.')
+  }
 }
 </script>
 
@@ -264,7 +274,7 @@ function castVote(v: 'like' | 'dislike') {
 
           <div
             v-if="searchResults.length === 0 && !searching && searchQuery"
-            class="text-center text-dim/70 text-sm py-8"
+            class="text-center text-dim/90 text-sm py-8"
           >
             Nenhum resultado
           </div>
@@ -298,13 +308,24 @@ function castVote(v: 'like' | 'dislike') {
 
           <div
             v-if="queue.length === 0 && !currentSong"
-            class="text-center text-dim/70 text-sm py-12"
+            class="text-center text-dim/90 text-sm py-12"
           >
             Fila vazia
           </div>
         </div>
       </template>
     </main>
+
+    <!-- Error toast -->
+    <Transition name="fade">
+      <div
+        v-if="error"
+        role="alert"
+        class="fixed left-4 right-4 bottom-20 z-50 px-4 py-3 rounded-xl bg-panel border border-neon-pink/40 text-white text-sm text-center"
+      >
+        {{ error }}
+      </div>
+    </Transition>
 
     <!-- Bottom Navigation -->
     <nav class="flex-shrink-0 flex border-t border-dim/15 bg-panel/50">
