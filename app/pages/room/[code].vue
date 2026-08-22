@@ -68,7 +68,7 @@ async function castVote(v: 'like' | 'dislike') {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-void overflow-hidden">
+  <div class="h-dvh flex flex-col bg-void overflow-hidden">
     <!-- Top bar -->
     <header class="flex items-center justify-between px-4 pt-6 pb-3 flex-shrink-0">
       <div class="flex items-center gap-2">

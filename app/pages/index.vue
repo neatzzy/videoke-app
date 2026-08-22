@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="h-screen flex flex-col items-center justify-center gap-9 bg-void px-6">
+  <div class="min-h-dvh flex flex-col items-center justify-center gap-9 bg-void px-6">
     <div class="flex items-center gap-3">
       <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-button-gradient-start to-button-gradient-end
                   border border-neon-pink/40 flex items-center justify-center text-glow-pink">

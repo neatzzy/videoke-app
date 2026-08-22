@@ -24,7 +24,7 @@ function submit() {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-void overflow-y-auto">
+  <div class="h-dvh flex flex-col bg-void overflow-y-auto">
     <!-- Header -->
     <header class="flex items-center gap-2.5 px-6 pt-8 pb-4">
       <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-button-gradient-start to-button-gradient-end
