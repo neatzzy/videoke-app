@@ -117,6 +117,19 @@ export async function advanceQueue(redis: Redis, clientId: string, code: string)
   return { session, previousVotes }
 }
 
+export async function reorderQueue(redis: Redis, clientId: string, code: string, orderedIds: string[]): Promise<Session | null> {
+  const session = await getSession(redis, code)
+  if (!session || session.hostClientId !== clientId) return null
+
+  const byId = new Map(session.queue.map((item) => [item.id, item]))
+  const reordered = orderedIds.map((id) => byId.get(id)).filter((item): item is QueueItem => !!item)
+  if (reordered.length !== session.queue.length) return null
+
+  session.queue = reordered
+  await saveSession(redis, session)
+  return session
+}
+
 export async function castVote(redis: Redis, clientId: string, code: string, vote: 'like' | 'dislike'): Promise<Session | null> {
   const session = await getSession(redis, code)
   if (!session || !session.currentSong || !session.clients[clientId]) return null

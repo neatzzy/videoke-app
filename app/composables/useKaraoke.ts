@@ -112,6 +112,15 @@ export const useKaraoke = () => {
     })
   }
 
+  async function reorderQueue(orderedIds: string[]) {
+    if (!session.value) return
+    const clientId = getOrCreateClientId()
+    await $fetch('/api/session/reorder-queue', {
+      method: 'POST',
+      body: { clientId, code: session.value.code, orderedIds },
+    })
+  }
+
   async function vote(v: 'like' | 'dislike') {
     if (!session.value) return
     const clientId = getOrCreateClientId()
@@ -151,6 +160,7 @@ export const useKaraoke = () => {
     joinSession,
     addSong,
     nextSong,
+    reorderQueue,
     vote,
     resumeSession,
   }

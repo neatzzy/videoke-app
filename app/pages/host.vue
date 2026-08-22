@@ -1,5 +1,35 @@
 <script setup lang="ts">
-const { createSession, nextSong, session, currentSong, queue, clientCount } = useKaraoke()
+import type { QueueItem } from '~/composables/useKaraoke'
+
+const { createSession, nextSong, session, currentSong, queue, clientCount, reorderQueue } = useKaraoke()
+
+// Local mirror of the queue so a drag can reorder it live; re-synced from the
+// server whenever nothing is being dragged (dragIndex null).
+const localQueue = ref<QueueItem[]>([])
+const dragIndex = ref<number | null>(null)
+
+watch(queue, (val) => {
+  if (dragIndex.value === null) localQueue.value = [...val]
+}, { immediate: true })
+
+function onDragStart(idx: number) {
+  dragIndex.value = idx
+}
+
+function onDragOver(idx: number) {
+  if (dragIndex.value === null || dragIndex.value === idx) return
+  const items = [...localQueue.value]
+  const [moved] = items.splice(dragIndex.value, 1)
+  items.splice(idx, 0, moved)
+  localQueue.value = items
+  dragIndex.value = idx
+}
+
+function onDragEnd() {
+  if (dragIndex.value === null) return
+  dragIndex.value = null
+  reorderQueue(localQueue.value.map((item) => item.id))
+}
 
 const sessionFailed = ref(false)
 const showIntro = ref(false)
@@ -242,7 +272,7 @@ watch(playerReady, (ready) => {
       <!-- Queue Items -->
       <div class="flex-1 overflow-y-auto scrollbar-thin p-3 space-y-2">
         <div
-          v-if="queue.length === 0"
+          v-if="localQueue.length === 0"
           class="flex flex-col items-center justify-center h-full text-center text-dim/90 gap-2"
         >
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" class="opacity-60">
@@ -253,28 +283,34 @@ watch(playerReady, (ready) => {
           <p class="text-[10px] leading-relaxed">Nenhuma música<br>adicionada ainda</p>
         </div>
 
-        <!-- Next up: highlighted -->
         <div
-          v-if="queue[0]"
-          class="p-3.5 rounded-2xl bg-gradient-to-br from-neon-pink/15 to-neon-pink/5 border border-neon-pink/30"
-        >
-          <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-neon-pink">Próxima</span>
-          <p class="text-sm font-bold text-white mt-1.5 mb-0.5 leading-tight truncate">{{ queue[0]?.title ?? '' }}</p>
-          <p class="text-[11px] text-dim truncate">{{ queue[0]?.addedBy ?? '' }} · {{ queue[0]?.artist ?? '' }}</p>
-        </div>
-
-        <div
-          v-for="(item, idx) in queue.slice(1)"
+          v-for="(item, idx) in localQueue"
           :key="item.id"
-          class="flex items-start gap-2 p-2.5 rounded-lg bg-void/60 hover:bg-void/80 transition-colors"
+          draggable="true"
+          @dragstart="onDragStart(idx)"
+          @dragover.prevent="onDragOver(idx)"
+          @dragend="onDragEnd"
+          :class="[
+            'cursor-grab active:cursor-grabbing transition-colors',
+            idx === 0
+              ? 'p-3.5 rounded-2xl bg-gradient-to-br from-neon-pink/15 to-neon-pink/5 border border-neon-pink/30'
+              : 'flex items-start gap-2 p-2.5 rounded-lg bg-void/60 hover:bg-void/80'
+          ]"
         >
-          <div class="w-5 h-5 rounded-full bg-neon-pink/15 border border-neon-pink/30 flex items-center justify-center text-[10px] font-bold text-neon-pink flex-shrink-0 mt-0.5">
-            {{ idx + 2 }}
-          </div>
-          <div class="min-w-0">
-            <p class="text-[11px] font-bold text-white truncate leading-tight">{{ item.title }}</p>
-            <p class="text-[10px] text-dim truncate mt-0.5">{{ item.addedBy }} · {{ item.artist }}</p>
-          </div>
+          <template v-if="idx === 0">
+            <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-neon-pink">Próxima</span>
+            <p class="text-sm font-bold text-white mt-1.5 mb-0.5 leading-tight truncate">{{ item.title }}</p>
+            <p class="text-[11px] text-dim truncate">{{ item.addedBy }} · {{ item.artist }}</p>
+          </template>
+          <template v-else>
+            <div class="w-5 h-5 rounded-full bg-neon-pink/15 border border-neon-pink/30 flex items-center justify-center text-[10px] font-bold text-neon-pink flex-shrink-0 mt-0.5">
+              {{ idx + 1 }}
+            </div>
+            <div class="min-w-0">
+              <p class="text-[11px] font-bold text-white truncate leading-tight">{{ item.title }}</p>
+              <p class="text-[10px] text-dim truncate mt-0.5">{{ item.addedBy }} · {{ item.artist }}</p>
+            </div>
+          </template>
         </div>
       </div>
     </div>
