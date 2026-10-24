@@ -68,7 +68,7 @@ function initPlayer() {
     height: '100%',
     width: '100%',
     videoId: '',
-    playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, iv_load_policy: 3 },
+    playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, iv_load_policy: 3, origin: window.location.origin },
     events: {
       onReady: () => { playerReady.value = true },
       onStateChange: (e: any) => {
