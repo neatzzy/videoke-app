@@ -3,7 +3,11 @@ const route = useRoute()
 const { session, currentSong, queue, votes, previousVotes, error, addSong, nextSong, vote, resumeSession } = useKaraoke()
 
 type Tab = 'live' | 'search' | 'queue'
-const activeTab = ref<Tab>('live')
+// Tab lives in the URL so the phone's back button returns to the previous tab instead of leaving the room
+const activeTab = computed<Tab>({
+  get: () => (['search', 'queue'].includes(route.query.tab as string) ? route.query.tab as Tab : 'live'),
+  set: (tab) => { navigateTo({ query: tab === 'live' ? {} : { tab } }) },
+})
 
 // My vote state
 const myVote = ref<'like' | 'dislike' | null>(null)
@@ -34,7 +38,7 @@ async function search() {
     })
     searchResults.value = items
   } catch {
-    // ignore search errors
+    flashError('Não foi possível buscar. Verifique sua conexão.')
   } finally {
     searching.value = false
   }
@@ -116,11 +120,11 @@ async function castVote(v: 'like' | 'dislike') {
             v-if="currentSong.thumbnail"
             :src="currentSong.thumbnail"
             alt=""
-            class="mt-3 w-full aspect-square object-cover rounded-lg bg-muted shadow-[rgba(0,0,0,.5)_0_8px_24px]"
+            class="mt-3 w-full aspect-video object-cover rounded-lg bg-muted shadow-[rgba(0,0,0,.5)_0_8px_24px]"
           />
-          <div v-else class="mt-3 w-full aspect-square rounded-lg bg-gradient-to-b from-muted to-elevated shadow-[rgba(0,0,0,.5)_0_8px_24px]" />
+          <div v-else class="mt-3 w-full aspect-video rounded-lg bg-gradient-to-b from-muted to-elevated shadow-[rgba(0,0,0,.5)_0_8px_24px]" />
 
-          <h2 class="mt-4 text-2xl font-bold leading-tight">{{ currentSong.title }}</h2>
+          <h2 class="mt-4 text-2xl font-bold leading-tight line-clamp-2">{{ currentSong.title }}</h2>
           <p class="mt-1 text-sm text-subdued">{{ currentSong.artist }}</p>
           <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-highlight">
             <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-[11px] font-bold">
@@ -196,7 +200,7 @@ async function castVote(v: 'like' | 'dislike') {
               enterkeyhint="search"
               aria-label="Buscar música no YouTube"
               placeholder="Buscar música no YouTube..."
-              class="flex-1 min-w-0 bg-transparent text-sm text-white placeholder-subdued focus:outline-none"
+              class="flex-1 min-w-0 bg-transparent text-base text-white placeholder-subdued focus:outline-none"
             />
           </label>
         </form>
@@ -224,7 +228,7 @@ async function castVote(v: 'like' | 'dislike') {
               v-if="addedIds.has(item.videoId)"
               role="img"
               :aria-label="`${item.title} já está na fila`"
-              class="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0"
+              class="w-11 h-11 rounded-full bg-accent flex items-center justify-center flex-shrink-0"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5 9-10" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </span>
@@ -232,7 +236,7 @@ async function castVote(v: 'like' | 'dislike') {
               v-else
               @click="addToQueue(item)"
               :aria-label="`Adicionar ${item.title} à fila`"
-              class="h-8 px-4 rounded-full border border-outline hover:border-white text-xs font-bold flex-shrink-0 transition-colors
+              class="h-11 px-4 rounded-full border border-outline hover:border-white text-xs font-bold flex-shrink-0 transition-colors
                      focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               + Fila

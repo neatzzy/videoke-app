@@ -41,7 +41,9 @@ function submit() {
             id="join-name"
             v-model="name"
             type="text"
-            placeholder="Ex: Marina"
+            placeholder="Ex: Matt Murdock"
+            autocomplete="name"
+            autocapitalize="words"
             maxlength="24"
             class="field"
           />
@@ -56,6 +58,9 @@ function submit() {
             placeholder="Ex: NEON"
             maxlength="4"
             autocomplete="off"
+            autocapitalize="characters"
+            autocorrect="off"
+            spellcheck="false"
             class="field font-mono tracking-[4px] uppercase"
             @input="code = code.toUpperCase()"
           />
