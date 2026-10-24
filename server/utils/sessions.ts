@@ -8,11 +8,13 @@ export interface QueueItem {
   thumbnail: string
   duration: string
   addedBy: string
+  addedById: string
 }
 
 export interface SessionClient {
   name: string
   isHost: boolean
+  songsSung?: number
 }
 
 export interface Session {
@@ -29,6 +31,25 @@ const SESSION_TTL = 60 * 60 * 6 // 6 hours
 
 function sessionKey(code: string) {
   return `session:${code}`
+}
+
+function markSung(session: Session, item: QueueItem) {
+  const client = session.clients[item.addedById]
+  if (client) client.songsSung = (client.songsSung ?? 0) + 1
+}
+
+// Each item's turn = songs its singer already sang + their items ahead of it in the queue.
+// A new item goes before the first item with a later turn, so whoever sang less goes first.
+export function fairInsertIndex(session: Session, clientId: string): number {
+  const turns: Record<string, number> = {}
+  const turnOf = (id: string) => (turns[id] ??= session.clients[id]?.songsSung ?? 0)
+  const newTurn = turnOf(clientId) + session.queue.filter((q) => q.addedById === clientId).length
+  for (let i = 0; i < session.queue.length; i++) {
+    const owner = session.queue[i]!.addedById
+    if (turnOf(owner) > newTurn) return i
+    turns[owner]!++
+  }
+  return session.queue.length
 }
 
 function generateCode(): string {
@@ -75,7 +96,7 @@ export async function joinSession(redis: Redis, clientId: string, code: string, 
   return session
 }
 
-export async function addToQueue(redis: Redis, clientId: string, code: string, item: Omit<QueueItem, 'id' | 'addedBy'>): Promise<Session | null> {
+export async function addToQueue(redis: Redis, clientId: string, code: string, item: Omit<QueueItem, 'id' | 'addedBy' | 'addedById'>): Promise<Session | null> {
   const session = await getSession(redis, code)
   if (!session || !session.clients[clientId]) return null
 
@@ -83,14 +104,16 @@ export async function addToQueue(redis: Redis, clientId: string, code: string, i
     ...item,
     id: crypto.randomUUID(),
     addedBy: session.clients[clientId].name,
+    addedById: clientId,
   }
 
   if (!session.currentSong) {
     session.currentSong = queueItem
     session.status = 'playing'
     session.votes = { likes: 0, dislikes: 0, voters: [] }
+    markSung(session, queueItem)
   } else {
-    session.queue.push(queueItem)
+    session.queue.splice(fairInsertIndex(session, clientId), 0, queueItem)
   }
 
   await saveSession(redis, session)
@@ -106,6 +129,7 @@ export async function advanceQueue(redis: Redis, clientId: string, code: string)
   if (session.queue.length > 0) {
     session.currentSong = session.queue.shift()!
     session.status = 'playing'
+    markSung(session, session.currentSong)
     session.votes = { likes: 0, dislikes: 0, voters: [] }
   } else {
     session.currentSong = null

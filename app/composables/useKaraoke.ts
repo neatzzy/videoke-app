@@ -8,11 +8,12 @@ export interface QueueItem {
   thumbnail: string
   duration: string
   addedBy: string
+  addedById: string
 }
 
 export interface KaraokeSession {
   code: string
-  clients: Record<string, { name: string; isHost: boolean }>
+  clients: Record<string, { name: string; isHost: boolean; songsSung?: number }>
   queue: QueueItem[]
   currentSong: QueueItem | null
   status: 'waiting' | 'playing'
@@ -94,7 +95,7 @@ export const useKaraoke = () => {
     }
   }
 
-  async function addSong(item: Omit<QueueItem, 'id' | 'addedBy'>) {
+  async function addSong(item: Omit<QueueItem, 'id' | 'addedBy' | 'addedById'>) {
     if (!session.value) return
     const clientId = getOrCreateClientId()
     await $fetch('/api/session/add-song', {
