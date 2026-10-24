@@ -68,23 +68,17 @@ async function castVote(v: 'like' | 'dislike') {
 </script>
 
 <template>
-  <div class="h-dvh flex flex-col bg-void overflow-hidden">
+  <div class="h-dvh flex flex-col bg-surface overflow-hidden">
     <!-- Top bar -->
     <header class="flex items-center justify-between px-4 pt-6 pb-3 flex-shrink-0">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-md bg-gradient-to-br from-button-gradient-start to-button-gradient-end
-                    border border-neon-pink/40 flex items-center justify-center shrink-0">
-          <svg width="9" height="9" viewBox="0 0 13 13"><polygon points="3,1 12,6.5 3,12" fill="#FF007F" /></svg>
-        </div>
-        <span class="font-black tracking-widest text-sm">VIDEOKÉ</span>
-      </div>
-      <div v-if="session?.code" class="px-3 py-1 rounded-full bg-panel text-xs font-mono font-bold tracking-widest neon-border-pink">
+      <AppLogo />
+      <span v-if="session?.code" class="px-3 py-1 rounded-full bg-highlight text-xs font-bold font-mono tracking-[2px]">
         {{ session.code }}
-      </div>
+      </span>
     </header>
 
     <!-- Content area (scrollable) -->
-    <main class="flex-1 overflow-y-auto scrollbar-thin px-4 pb-4">
+    <main class="flex-1 overflow-y-auto scrollbar-thin px-4 pt-2 pb-4">
 
       <!-- ══ TAB: AO VIVO ══ -->
       <template v-if="activeTab === 'live'">
@@ -93,16 +87,16 @@ async function castVote(v: 'like' | 'dislike') {
         <Transition name="fade">
           <div
             v-if="previousVotes"
-            class="mb-4 p-4 rounded-xl bg-panel border border-dim/20 flex items-center justify-between"
+            class="mb-4 p-4 rounded-lg bg-elevated flex items-center justify-between"
           >
-            <div class="text-xs text-dim uppercase tracking-[0.15em]">Última performance</div>
-            <div class="flex gap-4">
-              <span class="flex items-center gap-1.5 text-green-400 font-bold text-sm">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            <span class="text-xs font-bold tracking-label text-subdued uppercase">Última performance</span>
+            <div class="flex gap-4 text-sm font-bold">
+              <span class="flex items-center gap-1.5 text-accent">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 {{ previousVotes.likes }}
               </span>
-              <span class="flex items-center gap-1.5 text-red-400 font-bold text-sm">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span class="flex items-center gap-1.5 text-negative">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 {{ previousVotes.dislikes }}
               </span>
             </div>
@@ -110,105 +104,76 @@ async function castVote(v: 'like' | 'dislike') {
         </Transition>
 
         <!-- Current Song -->
-        <div v-if="currentSong" class="mb-6">
-          <div class="flex items-center gap-2 mb-3">
-            <div class="flex gap-0.5 items-end h-3">
-              <div v-for="(h, i) in [60, 100, 40, 80]" :key="i"
-                class="w-0.5 bg-neon-pink rounded-sm animate-pulse"
-                :style="{ height: `${h}%`, animationDelay: `${i * 0.1}s` }"
-              />
-            </div>
-            <span class="text-[10px] text-dim uppercase tracking-[0.15em]">Agora Cantando</span>
-          </div>
-
-          <!-- Thumbnail + info -->
-          <div class="rounded-xl overflow-hidden relative">
-            <img
-              v-if="currentSong.thumbnail"
-              :src="currentSong.thumbnail"
-              :alt="currentSong.title"
-              class="w-full object-cover opacity-60"
-              style="aspect-ratio: 16/9"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-void via-void/60 to-transparent" />
-            <div class="absolute bottom-0 left-0 right-0 p-4">
-              <p class="font-black text-xl leading-tight text-glow-pink">{{ currentSong.title }}</p>
-              <p class="text-neon-cyan text-sm mt-0.5">{{ currentSong.artist }}</p>
-              <div class="mt-2 flex items-center gap-2">
-                <div class="w-6 h-6 rounded-full bg-neon-pink/20 border border-neon-pink/40 flex items-center justify-center text-[10px] font-bold">
-                  {{ currentSong.addedBy[0].toUpperCase() }}
-                </div>
-                <span class="text-xs text-white/80">{{ currentSong.addedBy }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Live vote tally -->
-          <div class="mt-3 flex items-center justify-center gap-6 text-sm">
-            <span class="flex items-center gap-1.5 text-green-400 font-bold">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-              {{ votes.likes }}
+        <div v-if="currentSong">
+          <p class="flex items-center gap-2 text-xs font-bold tracking-label text-subdued">
+            <span class="flex gap-0.5 items-end h-3" aria-hidden="true">
+              <i v-for="h in [60, 100, 40, 80]" :key="h" class="w-0.5 bg-accent" :style="{ height: `${h}%` }" />
             </span>
-            <span class="text-dim text-xs">{{ votes.total }} votos</span>
-            <span class="flex items-center gap-1.5 text-red-400 font-bold">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-              {{ votes.dislikes }}
+            AGORA CANTANDO
+          </p>
+
+          <img
+            v-if="currentSong.thumbnail"
+            :src="currentSong.thumbnail"
+            alt=""
+            class="mt-3 w-full aspect-square object-cover rounded-lg bg-muted shadow-[rgba(0,0,0,.5)_0_8px_24px]"
+          />
+          <div v-else class="mt-3 w-full aspect-square rounded-lg bg-gradient-to-b from-muted to-elevated shadow-[rgba(0,0,0,.5)_0_8px_24px]" />
+
+          <h2 class="mt-4 text-2xl font-bold leading-tight">{{ currentSong.title }}</h2>
+          <p class="mt-1 text-sm text-subdued">{{ currentSong.artist }}</p>
+          <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-highlight">
+            <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-[11px] font-bold">
+              {{ currentSong.addedBy.charAt(0).toUpperCase() }}
             </span>
+            <span class="text-xs font-bold">{{ currentSong.addedBy }}</span>
           </div>
 
           <!-- Vote buttons -->
-          <div class="mt-4 grid grid-cols-2 gap-3">
+          <div class="mt-5 grid grid-cols-2 gap-3">
             <button
               @click="castVote('like')"
               :disabled="!!myVote"
-              aria-label="Curtir"
               :class="[
-                'py-5 rounded-2xl text-sm font-bold transition-all border-2 flex flex-col items-center gap-1.5',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
-                myVote === 'like'
-                  ? 'bg-green-500/30 border-green-400 scale-95'
-                  : myVote
-                    ? 'bg-panel border-dim/20 opacity-40 cursor-not-allowed'
-                    : 'bg-panel border-green-500/40 hover:bg-green-500/20 active:scale-95'
+                'h-12 rounded-full bg-accent text-black text-sm font-bold flex items-center justify-center gap-2 transition-all',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+                myVote === 'dislike' ? 'opacity-40' : 'enabled:hover:bg-accent-hover enabled:active:scale-95',
+                myVote && 'cursor-not-allowed'
               ]"
             >
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="#34D399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               Curtir
             </button>
             <button
               @click="castVote('dislike')"
               :disabled="!!myVote"
-              aria-label="Não curtir"
               :class="[
-                'py-5 rounded-2xl text-sm font-bold transition-all border-2 flex flex-col items-center gap-1.5',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
-                myVote === 'dislike'
-                  ? 'bg-red-500/30 border-red-400 scale-95'
-                  : myVote
-                    ? 'bg-panel border-dim/20 opacity-40 cursor-not-allowed'
-                    : 'bg-panel border-red-500/40 hover:bg-red-500/20 active:scale-95'
+                'h-12 rounded-full bg-transparent border text-sm font-bold flex items-center justify-center gap-2 transition-all',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+                myVote === 'dislike' ? 'border-white' : 'border-outline',
+                myVote === 'like' ? 'opacity-40' : 'enabled:hover:border-white enabled:active:scale-95',
+                myVote && 'cursor-not-allowed'
               ]"
             >
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="#F87171" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="#f3727f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               Não curtir
             </button>
           </div>
 
-          <p v-if="myVote" class="text-center text-xs text-dim mt-2">Voto registrado!</p>
+          <p class="mt-3 text-center text-xs text-subdued">
+            <template v-if="myVote">Voto registrado! · </template>
+            {{ votes.total }} votos · {{ votes.likes }} curtidas · {{ votes.dislikes }} não curtidas
+          </p>
         </div>
 
         <!-- No song playing -->
-        <div v-else class="flex flex-col items-center justify-center py-16 text-center gap-3">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" class="opacity-40">
-            <rect x="3" y="6" width="14" height="12" rx="2" stroke="#8B7DA5" stroke-width="1.5" />
-            <path d="M21 8.5v7l-4-2.3v-2.4l4-2.3z" fill="#8B7DA5" />
-          </svg>
-          <p class="text-dim text-sm">Nenhuma música tocando</p>
-          <p class="text-dim/70 text-xs">Adicione uma música na fila!</p>
+        <div v-else class="flex flex-col items-center justify-center py-16 text-center gap-2">
+          <h2 class="text-2xl font-bold">Nenhuma música tocando</h2>
+          <p class="text-sm text-subdued">Adicione uma música na fila!</p>
           <button
             @click="activeTab = 'search'"
-            class="mt-4 px-6 py-3 rounded-xl text-sm font-bold neon-border-cyan text-neon-cyan hover:bg-neon-cyan/10 transition-colors
-                   focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+            class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-bold tracking-label uppercase transition-colors
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             Buscar música
           </button>
@@ -217,102 +182,105 @@ async function castVote(v: 'like' | 'dislike') {
 
       <!-- ══ TAB: BUSCAR ══ -->
       <template v-else-if="activeTab === 'search'">
-        <form @submit.prevent="search" class="flex gap-2 mb-4 sticky top-0 bg-void pt-1 pb-2">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Buscar música no YouTube..."
-            class="flex-1 px-4 py-3 rounded-xl bg-panel text-white placeholder-dim text-sm
-                   border border-dim/20 focus:border-neon-cyan/50 focus:outline-none
-                   focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void
-                   transition-colors"
-          />
-          <button
-            type="submit"
-            :disabled="searching"
-            aria-label="Buscar música"
-            :class="[
-              'px-4 py-3 rounded-xl bg-panel border border-neon-cyan/40 text-neon-cyan',
-              'hover:bg-neon-cyan/10 disabled:opacity-50 transition-colors',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void',
-              searching && 'animate-pulse'
-            ]"
+        <form @submit.prevent="search" class="sticky top-0 bg-surface pb-2">
+          <label
+            class="flex items-center gap-3 px-4 py-3 rounded-full bg-highlight transition-shadow
+                   shadow-[rgb(18,18,18)_0_1px_0,rgb(124,124,124)_0_0_0_1px_inset] focus-within:shadow-[#fff_0_0_0_2px_inset]"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-          </button>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" :class="['flex-shrink-0', searching && 'animate-pulse']" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke="#b3b3b3" stroke-width="2" /><path d="M21 21l-4-4" stroke="#b3b3b3" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <input
+              v-model="searchQuery"
+              type="search"
+              enterkeyhint="search"
+              aria-label="Buscar música no YouTube"
+              placeholder="Buscar música no YouTube..."
+              class="flex-1 min-w-0 bg-transparent text-sm text-white placeholder-subdued focus:outline-none"
+            />
+          </label>
         </form>
 
-        <div class="space-y-3">
+        <p v-if="searching || searchResults.length" class="mt-3 mb-2 text-base font-bold">
+          {{ searching ? 'Buscando...' : 'Resultados' }}
+        </p>
+
+        <div class="flex flex-col gap-0.5">
           <div
             v-for="item in searchResults"
             :key="item.videoId"
-            class="flex items-center gap-3 p-3 rounded-xl bg-panel border border-dim/10
-                   hover:border-dim/30 transition-colors"
+            class="flex items-center gap-3 p-2 rounded-md hover:bg-[#272727] transition-colors"
           >
             <img
               :src="item.thumbnail"
-              :alt="item.title"
-              class="w-16 h-10 object-cover rounded-lg flex-shrink-0 bg-void"
+              alt=""
+              class="w-14 h-10 object-cover rounded flex-shrink-0 bg-muted"
             />
             <div class="flex-1 min-w-0">
-              <p class="text-xs font-bold text-white truncate">{{ item.title }}</p>
-              <p class="text-[10px] text-dim truncate mt-0.5">{{ item.artist }}</p>
+              <p class="text-sm font-bold truncate">{{ item.title }}</p>
+              <p class="mt-0.5 text-xs text-subdued truncate">{{ item.artist }}</p>
             </div>
-            <button
-              @click="addToQueue(item)"
-              :disabled="addedIds.has(item.videoId)"
-              :aria-label="addedIds.has(item.videoId) ? `${item.title} já está na fila` : `Adicionar ${item.title} à fila`"
-              class="flex-shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all
-                     focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
-              :class="addedIds.has(item.videoId)
-                ? 'bg-neon-pink/20 text-neon-pink border border-neon-pink/30 opacity-60'
-                : 'bg-panel border border-neon-cyan/40 text-neon-cyan hover:bg-neon-cyan/10'"
+            <span
+              v-if="addedIds.has(item.videoId)"
+              role="img"
+              :aria-label="`${item.title} já está na fila`"
+              class="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0"
             >
-              {{ addedIds.has(item.videoId) ? '✓' : '+ Fila' }}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5 9-10" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <button
+              v-else
+              @click="addToQueue(item)"
+              :aria-label="`Adicionar ${item.title} à fila`"
+              class="h-8 px-4 rounded-full border border-outline hover:border-white text-xs font-bold flex-shrink-0 transition-colors
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              + Fila
             </button>
           </div>
 
-          <div
+          <p
             v-if="searchResults.length === 0 && !searching && searchQuery"
-            class="text-center text-dim/90 text-sm py-8"
+            class="text-center text-subdued text-sm py-8"
           >
             Nenhum resultado
-          </div>
+          </p>
         </div>
       </template>
 
       <!-- ══ TAB: FILA ══ -->
       <template v-else-if="activeTab === 'queue'">
-        <div class="space-y-3">
-          <!-- Currently playing -->
-          <div v-if="currentSong" class="p-3 rounded-xl bg-neon-pink/10 border border-neon-pink/30">
-            <p class="text-[10px] text-neon-pink uppercase tracking-[0.15em] font-bold mb-1">Tocando agora</p>
-            <p class="text-sm font-bold text-white truncate">{{ currentSong.title }}</p>
-            <p class="text-[10px] text-dim truncate">{{ currentSong.addedBy }} · {{ currentSong.artist }}</p>
-          </div>
+        <h2 class="text-2xl font-bold mb-4">Fila</h2>
 
-          <!-- Queue -->
+        <!-- Currently playing -->
+        <div v-if="currentSong" class="flex items-center gap-3 p-3 mb-2 rounded-lg bg-hover">
+          <span class="w-5 flex gap-0.5 items-end justify-center h-3.5 flex-shrink-0" aria-hidden="true">
+            <i v-for="h in [60, 100, 40]" :key="h" class="w-[3px] bg-accent" :style="{ height: `${h}%` }" />
+          </span>
+          <div class="min-w-0">
+            <p class="text-sm font-bold text-accent truncate">{{ currentSong.title }}</p>
+            <p class="mt-0.5 text-xs text-subdued truncate">{{ currentSong.addedBy }} · {{ currentSong.artist }}</p>
+          </div>
+          <span class="ml-auto px-2 py-0.5 rounded-full bg-highlight text-[10.5px] font-semibold flex-shrink-0">Tocando agora</span>
+        </div>
+
+        <div class="flex flex-col gap-0.5">
           <div
             v-for="(item, idx) in queue"
             :key="item.id"
-            class="flex items-center gap-3 p-3 rounded-xl bg-panel border border-dim/10"
+            class="flex items-center gap-3 px-3 py-2 rounded-md"
           >
-            <div class="w-6 h-6 rounded-full bg-neon-pink/15 border border-neon-pink/25 flex items-center justify-center text-[10px] font-bold text-neon-pink flex-shrink-0">
-              {{ idx + 1 }}
+            <span class="w-5 text-center text-sm text-subdued flex-shrink-0">{{ idx + 1 }}</span>
+            <div class="min-w-0">
+              <p class="text-sm font-bold truncate">{{ item.title }}</p>
+              <p class="mt-0.5 text-xs text-subdued truncate">{{ item.addedBy }} · {{ item.artist }}</p>
             </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-bold text-white truncate">{{ item.title }}</p>
-              <p class="text-[10px] text-dim truncate mt-0.5">{{ item.addedBy }} · {{ item.artist }}</p>
-            </div>
-          </div>
-
-          <div
-            v-if="queue.length === 0 && !currentSong"
-            class="text-center text-dim/90 text-sm py-12"
-          >
-            Fila vazia
           </div>
         </div>
+
+        <p v-if="queue.length === 0 && !currentSong" class="text-center text-subdued text-sm py-12">
+          Fila vazia
+        </p>
       </template>
     </main>
 
@@ -321,28 +289,28 @@ async function castVote(v: 'like' | 'dislike') {
       <div
         v-if="error"
         role="alert"
-        class="fixed left-4 right-4 bottom-20 z-50 px-4 py-3 rounded-xl bg-panel border border-neon-pink/40 text-white text-sm text-center"
+        class="fixed left-4 right-4 bottom-20 z-50 px-4 py-3 rounded-lg bg-highlight text-white text-sm text-center shadow-[rgba(0,0,0,.5)_0_8px_24px]"
       >
         {{ error }}
       </div>
     </Transition>
 
     <!-- Bottom Navigation -->
-    <nav class="flex-shrink-0 flex border-t border-dim/15 bg-panel/50">
+    <nav class="flex-shrink-0 flex bg-black border-t border-highlight pb-[env(safe-area-inset-bottom)]">
       <button
         v-for="tab in (['live', 'search', 'queue'] as const)"
         :key="tab"
         @click="activeTab = tab"
         :aria-current="activeTab === tab ? 'true' : undefined"
         :class="[
-          'flex-1 flex flex-col items-center py-3 gap-1.5 text-[10px] font-semibold tracking-wide transition-colors',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-pink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-panel',
-          activeTab === tab ? 'text-neon-pink' : 'text-dim hover:text-white'
+          'flex-1 flex flex-col items-center py-3 gap-1.5 text-[10.5px] transition-colors',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white',
+          activeTab === tab ? 'text-accent font-bold' : 'text-subdued hover:text-white'
         ]"
       >
-        <span v-if="tab === 'live'" class="w-2 h-2 rounded-full bg-current" />
-        <svg v-else-if="tab === 'search'" width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
-        <svg v-else width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <span v-if="tab === 'live'" class="w-2 h-2 my-[5px] rounded-full bg-current" />
+        <svg v-else-if="tab === 'search'" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
         <span>{{ tab === 'live' ? 'Ao Vivo' : tab === 'search' ? 'Buscar' : 'Fila' }}</span>
       </button>
     </nav>

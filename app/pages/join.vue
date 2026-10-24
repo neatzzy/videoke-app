@@ -2,7 +2,8 @@
 const { connect, joinSession, session, error } = useKaraoke()
 
 const name = ref('')
-const code = ref('')
+// Prefilled when arriving from the host screen's QR code (/join?code=XXXX)
+const code = ref(String(useRoute().query.code ?? '').toUpperCase())
 const loading = ref(false)
 
 onMounted(() => connect())
@@ -24,83 +25,59 @@ function submit() {
 </script>
 
 <template>
-  <div class="h-dvh flex flex-col bg-void overflow-y-auto">
-    <!-- Header -->
-    <header class="flex items-center gap-2.5 px-6 pt-8 pb-4">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-button-gradient-start to-button-gradient-end
-                  border border-neon-pink/40 flex items-center justify-center shrink-0">
-        <svg width="10" height="10" viewBox="0 0 13 13"><polygon points="3,1 12,6.5 3,12" fill="#FF007F" /></svg>
-      </div>
-      <span class="font-black text-lg tracking-widest">VIDEOKÉ</span>
+  <div class="h-dvh flex flex-col bg-surface overflow-y-auto">
+    <header class="px-6 pt-8">
+      <AppLogo :size="28" text-class="text-base" />
     </header>
 
-    <!-- Content -->
     <main class="flex-1 flex flex-col justify-center px-6 pb-12 max-w-sm mx-auto w-full">
-      <h1 class="text-4xl font-black text-white mb-2">Entre na sala</h1>
-      <p class="text-dim text-sm mb-10">Peça o código para o anfitrião</p>
+      <h1 class="text-4xl font-extrabold leading-tight">Entre na sala</h1>
+      <p class="text-subdued text-sm mt-2">Peça o código para o anfitrião</p>
 
-      <form class="flex flex-col gap-6" @submit.prevent="submit">
-        <!-- Name -->
+      <form class="flex flex-col gap-6 mt-10" @submit.prevent="submit">
         <div>
-          <label class="block text-xs font-bold tracking-[0.15em] text-dim uppercase mb-2">
-            Seu Nome
-          </label>
+          <label for="join-name" class="block text-sm font-bold mb-2">Seu nome</label>
           <input
+            id="join-name"
             v-model="name"
             type="text"
             placeholder="Ex: Marina"
             maxlength="24"
-            class="w-full px-4 py-3.5 rounded-xl bg-panel text-white placeholder-dim
-                   border border-neon-pink/20 focus:border-neon-pink/60 focus:outline-none
-                   focus-visible:ring-2 focus-visible:ring-neon-pink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void
-                   transition-colors text-sm"
+            class="field"
           />
         </div>
 
-        <!-- Room code -->
         <div>
-          <label class="block text-xs font-bold tracking-[0.15em] text-dim uppercase mb-2">
-            Código da Sala
-          </label>
+          <label for="join-code" class="block text-sm font-bold mb-2">Código da sala</label>
           <input
+            id="join-code"
             v-model="code"
             type="text"
             placeholder="Ex: NEON"
             maxlength="4"
             autocomplete="off"
-            class="w-full px-4 py-3.5 rounded-xl bg-panel text-white placeholder-dim
-                   border border-neon-pink/20 focus:border-neon-pink/60 focus:outline-none
-                   focus-visible:ring-2 focus-visible:ring-neon-pink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void
-                   transition-colors text-sm tracking-widest uppercase font-mono"
+            class="field font-mono tracking-[4px] uppercase"
             @input="code = code.toUpperCase()"
           />
         </div>
 
-        <!-- Error -->
-        <p v-if="error" class="text-neon-pink text-sm text-center -mt-2">{{ error }}</p>
+        <p v-if="error" role="alert" class="text-negative text-sm text-center -mt-2">{{ error }}</p>
 
-        <!-- Submit -->
         <button
           type="submit"
           :disabled="loading || !name.trim() || !code.trim()"
-          class="w-full py-4 rounded-xl font-bold text-sm tracking-wider transition-all mt-2
-                 bg-gradient-to-r from-button-gradient-start to-button-gradient-end
-                 border border-neon-pink/30 text-white/90
-                 hover:border-neon-pink/70 hover:text-white
-                 focus:outline-none focus-visible:border-neon-pink/70 focus-visible:text-white
-                 focus-visible:ring-2 focus-visible:ring-neon-pink/50 focus-visible:ring-offset-2 focus-visible:ring-offset-void
-                 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="mt-2 w-full py-3.5 px-8 rounded-full bg-accent hover:bg-accent-hover text-black
+                 text-sm font-bold tracking-label uppercase transition-colors
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface
+                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-accent"
         >
           <span v-if="loading" class="inline-block animate-pulse">Entrando...</span>
           <span v-else>Entrar</span>
         </button>
       </form>
 
-      <!-- Hint -->
-      <p class="text-center text-xs text-dim/70 mt-8">
-        Dica: use o código
-        <span class="text-neon-cyan font-mono font-bold text-glow-cyan">NEON</span>
-        para testar
+      <p class="text-center text-xs text-subdued mt-8">
+        Dica: use o código <b class="text-white font-mono">NEON</b> para testar
       </p>
     </main>
   </div>
