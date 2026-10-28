@@ -9,11 +9,11 @@ Videoké — home karaoke. Host screen (PC/TV via Electron) shows the playing so
 ## Commands
 
 ```bash
-npm run dev            # web dev server, http://localhost:3000
-npm run electron:dev   # web dev server + Electron host window together
-npm run build           # Nuxt build
-npm run generate        # static build (.output/public)
-npm run electron:build  # generate + electron-builder package (dist-electron/)
+pnpm run dev            # web dev server, http://localhost:3000
+pnpm run electron:dev   # web dev server + Electron host window together
+pnpm run build           # Nuxt build
+pnpm run generate        # static build (.output/public)
+pnpm run electron:build  # generate + electron-builder package (dist-electron/)
 ```
 
 No test suite or linter is configured. Requires a `.env` at the repo root — see README.md for the full variable list (YouTube `API_KEY`, `UPSTASH_REDIS_REST_URL`/`TOKEN`, `PUSHER_*` server vars, `NUXT_PUBLIC_PUSHER_*` client vars).

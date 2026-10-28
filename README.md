@@ -13,7 +13,7 @@ Karaoke de casa: um telão (host, PC/TV via Electron) mostra a música tocando e
 ## Rodando localmente
 
 ```bash
-npm install
+pnpm install
 ```
 
 Crie um `.env` na raiz com:
@@ -38,16 +38,16 @@ NUXT_PUBLIC_PUSHER_CLUSTER=mt1
 ```
 
 ```bash
-npm run dev          # servidor web em http://localhost:3000
-npm run electron:dev # web + janela Electron do host
+pnpm run dev          # servidor web em http://localhost:3000
+pnpm run electron:dev # web + janela Electron do host
 ```
 
 ## Build
 
 ```bash
-npm run build           # build web (Nuxt)
-npm run generate        # build estático
-npm run electron:build  # empacota o app desktop (dist-electron/)
+pnpm run build           # build web (Nuxt)
+pnpm run generate        # build estático
+pnpm run electron:build  # empacota o app desktop (dist-electron/)
 ```
 
 ## Fluxo
