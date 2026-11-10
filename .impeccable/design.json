@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T23:06:17.000Z",
+  "generatedAt": "2026-11-10T23:33:04.000Z",
   "title": "Design System: Videoké",
   "extensions": {
     "colorMeta": {
@@ -173,27 +173,31 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Título da música tocando no host. O maior texto do sistema."
+        "purpose": "Título da música tocando no palco do host (clamp 32–64px). Maior texto do sistema."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Título da tela de entrada (join), ex. \"Entre na sala\"."
+        "purpose": "Título da tela de entrada (\"Entre na sala\") e título do placar final no host."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Nome da música na aba Ao Vivo, estados vazios do host e artista no palco."
+        "purpose": "Nome da música na aba Ao Vivo, títulos de estado vazio, cabeçalho \"Fila\" da sala e artista no palco."
+      },
+      "item": {
+        "displayName": "Item",
+        "purpose": "Nome da música em linhas de lista (fila do convidado, busca, fila e placar da noite do host) e botões de ação do host."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Nomes e metadados na fila, textos de apoio e mensagens."
+        "purpose": "Metadados (\"quem pediu · artista\"), textos de apoio, mensagens e toast. Nada abaixo de 14px no host."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Caixa alta com tracking 1.4px: logotipo e botão Entrar."
+        "purpose": "Caixa alta com tracking 1.4px: botão Entrar (14px) e logotipo VIDEOKÉ (tamanho próprio). Eyebrows existentes são defeito, não regra."
       },
       "micro": {
         "displayName": "Micro",
-        "purpose": "Rótulos da barra de abas e badges no celular (12px, o mínimo do sistema)."
+        "purpose": "Rótulos da barra de abas e badge \"Tocando agora\" no celular (12px, o mínimo do sistema)."
       }
     },
     "shadows": [
@@ -230,49 +234,69 @@
     ],
     "motion": [
       {
-        "name": "transition-colors",
-        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
-        "purpose": "Hover e foco de cor, fundo e borda em botões, cartões, linhas da fila e abas (transition-colors do Tailwind)."
+        "name": "duration-fast",
+        "value": "150ms cubic-bezier(0.2, 0, 0, 1) (--motion-fast, --ease-standard)",
+        "purpose": "Estados: hover, foco, cor, fundo e borda de botões, cartões, linhas, abas e campos. Classe duration-fast + ease-standard."
       },
       {
-        "name": "press-scale",
-        "value": "transform: scale(0.95) em :active nos votos; scale(1.05) em hover no play do host",
-        "purpose": "Retorno tátil nos botões de voto (active:scale-95) e no play do host (hover:scale-105)."
+        "name": "duration-base",
+        "value": "250ms cubic-bezier(0.2, 0, 0, 1) (--motion-base, --ease-standard)",
+        "purpose": "Fades de painel (placar final, cartão ↔ barra no palco), toast, cartão \"Última performance\", reordenação da fila e do placar da noite."
       },
       {
-        "name": "progress-fill",
-        "value": "transform: scaleX(); transition 1000ms linear; transform-origin: left",
-        "purpose": "Barra de progresso do player do host avança com transform, sem animar largura."
+        "name": "tab-swap",
+        "value": "opacity 150ms; saída absoluta, sem out-in",
+        "purpose": "Troca de aba do convidado: a aba que entra e a que sai fazem fade ao mesmo tempo."
       },
       {
         "name": "list-move",
-        "value": "opacity 200ms ease e transform 200ms ease; translateY(6px) na entrada e saída",
-        "purpose": "Fila do convidado (TransitionGroup \"queue\"). A fila do host não tem transição: é renderizada direto."
+        "value": "entrada/saída: opacity + translateY(6px) em 150ms; reordenação: transform em 250ms",
+        "purpose": "Fila do convidado (TransitionGroup \"queue\"). A fila do host é renderizada direto, com botões de reordenar."
       },
       {
         "name": "rank-move",
-        "value": "transform 400ms ease na reordenação; opacity 300ms ease na entrada e saída",
-        "purpose": "Placar da noite do host (TransitionGroup \"rank\"); a linha desliza até a nova posição sem translateY."
+        "value": "reordenação: transform 250ms; entrada/saída: opacity 150ms",
+        "purpose": "Placar da noite do host (TransitionGroup \"rank\"): a linha desliza até a nova posição."
       },
       {
-        "name": "tab-fade",
-        "value": "opacity 150ms ease",
-        "purpose": "Troca de aba do convidado (transição \"tab\", out-in)."
+        "name": "press-scale",
+        "value": "votos: transform scale(0.95) em :active; play do host: scale(1.05) em hover, 150ms",
+        "purpose": "Retorno tátil nos botões de voto (habilitados) e no play do host."
       },
       {
-        "name": "fade",
-        "value": "opacity 400ms",
-        "purpose": "Toast de erro e cartão \"Última performance\" do convidado (transição \"fade\")."
+        "name": "progress-fill",
+        "value": "transform scaleX(); transition 1000ms linear; origin left",
+        "purpose": "Exceção de tempo real: barra de progresso do host. Fora dos tokens (duration-1000)."
+      },
+      {
+        "name": "auto-advance-countdown",
+        "value": "scaleX(1 → 0) em 5000ms linear forwards",
+        "purpose": "Exceção de tempo real: contagem do placar final até o avanço. Cancelável (botão ou Esc). Com reduced-motion a barra some de imediato (Lacuna)."
+      },
+      {
+        "name": "equalizer",
+        "value": "keyframes scaleY(0.3 → 1); durações 0.9s / 1.1s / 0.7s / 1.0s; atrasos -0.3s / -0.7s / -0.1s / -0.5s; ease-in-out; alternate; infinite",
+        "purpose": "Equalizador: toca só enquanto a música toca. Com reduced-motion fica parado em alturas 0.6 / 1 / 0.4 / 0.8."
       },
       {
         "name": "pulse",
         "value": "animate-pulse: opacity 1 → 0.5, 2s infinite",
-        "purpose": "Equalizador do host só enquanto toca; spinner de busca e texto \"Entrando...\" no join."
+        "purpose": "Estados de carregamento: ícone e esqueleto da busca, \"Entrando...\" no join, \"Entrando na sala…\" no room."
+      },
+      {
+        "name": "haptic-patterns",
+        "value": "vibrate: like [30]; dislike [15, 40, 15]; add [20]; remove [10, 30, 10] (ms)",
+        "purpose": "Háptico distinto por ação. Desligável no botão de vibração do cabeçalho da sala; não dispara com reduced-motion."
+      },
+      {
+        "name": "toast-hold",
+        "value": "8000ms; pausa em hover e foco; fecha no botão",
+        "purpose": "Toast de erro fica até o toque em fechar ou 8 s, retomando o tempo restante ao sair do ponteiro ou do foco."
       },
       {
         "name": "reduced-motion",
-        "value": "@media (prefers-reduced-motion: reduce) { animation/transition-duration: 0.01ms !important }",
-        "purpose": "Zera animações e transições globalmente (main.css)."
+        "value": "@media (prefers-reduced-motion: reduce) { animation/transition-duration: 0.01ms !important; animation-iteration-count: 1 }",
+        "purpose": "Zera animações e transições globalmente (main.css). O equalizador vira barras estáticas em alturas distintas."
       }
     ]
   },
@@ -281,80 +305,78 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Ação principal em pílula verde com texto preto: Entrar (largura total, tela de entrada) e Buscar música (aba Ao Vivo, sem largura total).",
+      "description": "Ação principal em pílula verde com texto preto, 14px 700 em caixa alta: Entrar (largura total, tela de entrada) e Buscar música (aba Ao Vivo, sem largura total).",
       "html": "<button class='ds-btn-primary'>Entrar</button>",
-      "css": ".ds-btn-primary { width: 100%; padding: 14px 32px; border: 0; border-radius: 9999px; background: #1ED760; color: #000000; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover:not(:disabled) { background: #3BE477; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #121212, 0 0 0 4px #FFFFFF; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+      "css": ".ds-btn-primary { width: 100%; min-height: 44px; padding: 14px 32px; border: 0; border-radius: 9999px; background: #1ED760; color: #000000; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-primary:hover:not(:disabled) { background: #3BE477; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #121212, 0 0 0 4px #FFFFFF; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Ação secundária em pílula escura de 32px, com ícone à direita: Próxima no host (texto 16px).",
-      "html": "<button class='ds-btn-secondary'>Próxima<svg width='12' height='12' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M9 6l6 6-6 6' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button>",
-      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 16px; border: 0; border-radius: 9999px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-secondary:hover { background: #252525; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; }"
+      "description": "Ação secundária em pílula escura de 32px, texto 16px 700 e chevron à direita: Próxima no palco do host.",
+      "html": "<button class='ds-btn-secondary'>Próxima<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M9 6l6 6-6 6'/></svg></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 16px; border: 0; border-radius: 9999px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-secondary:hover { background: #252525; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; }"
     },
     {
       "name": "Outline Button",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "Contorno de 44px no celular: + Fila (aba Buscar). Depois de adicionada, a música vira círculo verde de 44px com check preto.",
+      "description": "Contorno de 44px no celular, texto 12px 700: + Fila na aba Buscar. Depois de adicionada, a música vira círculo verde de 44px com check preto.",
       "html": "<button class='ds-btn-outline'>+ Fila</button>",
-      "css": ".ds-btn-outline { height: 44px; padding: 0 16px; border: 1px solid #7C7C7C; border-radius: 9999px; background: transparent; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover { border-color: #FFFFFF; } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; }"
+      "css": ".ds-btn-outline { height: 44px; padding: 0 16px; border: 1px solid #7C7C7C; border-radius: 9999px; background: transparent; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-outline:hover { border-color: #FFFFFF; } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; }"
     },
     {
       "name": "Text Input",
       "kind": "input",
       "refersTo": "input-field",
-      "description": "Campo de texto da tela de entrada (nome e código). Fundo highlight, anel inset cinza que vira branco em foco; a busca da aba Buscar usa pílula com o mesmo anel.",
+      "description": "Campo de texto da tela de entrada (nome e código). Fundo highlight, anel inset cinza que vira branco em foco. A busca da aba Buscar é outra variação (pílula, mesmo anel).",
       "html": "<input class='ds-input' type='text' placeholder='Ex: Matt Murdock' />",
-      "css": ".ds-input { width: 100%; padding: 12px 16px; border: 0; border-radius: 4px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; box-shadow: rgb(18, 18, 18) 0 1px 0, rgb(124, 124, 124) 0 0 0 1px inset; transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: #B3B3B3; } .ds-input:focus { outline: none; box-shadow: #FFFFFF 0 0 0 2px inset; }"
-    },
-    {
-      "name": "Status Badge",
-      "kind": "chip",
-      "refersTo": "badge-pill",
-      "description": "Pílula informativa do host, 16px em negrito branco com ponto verde: contador \"online\" no cabeçalho.",
-      "html": "<span class='ds-badge'><i class='ds-badge-dot'></i>3 online</span>",
-      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 9999px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; } .ds-badge-dot { width: 8px; height: 8px; border-radius: 9999px; background: #1ED760; }"
+      "css": ".ds-input { width: 100%; padding: 12px 16px; border: 0; border-radius: 4px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; box-shadow: rgb(18, 18, 18) 0 1px 0, rgb(124, 124, 124) 0 0 0 1px inset; transition: box-shadow 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-input::placeholder { color: #B3B3B3; } .ds-input:focus { outline: none; box-shadow: #FFFFFF 0 0 0 2px inset; }"
     },
     {
       "name": "Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "Cartão elevated de opção (início: Modo Host): título em 16px 700 e apoio em 14px subdued. O \"Última performance\" da aba Ao Vivo usa o mesmo fundo.",
-      "html": "<a class='ds-card' href='#'><strong class='ds-card-title'>Modo Host</strong><span class='ds-card-meta'>Tela principal no PC/TV</span></a>",
-      "css": ".ds-card { display: flex; flex-direction: column; gap: 2px; padding: 16px; border-radius: 8px; background: #181818; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; text-decoration: none; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-card:hover { background: #252525; } .ds-card:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-card-title { font-size: 1rem; font-weight: 700; } .ds-card-meta { font-size: 0.875rem; color: #B3B3B3; }"
+      "description": "Cartão elevated de opção (início: Modo Host): ícone em tile de 48px, título 16px 700 e apoio 14px subdued. O \"Última performance\" da aba Ao Vivo usa o mesmo fundo.",
+      "html": "<a class='ds-card' href='#'><span class='ds-card-icon'><svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><rect x='2' y='3' width='20' height='14' rx='2'/><path d='M8 21h8M12 17v4'/></svg></span><span class='ds-card-text'><strong class='ds-card-title'>Modo Host</strong><span class='ds-card-meta'>Tela principal no PC/TV</span></span></a>",
+      "css": ".ds-card { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 8px; background: #181818; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; text-decoration: none; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-card:hover { background: #252525; } .ds-card:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-card-icon { width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1F1F1F; } .ds-card-text { display: flex; flex-direction: column; gap: 2px; } .ds-card-title { font-size: 1rem; font-weight: 700; } .ds-card-meta { font-size: 0.875rem; color: #B3B3B3; }"
     },
     {
       "name": "Queue Item",
       "kind": "custom",
       "refersTo": "queue-row",
-      "description": "Linha da fila no celular (aba Fila): posição em subdued, título 14px 700, quem pediu · artista em 12px subdued. Sem fundo; a música tocando ganha fundo #252525 e badge \"Tocando agora\".",
+      "description": "Linha da fila do convidado (aba Fila): posição 14px subdued, nome 16px 700, \"quem pediu · artista\" em 14px subdued. Sem fundo; a música tocando fica num bloco hover com badge \"Tocando agora\".",
       "html": "<div class='ds-queue-item'><span class='ds-queue-pos'>1</span><div class='ds-queue-text'><p class='ds-queue-title'>Sweet Caroline</p><p class='ds-queue-meta'>Carlos · Neil Diamond</p></div></div>",
-      "css": ".ds-queue-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; } .ds-queue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; } .ds-queue-text { min-width: 0; } .ds-queue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-queue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
+      "css": ".ds-queue-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; } .ds-queue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; } .ds-queue-text { min-width: 0; } .ds-queue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-queue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
     },
     {
       "name": "Host Queue Item",
       "kind": "custom",
       "refersTo": "queue-row",
-      "description": "Linha da fila no host (lateral de 340px): posição 16px, capa 40px, título 16px 700, quem pediu · artista 14px. O item 1 tem fundo highlight e badge \"Próxima\". Os botões Mover para cima/baixo (32px) reordenam sem arrastar; o de cima fica desabilitado no item 1 e o de baixo no último.",
-      "html": "<div class='ds-hqueue-item ds-hqueue-next'><span class='ds-hqueue-pos'>1</span><div class='ds-hqueue-thumb'></div><div class='ds-hqueue-text'><p class='ds-hqueue-title'>Sweet Caroline</p><p class='ds-hqueue-meta'>Carlos · Neil Diamond</p></div><span class='ds-hqueue-badge'>Próxima</span><div class='ds-hqueue-moves'><button class='ds-move' aria-label='Mover para cima' disabled><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M6 15l6-6 6 6' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button><button class='ds-move' aria-label='Mover para baixo'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M6 9l6 6 6-6' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div></div>",
-      "css": ".ds-hqueue-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; cursor: grab; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hqueue-item:hover, .ds-hqueue-next { background: #1F1F1F; } .ds-hqueue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; color: #B3B3B3; } .ds-hqueue-next .ds-hqueue-pos { color: #1ED760; font-weight: 700; } .ds-hqueue-thumb { width: 40px; height: 40px; flex-shrink: 0; border-radius: 4px; background: #4D4D4D; } .ds-hqueue-text { min-width: 0; flex: 1; } .ds-hqueue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: #4D4D4D; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 600; } .ds-hqueue-moves { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; } .ds-move { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: #181818; color: #FFFFFF; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-move:hover { background: #252525; } .ds-move:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-move:disabled { opacity: 0.4; pointer-events: none; }"
+      "description": "Linha da fila no palco e lateral do host: posição 16px, capa 40px, nome 16px 700, \"quem pediu · artista\" 14px. O item 1 tem fundo highlight, posição em accent e badge \"Próxima\" em muted. Os botões Mover (36px) ficam sobre a linha no hover ou foco, e sempre visíveis sem hover; o de cima fica desabilitado no item 1 e o de baixo no último.",
+      "html": "<div class='ds-hqueue-item ds-hqueue-next'><span class='ds-hqueue-pos'>1</span><div class='ds-hqueue-thumb'></div><div class='ds-hqueue-text'><p class='ds-hqueue-title'>Sweet Caroline</p><p class='ds-hqueue-meta'>Carlos · Neil Diamond</p></div><span class='ds-hqueue-badge'>Próxima</span><div class='ds-hqueue-moves'><button class='ds-move' aria-label='Mover para cima' disabled><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 15l6-6 6 6'/></svg></button><button class='ds-move' aria-label='Mover para baixo'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 9l6 6 6-6'/></svg></button></div></div>",
+      "css": ".ds-hqueue-item { position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; cursor: grab; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-hqueue-item:hover, .ds-hqueue-next { background: #1F1F1F; } .ds-hqueue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; color: #B3B3B3; } .ds-hqueue-next .ds-hqueue-pos { color: #1ED760; font-weight: 700; } .ds-hqueue-thumb { width: 40px; height: 40px; flex-shrink: 0; border-radius: 4px; background: #4D4D4D; } .ds-hqueue-text { min-width: 0; flex: 1; } .ds-hqueue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: #4D4D4D; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 600; } .ds-hqueue-moves { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; gap: 6px; padding: 4px; border-radius: 6px; background: #1F1F1F; opacity: 0; transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-hqueue-item:hover .ds-hqueue-moves, .ds-hqueue-item:focus-within .ds-hqueue-moves { opacity: 1; } .ds-move { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: #181818; color: #FFFFFF; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-move:hover { background: #252525; } .ds-move:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-move:disabled { opacity: 0.4; pointer-events: none; }"
     },
     {
       "name": "Bottom Tab Bar",
       "kind": "nav",
-      "description": "Barra inferior do convidado no celular: Ao Vivo, Buscar, Fila. Fundo preto, borda superior highlight, ícone de 18px acima do rótulo em 12px. Aba ativa em accent 700; inativas em subdued, branco no hover.",
-      "html": "<nav class='ds-tabs' aria-label='Navegação da sala'><button class='ds-tab ds-tab-active' aria-current='true'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' aria-hidden='true'><circle cx='12' cy='12' r='7' fill='currentColor'/></svg>Ao Vivo</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' aria-hidden='true'><circle cx='11' cy='11' r='7' stroke='currentColor' stroke-width='2.2'/><path d='M21 21l-4-4' stroke='currentColor' stroke-width='2.2' stroke-linecap='round'/></svg>Buscar</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M4 6h16M4 12h16M4 18h10' stroke='currentColor' stroke-width='2.2' stroke-linecap='round'/></svg>Fila</button></nav>",
-      "css": ".ds-tabs { display: flex; background: #000000; border-top: 1px solid #1F1F1F; padding-bottom: env(safe-area-inset-bottom); } .ds-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 0; border: 0; background: transparent; color: #B3B3B3; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; cursor: pointer; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tab:hover { color: #FFFFFF; } .ds-tab:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #FFFFFF; } .ds-tab-active, .ds-tab-active:hover { color: #1ED760; font-weight: 700; }"
+      "description": "Barra inferior do convidado no celular: Ao Vivo, Buscar, Fila. Fundo preto de borda a borda, conteúdo contido em 576px. Ícone de 18px acima do rótulo em 12px; aba ativa em accent 700 com ícone preenchido (filled); inativas em subdued, branco no hover.",
+      "html": "<nav class='ds-tabs' aria-label='Navegação da sala'><button class='ds-tab ds-tab-active' aria-current='true'><svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><circle cx='12' cy='12' r='9'/></svg>Ao Vivo</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>Buscar</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 6h16M4 12h16M4 18h10'/></svg>Fila</button></nav>",
+      "css": ".ds-tabs { display: flex; background: #000000; border-top: 1px solid #1F1F1F; padding-bottom: env(safe-area-inset-bottom); } .ds-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 0; border: 0; background: transparent; color: #B3B3B3; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; cursor: pointer; transition: color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-tab:hover { color: #FFFFFF; } .ds-tab:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #FFFFFF; } .ds-tab-active, .ds-tab-active:hover { color: #1ED760; font-weight: 700; }"
     },
     {
       "name": "Vote Button",
       "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Par de votos da aba Ao Vivo, 48px em pílula: Curtir (verde, texto preto) e Não curtir (contorno outline, ícone negative, texto branco). Depois de votar, o escolhido fica ativo e o outro cai para 40% de opacidade.",
-      "html": "<div class='ds-vote'><button class='ds-vote-like'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M18 9l-6-6-6 6M12 4v16' stroke='#000000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>Curtir</button><button class='ds-vote-dislike'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M18 15l-6 6-6-6M12 20V4' stroke='#F3727F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>Não curtir</button></div>",
-      "css": ".ds-vote { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .ds-vote button { height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9999px; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; cursor: pointer; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-vote button:disabled { cursor: not-allowed; } .ds-vote button:active:not(:disabled) { transform: scale(0.95); } .ds-vote button:focus-visible { outline: none; box-shadow: 0 0 0 2px #121212, 0 0 0 4px #FFFFFF; } .ds-vote-like { border: 0; background: #1ED760; color: #000000; } .ds-vote-like:hover:not(:disabled) { background: #3BE477; } .ds-vote-dislike { border: 1px solid #7C7C7C; background: transparent; color: #FFFFFF; } .ds-vote-dislike:hover:not(:disabled) { border-color: #FFFFFF; }"
+      "description": "Par de votos da aba Ao Vivo, 48px em pílula: Curtir (verde, texto preto, polegar para cima) e Não curtir (contorno outline, texto e polegar negative). Depois de votar, o escolhido fica com borda branca (Não curtir) e o outro cai para 40% de opacidade.",
+      "html": "<div class='ds-vote'><button class='ds-vote-like'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z'/></svg>Curtir</button><button class='ds-vote-dislike'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z'/></svg>Não curtir</button></div>",
+      "css": ".ds-vote { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .ds-vote button { height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9999px; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1), opacity 150ms cubic-bezier(0.2, 0, 0, 1), transform 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-vote button:disabled { cursor: not-allowed; } .ds-vote button:active:not(:disabled) { transform: scale(0.95); } .ds-vote button:focus-visible { outline: none; box-shadow: 0 0 0 2px #121212, 0 0 0 4px #FFFFFF; } .ds-vote-like { border: 0; background: #1ED760; color: #000000; } .ds-vote-like:hover:not(:disabled) { background: #3BE477; } .ds-vote-dislike { border: 1px solid #7C7C7C; background: transparent; color: #F3727F; } .ds-vote-dislike:hover:not(:disabled) { border-color: #FFFFFF; }"
+    },
+    {
+      "name": "Equalizer",
+      "kind": "custom",
+      "description": "Equalizador da música tocando: barras accent de 3px com altura de 14px (12px no tamanho sm). Toca só enquanto a música toca, com ritmo e fase distintos por barra; parado (reduced-motion), fica em alturas distintas.",
+      "html": "<span class='ds-eq' aria-hidden='true'><i style='animation-duration:0.9s;animation-delay:-0.3s'></i><i style='animation-duration:1.1s;animation-delay:-0.7s'></i><i style='animation-duration:0.7s;animation-delay:-0.1s'></i><i style='animation-duration:1s;animation-delay:-0.5s'></i></span>",
+      "css": ".ds-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; } .ds-eq i { display: block; width: 3px; height: 100%; border-radius: 2px; background: #1ED760; transform-origin: bottom; animation-name: ds-eq; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; } @keyframes ds-eq { from { transform: scaleY(0.3); } to { transform: scaleY(1); } } @media (prefers-reduced-motion: reduce) { .ds-eq i { animation: none; } .ds-eq i:nth-child(1) { transform: scaleY(0.6); } .ds-eq i:nth-child(2) { transform: scaleY(1); } .ds-eq i:nth-child(3) { transform: scaleY(0.4); } .ds-eq i:nth-child(4) { transform: scaleY(0.8); } }"
     }
   ],
   "narrative": {
@@ -363,8 +385,10 @@
     "keyCharacteristics": [
       "Base preta com superfícies em degraus (`black` → `surface` → `elevated` → `highlight` → `hover`); profundidade vem do degrau de cor, não de sombra.",
       "Um único acento: `accent` (#1ED760). Verde = ação primária, \"tocando agora\", ativo, online.",
-      "Formas: pílula (`rounded-full`) para tudo que se toca; `rounded-lg` para cartões; `rounded-md` para linhas de lista; `rounded` (4px) só no campo de texto.",
+      "Formas: pílula (`rounded-full`) para tudo que se toca; `rounded-lg` para cartões; `rounded-md` para linhas de lista; `rounded` (4px) só no campo de texto e nas miniaturas.",
       "Inter em pesos 400–800. Títulos em 700–800, nunca mais leves.",
+      "Ícones de um sistema só (`AppIcon`): traço de 2px, `currentColor`, viewBox 24, tamanhos 16/18/20/24/32.",
+      "Movimento curto: 150ms e 250ms numa curva só; nada de animação decorativa.",
       "Plano: sem glow, sem gradientes decorativos, sem translucidez."
     ],
     "rules": [
@@ -375,29 +399,39 @@
       },
       {
         "name": "Regra dos Tokens",
-        "body": "Cor vem do token. Os hex soltos que existem hoje (ver \"Lacunas conhecidas\") são dívida, não padrão a copiar.",
+        "body": "Cor vem do token ou de `currentColor`. Os hex soltos que existem hoje (ver \"Lacunas conhecidas\") são dívida, não padrão a copiar.",
         "section": "colors"
       },
       {
         "name": "Regra do Peso",
-        "body": "Títulos são 700 ou 800. Não há peso 500 nem 300 no sistema.",
+        "body": "Títulos são 700 ou 800. Não há peso 500 nem 300 no sistema. O peso 600 só aparece em duas badges (\"Próxima\" e \"Tocando agora\").",
         "section": "typography"
+      },
+      {
+        "name": "Regra do Movimento Curto",
+        "body": "Nada de interface passa de 250ms. Só a barra de progresso (1000ms) e a contagem do avanço (5000ms) fogem da regra, porque medem tempo real.",
+        "section": "components"
       }
     ],
     "dos": [
-      "**Do** usar os tokens do Tailwind (`bg-surface`, `bg-elevated`, `text-subdued`, `bg-accent`) em vez de hex.",
+      "**Do** usar os tokens do Tailwind (`bg-surface`, `bg-elevated`, `text-subdued`, `bg-accent`) e `currentColor` em ícones, em vez de hex.",
       "**Do** reservar o verde para ação primária e estado \"tocando/ativo/online\".",
       "**Do** separar camadas com o degrau de cor; sombra só nas capas, no player e no toast.",
       "**Do** manter pílulas para o que se toca e `rounded-lg` para cartões.",
+      "**Do** usar `duration-fast`, `duration-base` e `ease-standard` em qualquer transição nova, e animar só `opacity` e `transform` em entradas e saídas.",
+      "**Do** oferecer cancelamento em qualquer ação automática do host (botão e Esc).",
       "**Do** manter alvo de toque ≥ 44px no celular, anel `focus-visible` e `role=\"alert\"` nos erros.",
       "**Do** escrever em português e curto; sem emoji."
     ],
     "donts": [
-      "**Don't** adicionar um segundo acento nem usar o verde como decoração.",
-      "**Don't** usar glow, gradiente decorativo ou blur em cartões.",
+      "**Don't** adicionar um segundo acento nem usar o verde como decoração. Pontuação em verde é exceção registrada, não modelo.",
+      "**Don't** usar glow, `text-shadow`, blur ou gradiente decorativo em cartões e painéis. Os gradientes que existem hoje são dívida (ver Lacunas), não exemplo.",
+      "**Don't** criar eyebrows ou kickers em caixa alta com tracking (ex.: um rótulo \"AGORA CANTANDO\" acima do título). O piso de qualidade proíbe; os existentes são defeito carregado, não regra.",
       "**Don't** usar texto em `muted` ou `outline`; só `subdued` e branco carregam informação.",
+      "**Don't** usar setas para reordenar nem polegares para resultado: chevrons reordenam, setas mostram o total de votos.",
       "**Don't** introduzir pesos 300/500 ou uma segunda família de fonte.",
-      "**Don't** criar novos cinzas soltos; se faltar um degrau, adicione um token."
+      "**Don't** criar novos cinzas soltos; se faltar um degrau, adicione um token.",
+      "**Don't** colocar hex em ícones ou em CSS de componente."
     ]
   }
 }
