@@ -5,6 +5,11 @@ export default defineNuxtConfig({
   devServer: { host: '0.0.0.0' },
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
+  // Telão e sala são 100% client-side (dependem de Pusher/localStorage); /join segue com SSR.
+  routeRules: {
+    '/host': { ssr: false },
+    '/room/**': { ssr: false },
+  },
   app: {
     head: {
       htmlAttrs: { lang: 'pt-BR' },
@@ -14,8 +19,15 @@ export default defineNuxtConfig({
       ],
     },
   },
+  // Privado (só servidor). Os defaults leem o .env no build; NUXT_<CHAVE> sobrescreve em runtime.
   runtimeConfig: {
-    youtubeApiKey: process.env.API_KEY || '', // NUXT_YOUTUBE_API_KEY sobrescreve em runtime
+    youtubeApiKey: process.env.API_KEY || '',               // NUXT_YOUTUBE_API_KEY
+    upstashRedisRestUrl: process.env.UPSTASH_REDIS_REST_URL || '',     // NUXT_UPSTASH_REDIS_REST_URL
+    upstashRedisRestToken: process.env.UPSTASH_REDIS_REST_TOKEN || '', // NUXT_UPSTASH_REDIS_REST_TOKEN
+    pusherAppId: process.env.PUSHER_APP_ID || '',           // NUXT_PUSHER_APP_ID
+    pusherKey: process.env.PUSHER_KEY || '',                // NUXT_PUSHER_KEY
+    pusherSecret: process.env.PUSHER_SECRET || '',          // NUXT_PUSHER_SECRET
+    pusherCluster: process.env.PUSHER_CLUSTER || 'mt1',     // NUXT_PUSHER_CLUSTER
     public: {
       pusherKey: '',    // set via NUXT_PUBLIC_PUSHER_KEY
       pusherCluster: 'mt1', // set via NUXT_PUBLIC_PUSHER_CLUSTER

@@ -16,28 +16,25 @@ Karaoke de casa: um telão (host, PC/TV via Electron) mostra a música tocando e
 pnpm install
 ```
 
-Crie um `.env` na raiz com:
+Copie `.env.example` para `.env` na raiz e preencha os valores. Todas as variáveis:
 
-```bash
-# YouTube Data API (busca de músicas)
-# Lida em nuxt.config.ts como runtimeConfig.youtubeApiKey. Em produção, prefira
-# NUXT_YOUTUBE_API_KEY no ambiente de execução: API_KEY vira default no build do servidor.
-API_KEY=
+| Variável | Uso | Onde é lida |
+| --- | --- | --- |
+| `API_KEY` | Chave da YouTube Data API (busca de músicas) | servidor (`runtimeConfig.youtubeApiKey`) |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Persistência da sessão no Redis | servidor (`upstashRedisRestUrl/Token`) |
+| `PUSHER_APP_ID` / `PUSHER_KEY` / `PUSHER_SECRET` / `PUSHER_CLUSTER` | Pusher, lado servidor (disparo de eventos) | servidor (`pusherAppId`, `pusherKey`, `pusherSecret`, `pusherCluster`) |
+| `NUXT_PUBLIC_PUSHER_KEY` / `NUXT_PUBLIC_PUSHER_CLUSTER` | Pusher, lado cliente (assinatura de eventos) | browser (`runtimeConfig.public`) |
+| `NUXT_PUBLIC_SITE_URL` | URL pública da sala, usada no QR code do host | browser (`runtimeConfig.public.siteUrl`) |
 
-# Upstash Redis (persistência da sessão)
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
+Segredos (`API_KEY`, tokens do Upstash, `PUSHER_SECRET`) ficam só em `runtimeConfig` privado e nunca chegam ao browser.
 
-# Pusher (realtime — server-side)
-PUSHER_APP_ID=
-PUSHER_KEY=
-PUSHER_SECRET=
-PUSHER_CLUSTER=mt1
+**`NUXT_PUBLIC_SITE_URL`** é o endereço que os convidados abrem no celular. O host monta `…/join?code=XXXX` a partir dele para gerar o QR code. Sem a variável, usa a origem da página do host (`window.location`), que em dev costuma ser `localhost` e não funciona no celular: aponte para o IP da rede local (ex.: `http://192.168.0.10:3000`) ou para o domínio de deploy.
 
-# Pusher (client-side, expostas ao browser)
-NUXT_PUBLIC_PUSHER_KEY=
-NUXT_PUBLIC_PUSHER_CLUSTER=mt1
-```
+**Valores em produção**
+
+- Os valores do `.env` entram como default no build. Para não depender do `.env` no build, defina `NUXT_<CHAVE>` no ambiente de execução (ex.: `NUXT_UPSTASH_REDIS_REST_TOKEN`, `NUXT_PUSHER_SECRET`, `NUXT_YOUTUBE_API_KEY`); no servidor Node (`node .output/server/index.mjs`) eles sobrescrevem os defaults em runtime.
+- O build estático (`pnpm run generate` / `electron:build`) grava as variáveis `NUXT_PUBLIC_*` no HTML gerado, então defina-as antes de gerar.
+- Os defaults de `runtimeConfig` privados vêm do `.env` no build e podem acabar embutidos em `.output/`. Não distribua `.output/` (ou o instalador do Electron) com segredos de produção.
 
 ```bash
 pnpm run dev          # servidor web em http://localhost:3000

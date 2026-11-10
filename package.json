@@ -10,14 +10,16 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "electron:dev": "concurrently \"nuxt dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
-    "electron:build": "nuxt generate && electron-builder"
+    "electron:build": "electron-builder",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck",
+    "test": "vitest run"
   },
   "build": {
     "appId": "com.karaokelive.app",
     "productName": "KaraokeLive",
     "files": [
-      "electron/**/*",
-      ".output/**/*"
+      "electron/**/*"
     ],
     "directories": {
       "output": "dist-electron"
@@ -39,15 +41,20 @@
     "pusher": "^5.3.4",
     "pusher-js": "^8.6.0",
     "uqr": "0.1.3",
-    "vercel": "^59.26.0",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0"
   },
   "devDependencies": {
+    "@nuxt/eslint-config": "^1.17.0",
     "concurrently": "^10.0.6",
     "cross-env": "^10.1.0",
     "electron": "^42.11.18",
     "electron-builder": "^26.18.0",
+    "eslint": "^10.14.0",
+    "typescript": "^6.0.3",
+    "vercel": "^59.26.0",
+    "vitest": "^5.1.0",
+    "vue-tsc": "^3.3.14",
     "wait-on": "^9.5.1"
   }
 }

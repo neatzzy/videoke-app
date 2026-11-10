@@ -1,12 +1,10 @@
 <script setup lang="ts">
-const { connect, joinSession, session, error } = useKaraoke()
+const { joinSession, session, error } = useKaraoke()
 
 const name = ref('')
 // Prefilled when arriving from the host screen's QR code (/join?code=XXXX)
 const code = ref(String(useRoute().query.code ?? '').toUpperCase())
 const loading = ref(false)
-
-onMounted(() => connect())
 
 watch(session, (s) => {
   if (s) {

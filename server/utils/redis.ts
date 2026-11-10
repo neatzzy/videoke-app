@@ -4,9 +4,10 @@ let _redis: Redis | null = null
 
 export function getRedis(): Redis {
   if (!_redis) {
+    const { upstashRedisRestUrl, upstashRedisRestToken } = useRuntimeConfig()
     _redis = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      url: upstashRedisRestUrl,
+      token: upstashRedisRestToken,
     })
   }
   return _redis

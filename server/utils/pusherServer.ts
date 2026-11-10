@@ -4,11 +4,12 @@ let _pusher: Pusher | null = null
 
 export function getPusher(): Pusher {
   if (!_pusher) {
+    const { pusherAppId, pusherKey, pusherSecret, pusherCluster } = useRuntimeConfig()
     _pusher = new Pusher({
-      appId: process.env.PUSHER_APP_ID!,
-      key: process.env.PUSHER_KEY!,
-      secret: process.env.PUSHER_SECRET!,
-      cluster: process.env.PUSHER_CLUSTER ?? 'mt1',
+      appId: pusherAppId,
+      key: pusherKey,
+      secret: pusherSecret,
+      cluster: pusherCluster,
       useTLS: true,
     })
   }

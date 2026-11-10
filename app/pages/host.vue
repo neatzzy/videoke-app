@@ -20,6 +20,7 @@ function onDragOver(idx: number) {
   if (dragIndex.value === null || dragIndex.value === idx) return
   const items = [...localQueue.value]
   const [moved] = items.splice(dragIndex.value, 1)
+  if (!moved) return
   items.splice(idx, 0, moved)
   localQueue.value = items
   dragIndex.value = idx

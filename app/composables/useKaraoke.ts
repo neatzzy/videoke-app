@@ -159,10 +159,6 @@ export const useKaraoke = () => {
     }
   }
 
-  // kept for API compatibility with existing pages
-  function connect() {}
-  function sync() {}
-
   return {
     session,
     error,
@@ -171,8 +167,6 @@ export const useKaraoke = () => {
     queue,
     votes,
     clientCount,
-    connect,
-    sync,
     subscribe,
     createSession,
     joinSession,

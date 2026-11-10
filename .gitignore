@@ -19,11 +19,9 @@ logs
 .idea
 
 # Local env files
-.env
-.env.*
+.env*
 !.env.example
 .vercel
-.env*
 
 # graphify output
 graphify-out/
