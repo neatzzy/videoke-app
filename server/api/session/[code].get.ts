@@ -1,9 +1,9 @@
 import { getRedis } from '../../utils/redis'
 import { getSession, serializeSession } from '../../utils/sessions'
+import { parseCode } from '../../utils/validate'
 
 export default defineEventHandler(async (event) => {
-  const code = getRouterParam(event, 'code')?.toUpperCase()
-  if (!code) throw createError({ statusCode: 400, message: 'Código inválido' })
+  const code = parseCode(getRouterParam(event, 'code'))
 
   const redis = getRedis()
   const session = await getSession(redis, code)

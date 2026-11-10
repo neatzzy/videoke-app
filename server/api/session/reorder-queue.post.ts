@@ -1,13 +1,13 @@
 import { getRedis } from '../../utils/redis'
-import { getPusher } from '../../utils/pusherServer'
+import { broadcastSession } from '../../utils/pusherServer'
 import { reorderQueue, serializeSession } from '../../utils/sessions'
+import { parseClientId, parseCode, parseIds } from '../../utils/validate'
 
 export default defineEventHandler(async (event) => {
-  const { clientId, code, orderedIds } = await readBody(event)
-
-  if (!clientId || !code || !Array.isArray(orderedIds)) {
-    throw createError({ statusCode: 400, message: 'Dados incompletos' })
-  }
+  const body = (await readBody(event)) ?? {}
+  const clientId = parseClientId(body.clientId)
+  const code = parseCode(body.code)
+  const orderedIds = parseIds(body.orderedIds)
 
   const redis = getRedis()
   const session = await reorderQueue(redis, clientId, code, orderedIds)
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const serialized = serializeSession(session)
-  await getPusher().trigger(`session-${code}`, 'session-update', { session: serialized })
+  await broadcastSession(code, { session: serialized })
 
   return { session: serialized }
 })

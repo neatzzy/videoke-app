@@ -14,3 +14,12 @@ export function getPusher(): Pusher {
   }
   return _pusher
 }
+
+// Falha do Pusher não pode virar 500: o estado já foi gravado no Redis.
+export async function broadcastSession(code: string, payload: Record<string, unknown>): Promise<void> {
+  try {
+    await getPusher().trigger(`session-${code}`, 'session-update', payload)
+  } catch (err) {
+    console.error(`[pusher] falha ao notificar a sala ${code}:`, err)
+  }
+}

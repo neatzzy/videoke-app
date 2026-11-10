@@ -28,7 +28,9 @@ function onDragOver(idx: number) {
 function onDragEnd() {
   if (dragIndex.value === null) return
   dragIndex.value = null
-  reorderQueue(localQueue.value.map((item) => item.id))
+  reorderQueue(localQueue.value.map((item) => item.id)).then((ok) => {
+    if (!ok) localQueue.value = [...queue.value]
+  })
 }
 
 const sessionFailed = ref(false)
@@ -71,6 +73,8 @@ function initPlayer() {
     playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, iv_load_policy: 3, origin: window.location.origin },
     events: {
       onReady: () => { playerReady.value = true },
+      // Blocked or unavailable video: skip it so the screen never stalls. With an empty queue this clears currentSong and the error does not repeat.
+      onError: () => { if (currentSong.value) nextSong() },
       onStateChange: (e: any) => {
         // YT.PlayerState.PLAYING = 1
         isPlaying.value = e.data === 1

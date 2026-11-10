@@ -51,6 +51,12 @@ export const useKaraoke = () => {
       pusherClient = new PusherClient(config.public.pusherKey as string, {
         cluster: config.public.pusherCluster as string,
       })
+      // Events emitted while the socket was down (phone locked) are not replayed: refetch state.
+      const refresh = () => { if (subscribedCode) resumeSession(subscribedCode) }
+      pusherClient.connection.bind('connected', refresh)
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refresh()
+      })
     }
 
     if (subscribedCode && subscribedCode !== code) {
@@ -103,22 +109,34 @@ export const useKaraoke = () => {
     })
   }
 
-  async function nextSong() {
-    if (!session.value) return
+  // Returns false on failure; the server ignores the call if songId is no longer the current song.
+  async function nextSong(): Promise<boolean> {
+    if (!session.value) return false
     const clientId = getOrCreateClientId()
-    await $fetch('/api/session/next-song', {
-      method: 'POST',
-      body: { clientId, code: session.value.code },
-    })
+    try {
+      await $fetch('/api/session/next-song', {
+        method: 'POST',
+        body: { clientId, code: session.value.code, songId: currentSong.value?.id },
+      })
+      return true
+    } catch {
+      return false
+    }
   }
 
-  async function reorderQueue(orderedIds: string[]) {
-    if (!session.value) return
+  // Returns false on failure so the caller can roll back its local copy.
+  async function reorderQueue(orderedIds: string[]): Promise<boolean> {
+    if (!session.value) return false
     const clientId = getOrCreateClientId()
-    await $fetch('/api/session/reorder-queue', {
-      method: 'POST',
-      body: { clientId, code: session.value.code, orderedIds },
-    })
+    try {
+      await $fetch('/api/session/reorder-queue', {
+        method: 'POST',
+        body: { clientId, code: session.value.code, orderedIds },
+      })
+      return true
+    } catch {
+      return false
+    }
   }
 
   async function vote(v: 'like' | 'dislike') {
