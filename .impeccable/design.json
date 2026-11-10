@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T23:33:04.000Z",
+  "generatedAt": "2026-11-10T23:55:43.000Z",
   "title": "Design System: Videoké",
   "extensions": {
     "colorMeta": {
@@ -177,27 +177,27 @@
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Título da tela de entrada (\"Entre na sala\") e título do placar final no host."
+        "purpose": "Título da tela de entrada (\"Entre na sala\") e nome da música no placar final do host."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Nome da música na aba Ao Vivo, títulos de estado vazio, cabeçalho \"Fila\" da sala e artista no palco."
+        "purpose": "Nome da música na aba Ao Vivo da sala, títulos de estado vazio e cabeçalho \"Fila\" da sala; artista no palco do host (subdued, 400)."
       },
       "item": {
         "displayName": "Item",
-        "purpose": "Nome da música em linhas de lista (fila do convidado, busca, fila e placar da noite do host) e botões de ação do host."
+        "purpose": "Nome da música em linhas de lista (fila do convidado, busca, fila e placar da noite do host), título da música tocando na aba Fila e botões de ação do host."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Metadados (\"quem pediu · artista\"), textos de apoio, mensagens e toast. Nada abaixo de 14px no host."
+        "purpose": "Metadados (\"quem pediu · artista\"), posição na fila da sala, textos de apoio, mensagens e toast. Nada abaixo de 14px no host."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Caixa alta com tracking 1.4px: botão Entrar (14px) e logotipo VIDEOKÉ (tamanho próprio). Eyebrows existentes são defeito, não regra."
+        "purpose": "Caixa alta com tracking 1.4px em 14px: botões Entrar e Buscar música. O logotipo VIDEOKÉ tem peso 800 e tamanho próprio."
       },
       "micro": {
         "displayName": "Micro",
-        "purpose": "Rótulos da barra de abas e badge \"Tocando agora\" no celular (12px, o mínimo do sistema)."
+        "purpose": "Rótulos da barra de abas da sala, legenda \"Última performance\" e badge \"Tocando agora\" (12px, o mínimo do sistema)."
       }
     },
     "shadows": [
@@ -270,8 +270,8 @@
       },
       {
         "name": "auto-advance-countdown",
-        "value": "scaleX(1 → 0) em 5000ms linear forwards",
-        "purpose": "Exceção de tempo real: contagem do placar final até o avanço. Cancelável (botão ou Esc). Com reduced-motion a barra some de imediato (Lacuna)."
+        "value": "scaleX(1 → 0) em 5000ms linear forwards; pausável por animation-play-state",
+        "purpose": "Exceção de tempo real: contagem do placar final até o avanço. Cancelável (botão ou Esc) e pausável (Pausar/Retomar), com o tempo em texto (\"Próxima música em N s\"). Com reduced-motion a barra zera de imediato."
       },
       {
         "name": "equalizer",
@@ -281,7 +281,7 @@
       {
         "name": "pulse",
         "value": "animate-pulse: opacity 1 → 0.5, 2s infinite",
-        "purpose": "Estados de carregamento: ícone e esqueleto da busca, \"Entrando...\" no join, \"Entrando na sala…\" no room."
+        "purpose": "Estados de carregamento: ícone e esqueleto da busca, \"Entrando...\" no join, \"Entrando na sala…\" na sala."
       },
       {
         "name": "haptic-patterns",
@@ -297,6 +297,23 @@
         "name": "reduced-motion",
         "value": "@media (prefers-reduced-motion: reduce) { animation/transition-duration: 0.01ms !important; animation-iteration-count: 1 }",
         "purpose": "Zera animações e transições globalmente (main.css). O equalizador vira barras estáticas em alturas distintas."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "room-duo",
+        "value": "768px",
+        "purpose": "Sala em duas colunas (Ao Vivo e Fila); a barra mostra só Ao Vivo e Buscar."
+      },
+      {
+        "name": "room-short-height",
+        "value": "500px",
+        "purpose": "Altura curta: cabeçalho e conteúdo encolhem; abaixo de 768px de largura, a aba Ao Vivo vira capa à esquerda."
+      },
+      {
+        "name": "host-short-height",
+        "value": "700px",
+        "purpose": "Host: cartão de QR compacto (112px) durante os 5 s de informação."
       }
     ]
   },
@@ -353,14 +370,14 @@
       "name": "Host Queue Item",
       "kind": "custom",
       "refersTo": "queue-row",
-      "description": "Linha da fila no palco e lateral do host: posição 16px, capa 40px, nome 16px 700, \"quem pediu · artista\" 14px. O item 1 tem fundo highlight, posição em accent e badge \"Próxima\" em muted. Os botões Mover (36px) ficam sobre a linha no hover ou foco, e sempre visíveis sem hover; o de cima fica desabilitado no item 1 e o de baixo no último.",
-      "html": "<div class='ds-hqueue-item ds-hqueue-next'><span class='ds-hqueue-pos'>1</span><div class='ds-hqueue-thumb'></div><div class='ds-hqueue-text'><p class='ds-hqueue-title'>Sweet Caroline</p><p class='ds-hqueue-meta'>Carlos · Neil Diamond</p></div><span class='ds-hqueue-badge'>Próxima</span><div class='ds-hqueue-moves'><button class='ds-move' aria-label='Mover para cima' disabled><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 15l6-6 6 6'/></svg></button><button class='ds-move' aria-label='Mover para baixo'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 9l6 6 6-6'/></svg></button></div></div>",
-      "css": ".ds-hqueue-item { position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; cursor: grab; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-hqueue-item:hover, .ds-hqueue-next { background: #1F1F1F; } .ds-hqueue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; color: #B3B3B3; } .ds-hqueue-next .ds-hqueue-pos { color: #1ED760; font-weight: 700; } .ds-hqueue-thumb { width: 40px; height: 40px; flex-shrink: 0; border-radius: 4px; background: #4D4D4D; } .ds-hqueue-text { min-width: 0; flex: 1; } .ds-hqueue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: #4D4D4D; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 600; } .ds-hqueue-moves { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; gap: 6px; padding: 4px; border-radius: 6px; background: #1F1F1F; opacity: 0; transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-hqueue-item:hover .ds-hqueue-moves, .ds-hqueue-item:focus-within .ds-hqueue-moves { opacity: 1; } .ds-move { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: #181818; color: #FFFFFF; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-move:hover { background: #252525; } .ds-move:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-move:disabled { opacity: 0.4; pointer-events: none; }"
+      "description": "Linha da fila na lateral do host: posição 16px, capa 40px (raio 4px), nome 16px 700 em até 2 linhas, \"quem pediu · artista\" 14px truncado. O item 1 tem fundo highlight, posição em accent e a badge \"Próxima\" (muted, 14px 600) logo abaixo dos metadados. Os botões Mover (36px) ficam sobre o canto direito no hover ou foco, e sempre visíveis sem hover; o de cima fica desabilitado no item 1 e o de baixo no último.",
+      "html": "<div class='ds-hqueue-item ds-hqueue-next'><span class='ds-hqueue-pos'>1</span><div class='ds-hqueue-thumb'></div><div class='ds-hqueue-text'><p class='ds-hqueue-title'>Sweet Caroline</p><p class='ds-hqueue-meta'>Carlos · Neil Diamond</p><span class='ds-hqueue-badge'>Próxima</span></div><div class='ds-hqueue-moves'><button class='ds-move' aria-label='Mover para cima' disabled><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 15l6-6 6 6'/></svg></button><button class='ds-move' aria-label='Mover para baixo'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 9l6 6 6-6'/></svg></button></div></div>",
+      "css": ".ds-hqueue-item { position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; cursor: grab; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-hqueue-item:hover, .ds-hqueue-next { background: #1F1F1F; } .ds-hqueue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; color: #B3B3B3; } .ds-hqueue-next .ds-hqueue-pos { color: #1ED760; font-weight: 700; } .ds-hqueue-thumb { width: 40px; height: 40px; flex-shrink: 0; border-radius: 4px; background: #4D4D4D; } .ds-hqueue-text { min-width: 0; flex: 1; } .ds-hqueue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; line-height: 1.5; color: #FFFFFF; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; } .ds-hqueue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-badge { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 9999px; background: #4D4D4D; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 600; } .ds-hqueue-moves { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; gap: 6px; padding: 4px; border-radius: 6px; background: #1F1F1F; opacity: 0; transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-hqueue-item:hover .ds-hqueue-moves, .ds-hqueue-item:focus-within .ds-hqueue-moves { opacity: 1; } @media (hover: none) { .ds-hqueue-moves { opacity: 1; } } .ds-move { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: #181818; color: #FFFFFF; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-move:hover { background: #252525; } .ds-move:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-move:disabled { opacity: 0.4; pointer-events: none; }"
     },
     {
       "name": "Bottom Tab Bar",
       "kind": "nav",
-      "description": "Barra inferior do convidado no celular: Ao Vivo, Buscar, Fila. Fundo preto de borda a borda, conteúdo contido em 576px. Ícone de 18px acima do rótulo em 12px; aba ativa em accent 700 com ícone preenchido (filled); inativas em subdued, branco no hover.",
+      "description": "Barra inferior do convidado. Abaixo de 768px: Ao Vivo, Buscar, Fila; a partir de 768px: só Ao Vivo e Buscar, porque a Fila já aparece ao lado. Fundo preto de borda a borda, conteúdo contido na largura da sala (576px, ou 896px em duas colunas). Ícone de 18px acima do rótulo em 12px; aba ativa em accent 700 com ícone preenchido (filled); inativas em subdued, branco no hover.",
       "html": "<nav class='ds-tabs' aria-label='Navegação da sala'><button class='ds-tab ds-tab-active' aria-current='true'><svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><circle cx='12' cy='12' r='9'/></svg>Ao Vivo</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4-4'/></svg>Buscar</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4 6h16M4 12h16M4 18h10'/></svg>Fila</button></nav>",
       "css": ".ds-tabs { display: flex; background: #000000; border-top: 1px solid #1F1F1F; padding-bottom: env(safe-area-inset-bottom); } .ds-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 0; border: 0; background: transparent; color: #B3B3B3; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; cursor: pointer; transition: color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-tab:hover { color: #FFFFFF; } .ds-tab:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #FFFFFF; } .ds-tab-active, .ds-tab-active:hover { color: #1ED760; font-weight: 700; }"
     },
@@ -374,7 +391,7 @@
     {
       "name": "Equalizer",
       "kind": "custom",
-      "description": "Equalizador da música tocando: barras accent de 3px com altura de 14px (12px no tamanho sm). Toca só enquanto a música toca, com ritmo e fase distintos por barra; parado (reduced-motion), fica em alturas distintas.",
+      "description": "Equalizador da música tocando: barras accent de 3px com altura de 14px (2px e 12px no tamanho sm). Quatro barras por padrão, três na aba Fila. Toca só enquanto a música toca, com ritmo e fase distintos por barra; parado, fica em alturas distintas (0,6 / 1 / 0,4 / 0,8), inclusive com reduced-motion.",
       "html": "<span class='ds-eq' aria-hidden='true'><i style='animation-duration:0.9s;animation-delay:-0.3s'></i><i style='animation-duration:1.1s;animation-delay:-0.7s'></i><i style='animation-duration:0.7s;animation-delay:-0.1s'></i><i style='animation-duration:1s;animation-delay:-0.5s'></i></span>",
       "css": ".ds-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; } .ds-eq i { display: block; width: 3px; height: 100%; border-radius: 2px; background: #1ED760; transform-origin: bottom; animation-name: ds-eq; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; } @keyframes ds-eq { from { transform: scaleY(0.3); } to { transform: scaleY(1); } } @media (prefers-reduced-motion: reduce) { .ds-eq i { animation: none; } .ds-eq i:nth-child(1) { transform: scaleY(0.6); } .ds-eq i:nth-child(2) { transform: scaleY(1); } .ds-eq i:nth-child(3) { transform: scaleY(0.4); } .ds-eq i:nth-child(4) { transform: scaleY(0.8); } }"
     }
@@ -399,7 +416,7 @@
       },
       {
         "name": "Regra dos Tokens",
-        "body": "Cor vem do token ou de `currentColor`. Os hex soltos que existem hoje (ver \"Lacunas conhecidas\") são dívida, não padrão a copiar.",
+        "body": "Cor vem do token ou de `currentColor`. Os valores soltos que sobram estão em \"Lacunas conhecidas\" e são dívida, não padrão a copiar.",
         "section": "colors"
       },
       {
@@ -409,7 +426,7 @@
       },
       {
         "name": "Regra do Movimento Curto",
-        "body": "Nada de interface passa de 250ms. Só a barra de progresso (1000ms) e a contagem do avanço (5000ms) fogem da regra, porque medem tempo real.",
+        "body": "Transições de estado não passam de 250ms. Exceções: a barra de progresso (1000ms) e a contagem do avanço (5000ms), que medem tempo real, e os loops do equalizador e do pulso de carregamento.",
         "section": "components"
       }
     ],
@@ -419,13 +436,13 @@
       "**Do** separar camadas com o degrau de cor; sombra só nas capas, no player e no toast.",
       "**Do** manter pílulas para o que se toca e `rounded-lg` para cartões.",
       "**Do** usar `duration-fast`, `duration-base` e `ease-standard` em qualquer transição nova, e animar só `opacity` e `transform` em entradas e saídas.",
-      "**Do** oferecer cancelamento em qualquer ação automática do host (botão e Esc).",
+      "**Do** oferecer cancelamento (botão e Esc) e pausa em qualquer ação automática do host, com o tempo restante em texto.",
       "**Do** manter alvo de toque ≥ 44px no celular, anel `focus-visible` e `role=\"alert\"` nos erros.",
       "**Do** escrever em português e curto; sem emoji."
     ],
     "donts": [
-      "**Don't** adicionar um segundo acento nem usar o verde como decoração. Pontuação em verde é exceção registrada, não modelo.",
-      "**Don't** usar glow, `text-shadow`, blur ou gradiente decorativo em cartões e painéis. Os gradientes que existem hoje são dívida (ver Lacunas), não exemplo.",
+      "**Don't** adicionar um segundo acento nem usar o verde como decoração. A seta de \"Última performance\" é exceção registrada, não modelo.",
+      "**Don't** usar glow, `text-shadow`, blur ou gradiente decorativo em cartões e painéis. Não há gradiente no sistema.",
       "**Don't** criar eyebrows ou kickers em caixa alta com tracking (ex.: um rótulo \"AGORA CANTANDO\" acima do título). O piso de qualidade proíbe; os existentes são defeito carregado, não regra.",
       "**Don't** usar texto em `muted` ou `outline`; só `subdued` e branco carregam informação.",
       "**Don't** usar setas para reordenar nem polegares para resultado: chevrons reordenam, setas mostram o total de votos.",

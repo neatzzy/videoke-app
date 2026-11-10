@@ -2,10 +2,6 @@
 
 <!-- impeccable:product-schema 1 -->
 
-## Register
-
-product
-
 ## Platform
 
 web
@@ -24,7 +20,7 @@ Turns a laptop plugged into a TV into a real karaoke show — a live now-playing
 
 ## Brand Personality
 
-Playful house party, not nightclub. The codebase's existing neon/cyberpunk visual system (pink/cyan glow, deep purple-black) stays as the foundation, but the voice and feel should read warmer and friendlier — fun with friends, not moody venue-serious. Glow and neon are the show's lighting rig, not a mood the copy or interactions need to match.
+Playful house party, not nightclub. The implemented visual system (flat dark jukebox: black and charcoal surfaces with a single green accent, see DESIGN.md) is the foundation, and the voice and feel should read warm and friendly — fun with friends, not moody venue-serious. The dark stage is the show's lighting rig, not a mood the copy or interactions need to match.
 
 ## Operating Context
 
@@ -42,7 +38,7 @@ Generic karaoke apps: cheap bordered list UIs, default Bootstrap-y form styling,
 
 - Show, don't stream: the host screen should read as a live show (now-playing, lyrics, queue as a real interface) — never a bare video embed with UI bolted on.
 - Zero-friction join: the guest phone flow (room code → name → queue) can never stall the party waiting on installs, accounts, or host bottlenecks.
-- Warm neon, not cold venue: keep the pink/cyan glow system, but let copy, micro-interactions, and pacing feel like friends messing around, not a nightclub console.
+- Warm stage, not cold venue: keep the dark jukebox look with its single green accent, but let copy, micro-interactions, and pacing feel like friends messing around, not a nightclub console.
 - Don't reach for enterprise defaults: no card grids, no dashboard chrome — every surface should feel like it belongs to a living-room party, not a tool.
 
 ## Evidence on Hand
@@ -51,4 +47,4 @@ None — no real testimonials, case studies, press, or customer content exist. D
 
 ## Accessibility & Inclusion
 
-Baseline only — no formal WCAG target. Still hold to standard contrast and readability care given the neon-on-dark palette (glow effects must not compromise legibility of song titles, queue text, or form labels).
+Baseline only — no formal WCAG target. Still hold to standard contrast and readability care given the green-on-dark palette (the accent must never be the only carrier of meaning, and it must not compromise legibility of song titles, queue text, or form labels).
