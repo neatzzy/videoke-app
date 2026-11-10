@@ -68,10 +68,21 @@ const joinUrl = computed(() => `${siteUrl}/join?code=${session.value?.code ?? ''
 const showInfo = ref(false)
 let infoTimer: ReturnType<typeof setTimeout>
 
-// Placar do fim da música (5 s) e avanço automático. Some quando a música muda ou o host pula.
+// Troca de painel (cartão grande ↔ barra, placar final): fade curto com as classes do design system.
+const FADE_TRANSITION = {
+  enterActiveClass: 'transition-opacity duration-base ease-standard',
+  enterFromClass: 'opacity-0',
+  leaveActiveClass: 'transition-opacity duration-base ease-standard',
+  leaveToClass: 'opacity-0',
+}
+
+// Placar do fim da música (5 s) e avanço automático. Some quando a música muda, o host pula
+// ou cancela (botão, Esc). Cancelar mantém a música terminada; "Próxima" continua valendo.
 const AUTO_ADVANCE_MS = 5000
 const endedScore = ref<{ likes: number, dislikes: number } | null>(null)
 let advanceTimer: ReturnType<typeof setTimeout> | null = null
+// Id da música já contada: evita que um ENDED repetido do YouTube reabra o placar após cancelar.
+let endedSongId: string | null = null
 
 function cancelAutoAdvance() {
   if (advanceTimer !== null) clearTimeout(advanceTimer)
@@ -80,8 +91,9 @@ function cancelAutoAdvance() {
 }
 
 function onSongEnded() {
-  // Idempotente: o YouTube pode notificar ENDED mais de uma vez; só uma contagem por música.
-  if (advanceTimer !== null || !currentSong.value) return
+  const id = currentSong.value?.id
+  if (!id || advanceTimer !== null || endedSongId === id) return
+  endedSongId = id
   endedScore.value = { likes: votes.value.likes, dislikes: votes.value.dislikes }
   advanceTimer = setTimeout(() => {
     advanceTimer = null
@@ -90,10 +102,14 @@ function onSongEnded() {
   }, AUTO_ADVANCE_MS)
 }
 
-// Botão "Próxima": cancela a contagem antes de pular, para não avançar duas vezes.
+// Botão "Próxima" e "Avançar agora": cancelam a contagem antes de pular, para não avançar duas vezes.
 function skipToNext() {
   cancelAutoAdvance()
   nextSong()
+}
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && endedScore.value) cancelAutoAdvance()
 }
 
 // Tela sempre acesa (web). No Electron, powerSaveBlocker cuida disso no processo principal.
@@ -174,6 +190,7 @@ let progressInterval: ReturnType<typeof setInterval>
 onMounted(async () => {
   requestWakeLock()
   document.addEventListener('visibilitychange', onVisibilityChange)
+  window.addEventListener('keydown', onKeydown)
 
   try {
     // resumeSession resolves false for a missing/expired room, so fall through to a new one
@@ -208,6 +225,7 @@ onUnmounted(() => {
   clearTimeout(infoTimer)
   cancelAutoAdvance()
   document.removeEventListener('visibilitychange', onVisibilityChange)
+  window.removeEventListener('keydown', onKeydown)
   wakeLock?.release().catch(() => {})
   wakeLock = null
 })
@@ -219,6 +237,7 @@ watch(
   () => currentSong.value?.id,
   (newId) => {
     cancelAutoAdvance()
+    endedSongId = null
     if (!newId) return
     clearTimeout(infoTimer)
     showInfo.value = true
@@ -240,11 +259,11 @@ watch(playerReady, (ready) => {
 </script>
 
 <template>
-  <div class="h-screen w-screen flex flex-col gap-2 p-2 overflow-hidden bg-black select-none">
+  <div class="h-dvh w-full flex flex-col gap-2 pt-2 page-x pb-[max(0.5rem,env(safe-area-inset-bottom))] overflow-hidden bg-black select-none">
     <div class="flex-1 flex gap-2 min-h-0">
       <!-- ═══ MAIN PANEL: player + now singing ═══ -->
       <section aria-label="Palco" class="relative flex-1 flex flex-col min-w-0 rounded-lg bg-surface">
-        <header class="flex items-center justify-between px-6 py-4 flex-shrink-0">
+        <header class="flex items-center justify-between page-x py-4 flex-shrink-0">
           <AppLogo :size="32" text-class="text-lg" />
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-highlight text-base font-bold">
@@ -253,7 +272,7 @@ watch(playerReady, (ready) => {
             </div>
             <div
               v-if="session?.code"
-              class="px-5 py-2 rounded-full bg-[#eeeeee] text-[#181818] text-base font-bold tracking-label"
+              class="px-5 py-2 rounded-full bg-[#eeeeee] text-elevated text-base font-bold tracking-label"
             >
               SALA&nbsp;{{ session.code }}
             </div>
@@ -261,7 +280,7 @@ watch(playerReady, (ready) => {
         </header>
 
         <!-- v-show, not v-if: the YouTube iframe must stay mounted between songs -->
-        <div v-show="currentSong" class="flex-1 flex flex-col gap-5 px-6 pb-5 min-h-0">
+        <div v-show="currentSong" class="flex-1 flex flex-col gap-5 page-x pb-5 min-h-0">
           <!-- Size container: the player is the largest 16:9 box that fits, centered -->
           <div class="relative flex-1 min-h-0 [container-type:size]">
             <div
@@ -273,35 +292,35 @@ watch(playerReady, (ready) => {
             </div>
           </div>
 
-          <div v-if="currentSong && showInfo" class="flex items-end justify-between gap-8 flex-shrink-0">
-            <div class="min-w-0">
-              <p class="flex items-center gap-2.5 text-sm font-bold tracking-label text-subdued">
-                <span class="flex gap-0.5 items-end h-3.5" aria-hidden="true">
-                  <i v-for="h in [60, 100, 40, 80]" :key="h" class="w-[3px] bg-accent" :class="isPlaying && 'animate-pulse'" :style="{ height: `${h}%` }" />
-                </span>
-                AGORA CANTANDO
-              </p>
-              <h1 class="mt-2 text-[64px] font-extrabold leading-[1.1] truncate">{{ currentSong.title }}</h1>
-              <p class="mt-1 text-2xl text-subdued truncate">{{ currentSong.artist }}</p>
-              <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-4 rounded-full bg-highlight">
-                <span class="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-base font-bold">
-                  {{ currentSong.addedBy.charAt(0).toUpperCase() }}
-                </span>
-                <span class="text-base font-bold">{{ currentSong.addedBy }}</span>
+          <Transition v-bind="FADE_TRANSITION">
+            <div v-if="currentSong && showInfo" class="flex items-end justify-between gap-8 flex-shrink-0">
+              <div class="min-w-0">
+                <p class="flex items-center gap-2.5 text-sm font-bold tracking-label text-subdued">
+                  <Equalizer :playing="isPlaying" />
+                  AGORA CANTANDO
+                </p>
+                <h1 class="mt-2 text-[clamp(32px,5vw,64px)] font-extrabold leading-[1.1] truncate">{{ currentSong.title }}</h1>
+                <p class="mt-1 text-2xl text-subdued truncate">{{ currentSong.artist }}</p>
+                <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-4 rounded-full bg-highlight">
+                  <span class="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-base font-bold">
+                    {{ currentSong.addedBy.charAt(0).toUpperCase() }}
+                  </span>
+                  <span class="text-base font-bold">{{ currentSong.addedBy }}</span>
+                </div>
               </div>
-            </div>
 
-            <div v-if="session?.code" class="flex items-center gap-4 py-3 pl-3 pr-4 rounded-lg bg-elevated flex-shrink-0">
-              <div class="p-1.5 rounded-md bg-white">
-                <QrCode :value="joinUrl" :size="160" />
-              </div>
-              <div>
-                <p class="text-base font-bold">Entre pelo celular</p>
-                <p class="mt-1 text-sm text-subdued">Escaneie o QR code ou use o código</p>
-                <p class="mt-2 text-base font-bold font-mono tracking-label">{{ session.code }}</p>
+              <div v-if="session?.code" class="flex items-center gap-4 py-3 pl-3 pr-4 rounded-lg bg-elevated flex-shrink-0">
+                <div class="p-1.5 rounded-md bg-white">
+                  <QrCode :value="joinUrl" :size="160" />
+                </div>
+                <div>
+                  <p class="text-base font-bold">Entre pelo celular</p>
+                  <p class="mt-1 text-sm text-subdued">Escaneie o QR code ou use o código</p>
+                  <p class="mt-2 text-base font-bold font-mono tracking-label">{{ session.code }}</p>
+                </div>
               </div>
             </div>
-          </div>
+          </Transition>
         </div>
 
         <div v-if="!currentSong" class="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
@@ -312,13 +331,13 @@ watch(playerReady, (ready) => {
           <template v-else>
             <h1 class="text-2xl font-bold">Nenhuma música tocando</h1>
             <p class="text-base text-subdued">Escaneie o QR code com o celular</p>
-            <div v-if="session?.code" class="mt-4 flex items-center gap-10">
+            <div v-if="session?.code" class="mt-4 flex flex-wrap items-center justify-center gap-10">
               <div class="p-3 rounded-lg bg-white">
                 <QrCode :value="joinUrl" :size="220" />
               </div>
               <div class="text-left">
                 <p class="text-sm font-bold tracking-label text-subdued">OU DIGITE O CÓDIGO</p>
-                <div class="mt-3 px-12 py-4 rounded-full bg-[#eeeeee] text-[#181818] text-5xl font-extrabold tracking-[12px]">
+                <div class="mt-3 px-12 py-4 rounded-full bg-[#eeeeee] text-elevated text-5xl font-extrabold tracking-[12px]">
                   {{ session.code }}
                 </div>
               </div>
@@ -330,33 +349,62 @@ watch(playerReady, (ready) => {
         <p class="sr-only" aria-live="polite">
           <template v-if="endedScore">Placar final: {{ endedScore.likes }} curtidas, {{ endedScore.dislikes }} não curtiram. Próxima música em instantes.</template>
         </p>
-        <div
-          v-if="endedScore"
-          aria-hidden="true"
-          class="absolute inset-0 z-10 flex items-center justify-center bg-surface/90 rounded-lg"
-        >
-          <div class="text-center px-10 py-8 rounded-lg bg-elevated">
-            <p class="text-sm font-bold tracking-label text-subdued">PLACAR FINAL</p>
-            <p class="mt-2 text-4xl font-extrabold truncate max-w-[60vw]">{{ currentSong?.title }}</p>
-            <div class="mt-6 flex items-center justify-center gap-12">
-              <div>
-                <p class="text-6xl font-extrabold text-accent">{{ endedScore.likes }}</p>
-                <p class="mt-1 text-base text-subdued">curtidas</p>
+        <Transition v-bind="FADE_TRANSITION">
+          <div
+            v-if="endedScore"
+            class="absolute inset-0 z-10 flex items-center justify-center bg-surface rounded-lg"
+          >
+            <div class="w-[min(90%,640px)] text-center px-10 py-8 rounded-lg bg-elevated">
+              <p class="text-sm font-bold tracking-label text-subdued">PLACAR FINAL</p>
+              <p class="mt-2 text-4xl font-extrabold truncate">{{ currentSong?.title }}</p>
+              <div class="mt-6 flex items-center justify-center gap-12">
+                <div>
+                  <p class="text-6xl font-extrabold text-accent">{{ endedScore.likes }}</p>
+                  <p class="mt-1 text-base text-subdued">curtidas</p>
+                </div>
+                <div>
+                  <p class="text-6xl font-extrabold text-negative">{{ endedScore.dislikes }}</p>
+                  <p class="mt-1 text-base text-subdued">não curtiram</p>
+                </div>
               </div>
-              <div>
-                <p class="text-6xl font-extrabold text-negative">{{ endedScore.dislikes }}</p>
-                <p class="mt-1 text-base text-subdued">não curtiram</p>
+              <!-- Contagem regressiva: encolhe com scaleX até o avanço automático -->
+              <div class="mt-6 h-1 rounded-sm bg-muted overflow-hidden" aria-hidden="true">
+                <div
+                  class="countdown h-full w-full origin-left rounded-sm bg-accent"
+                  :style="{ animationDuration: `${AUTO_ADVANCE_MS}ms` }"
+                />
+              </div>
+              <p class="mt-3 text-base text-subdued">Próxima música em instantes</p>
+              <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  aria-label="Cancelar avanço automático"
+                  class="min-h-11 px-6 rounded-full bg-highlight hover:bg-hover text-base font-bold
+                         transition-colors duration-fast ease-standard
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  @click="cancelAutoAdvance"
+                >
+                  Cancelar avanço
+                </button>
+                <button
+                  type="button"
+                  class="min-h-11 px-6 rounded-full bg-accent hover:bg-accent-hover text-black text-base font-bold
+                         transition-colors duration-fast ease-standard
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  @click="skipToNext"
+                >
+                  Avançar agora
+                </button>
               </div>
             </div>
-            <p class="mt-6 text-base text-subdued">Próxima música em instantes</p>
           </div>
-        </div>
+        </Transition>
       </section>
 
       <!-- ═══ QUEUE PANEL ═══ -->
-      <aside aria-label="Fila de músicas" class="w-[340px] flex-shrink-0 flex flex-col rounded-lg bg-surface">
-        <div class="flex items-center gap-3 px-5 py-4 text-subdued flex-shrink-0">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+      <aside aria-label="Fila de músicas" class="w-[clamp(260px,26vw,340px)] flex-shrink-0 flex flex-col rounded-lg bg-surface">
+        <div class="flex items-center gap-3 px-page py-4 text-subdued flex-shrink-0">
+          <AppIcon name="list" :size="20" />
           <span class="text-base font-bold">Fila</span>
           <span
             v-if="queue.length > 0"
@@ -370,11 +418,7 @@ watch(playerReady, (ready) => {
           v-if="localQueue.length === 0"
           class="flex-1 flex flex-col items-center justify-center gap-2 text-center text-subdued"
         >
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" />
-            <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6" />
-            <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6" />
-          </svg>
+          <AppIcon name="music" :size="32" />
           <p class="text-base">Nenhuma música adicionada ainda</p>
         </div>
 
@@ -384,8 +428,8 @@ watch(playerReady, (ready) => {
             :key="item.id"
             draggable="true"
             :class="[
-              'flex items-center gap-3 px-3 py-2 rounded-md cursor-grab active:cursor-grabbing transition-colors',
-              idx === 0 ? 'bg-highlight' : 'hover:bg-highlight'
+              'group relative flex items-center gap-3 px-3 py-2 rounded-md cursor-grab active:cursor-grabbing transition-colors duration-fast ease-standard',
+              idx === 0 ? 'bg-highlight' : 'hover:bg-highlight focus-within:bg-highlight'
             ]"
             @dragstart="onDragStart(idx)"
             @dragover.prevent="onDragOver(idx)"
@@ -412,28 +456,33 @@ watch(playerReady, (ready) => {
             >
               Próxima
             </span>
-            <div class="flex flex-col gap-0.5 flex-shrink-0">
+            <!-- Fora do fluxo: o título ocupa a linha inteira; aparece com hover, foco por teclado ou em telas sem hover -->
+            <div
+              class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 p-1 rounded-md bg-highlight opacity-0
+                     group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100
+                     transition-opacity duration-fast ease-standard"
+            >
               <button
                 type="button"
                 :disabled="idx === 0"
                 :aria-label="`Mover ${item.title} para cima`"
-                class="w-8 h-8 rounded-md bg-elevated hover:bg-hover flex items-center justify-center transition-colors
-                       disabled:opacity-40 disabled:pointer-events-none
+                class="w-9 h-9 rounded-md bg-elevated hover:bg-hover flex items-center justify-center
+                       transition-colors duration-fast ease-standard disabled:opacity-40 disabled:pointer-events-none
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 @click="moveItem(idx, -1)"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 15l6-6 6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <AppIcon name="chevron-up" :size="16" />
               </button>
               <button
                 type="button"
                 :disabled="idx === localQueue.length - 1"
                 :aria-label="`Mover ${item.title} para baixo`"
-                class="w-8 h-8 rounded-md bg-elevated hover:bg-hover flex items-center justify-center transition-colors
-                       disabled:opacity-40 disabled:pointer-events-none
+                class="w-9 h-9 rounded-md bg-elevated hover:bg-hover flex items-center justify-center
+                       transition-colors duration-fast ease-standard disabled:opacity-40 disabled:pointer-events-none
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 @click="moveItem(idx, 1)"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <AppIcon name="chevron-down" :size="16" />
               </button>
             </div>
           </div>
@@ -472,72 +521,87 @@ watch(playerReady, (ready) => {
 
     <!-- ═══ NOW PLAYING BAR ═══ -->
     <!-- Hidden during the info phase so the player gets the room -->
-    <footer v-if="!currentSong || !showInfo" aria-label="Reprodução" class="h-[72px] flex-shrink-0 flex items-center gap-6 px-4">
-      <template v-if="currentSong">
-        <div class="w-[30%] flex items-center gap-3 min-w-0">
-          <img
-            v-if="currentSong.thumbnail"
-            :src="currentSong.thumbnail"
-            alt=""
-            class="w-12 h-12 rounded-md object-cover bg-muted flex-shrink-0"
-          >
-          <div v-else class="w-12 h-12 rounded-md bg-muted flex-shrink-0" />
-          <div class="min-w-0">
-            <p class="text-base font-bold truncate">{{ currentSong.title }}</p>
-            <p class="text-sm text-subdued truncate">{{ currentSong.artist }}</p>
-          </div>
-        </div>
-
-        <div class="flex-1 flex flex-col items-center gap-1.5">
-          <div class="flex items-center gap-4">
-            <button
-              :aria-label="isPlaying ? 'Pausar' : 'Tocar'"
-              class="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:scale-105 transition-transform
-                     focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              @click="togglePlay"
+    <Transition v-bind="FADE_TRANSITION">
+      <footer v-if="!currentSong || !showInfo" aria-label="Reprodução" class="min-h-[72px] flex-shrink-0 flex items-center gap-6 px-4">
+        <template v-if="currentSong">
+          <div class="w-[30%] flex items-center gap-3 min-w-0">
+            <img
+              v-if="currentSong.thumbnail"
+              :src="currentSong.thumbnail"
+              alt=""
+              class="w-12 h-12 rounded-md object-cover bg-muted flex-shrink-0"
             >
-              <svg v-if="isPlaying" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" fill="#000" /><rect x="14" y="4" width="4" height="16" fill="#000" /></svg>
-              <svg v-else width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><polygon points="7,4 20,12 7,20" fill="#000" /></svg>
-            </button>
-            <button
-              class="h-8 flex items-center gap-2 px-4 rounded-full bg-highlight hover:bg-hover text-base font-bold transition-colors
-                     focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              @click="skipToNext"
-            >
-              Próxima
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            </button>
-          </div>
-          <div class="w-full max-w-[560px] flex items-center gap-2 text-base text-subdued">
-            <span class="tabular-nums">{{ formatTime(currentTime) }}</span>
-            <div class="flex-1 h-1 rounded-sm bg-muted overflow-hidden">
-              <div
-                class="h-full w-full origin-left rounded-sm bg-accent transition-transform duration-1000 ease-linear"
-                :style="{ transform: `scaleX(${progress / 100})` }"
-              />
+            <div v-else class="w-12 h-12 rounded-md bg-muted flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-base font-bold truncate">{{ currentSong.title }}</p>
+              <p class="text-sm text-subdued truncate">{{ currentSong.artist }}</p>
             </div>
-            <span class="tabular-nums">{{ formatTime(totalDuration) }}</span>
           </div>
-        </div>
 
-        <div class="w-[30%] text-right text-base text-subdued" aria-live="polite">
-          {{ queue.length > 0 ? `${queue.length} na fila` : 'Fila vazia' }}
-        </div>
-      </template>
-      <span v-else class="text-base text-subdued">Fila vazia</span>
-    </footer>
+          <div class="flex-1 flex flex-col items-center gap-1.5">
+            <div class="flex items-center gap-4">
+              <button
+                :aria-label="isPlaying ? 'Pausar' : 'Tocar'"
+                class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-105
+                       transition-transform duration-fast ease-standard
+                       focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                @click="togglePlay"
+              >
+                <AppIcon :name="isPlaying ? 'pause' : 'play'" :size="16" />
+              </button>
+              <button
+                class="h-8 flex items-center gap-2 px-4 rounded-full bg-highlight hover:bg-hover text-base font-bold
+                       transition-colors duration-fast ease-standard
+                       focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                @click="skipToNext"
+              >
+                Próxima
+                <AppIcon name="chevron-right" :size="16" />
+              </button>
+            </div>
+            <div class="w-full max-w-[560px] flex items-center gap-2 text-base text-subdued">
+              <span class="tabular-nums">{{ formatTime(currentTime) }}</span>
+              <div class="flex-1 h-1 rounded-sm bg-muted overflow-hidden">
+                <div
+                  class="h-full w-full origin-left rounded-sm bg-accent transition-transform duration-1000 ease-linear"
+                  :style="{ transform: `scaleX(${progress / 100})` }"
+                />
+              </div>
+              <span class="tabular-nums">{{ formatTime(totalDuration) }}</span>
+            </div>
+          </div>
+
+          <div class="w-[30%] text-right text-base text-subdued" aria-live="polite">
+            {{ queue.length > 0 ? `${queue.length} na fila` : 'Fila vazia' }}
+          </div>
+        </template>
+        <span v-else class="text-base text-subdued">Fila vazia</span>
+      </footer>
+    </Transition>
   </div>
 </template>
 
 <style scoped>
+/* Barra de contagem do avanço automático: encolhe de 1 a 0 na duração inline (AUTO_ADVANCE_MS) */
+.countdown {
+  animation: countdown linear forwards;
+}
+
+@keyframes countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
 /* Reordenação do placar: a linha desliza até a nova posição; reduced-motion é tratado em main.css */
 .rank-move {
-  transition: transform 400ms ease;
+  transition: transform var(--motion-base) var(--ease-standard);
 }
+
 .rank-enter-active,
 .rank-leave-active {
-  transition: opacity 300ms ease;
+  transition: opacity var(--motion-fast) var(--ease-standard);
 }
+
 .rank-enter-from,
 .rank-leave-to {
   opacity: 0;

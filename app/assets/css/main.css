@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes eq {
+  from { transform: scaleY(0.3); }
+  to { transform: scaleY(1); }
+}
+
 @layer base {
   body {
     background-color: #000;
@@ -20,8 +31,18 @@
 @layer components {
   /* Spotify-style text field: hairline inset border, white ring on focus */
   .field {
-    @apply w-full bg-highlight text-white placeholder-subdued text-base px-4 py-3 rounded transition-shadow focus:outline-none;
+    @apply w-full bg-highlight text-white placeholder-subdued text-base px-4 py-3 rounded focus:outline-none;
     box-shadow: rgb(18, 18, 18) 0 1px 0, rgb(124, 124, 124) 0 0 0 1px inset;
+    transition: box-shadow var(--motion-fast) var(--ease-standard);
+  }
+
+  /* Barra do equalizador (Equalizer.vue): duração/atraso vêm inline por barra */
+  .eq-bar {
+    transform-origin: bottom;
+    animation-name: eq;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
   }
 
   .field:focus {
@@ -30,6 +51,24 @@
 }
 
 @layer utilities {
+  /* Respeitam notch/safe area em telas de celular; mínimo de 1.25rem/1.5rem no resto */
+  .page-x {
+    padding-left: max(1.25rem, env(safe-area-inset-left));
+    padding-right: max(1.25rem, env(safe-area-inset-right));
+  }
+
+  .page-top {
+    padding-top: max(1.5rem, env(safe-area-inset-top));
+  }
+
+  .page-bottom {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
   }
@@ -45,6 +84,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Sem movimento, o equalizador fica parado em alturas distintas (não como um bloco liso). */
+  .eq-bar { animation: none !important; transform: scaleY(var(--eq-base, 0.6)); }
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

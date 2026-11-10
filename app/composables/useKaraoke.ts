@@ -26,6 +26,8 @@ let pusherClient: PusherClient | null = null
 let subscribedCode: string | null = null
 // Sala cujos ids "minhas músicas" estão carregados em memória
 let mySongsCode: string | null = null
+// Timer do "Última performance": cancelado ao chegar outro resultado (B-01)
+let previousVotesTimer: ReturnType<typeof setTimeout> | undefined
 
 const mySongsKey = (code: string) => `karaoke:mySongs:${code}`
 
@@ -139,7 +141,8 @@ export const useKaraoke = () => {
       setSession(data.session)
       if (data.previousVotes) {
         previousVotes.value = data.previousVotes
-        setTimeout(() => { previousVotes.value = null }, 5000)
+        clearTimeout(previousVotesTimer)
+        previousVotesTimer = setTimeout(() => { previousVotes.value = null }, 8000)
       }
     })
   }

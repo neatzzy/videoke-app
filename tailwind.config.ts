@@ -22,6 +22,16 @@ export default {
       letterSpacing: {
         label: '1.4px',
       },
+      spacing: {
+        page: '1.25rem',
+      },
+      transitionDuration: {
+        fast: 'var(--motion-fast)',
+        base: 'var(--motion-base)',
+      },
+      transitionTimingFunction: {
+        standard: 'var(--ease-standard)',
+      },
     },
   },
 } satisfies Config
