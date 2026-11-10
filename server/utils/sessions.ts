@@ -15,6 +15,7 @@ export interface SessionClient {
   name: string
   isHost: boolean
   songsSung?: number
+  likesReceived?: number // salas antigas não têm o campo: ausente = 0
 }
 
 export interface Session {
@@ -50,6 +51,12 @@ export function fairInsertIndex(session: Session, clientId: string): number {
     turns[owner]!++
   }
   return session.queue.length
+}
+
+// Likes of a finished song go to its singer; a singer who left the room earns nothing.
+export function awardLikes(session: Session, singerId: string, likes: number): void {
+  const client = session.clients[singerId]
+  if (client && likes > 0) client.likesReceived = (client.likesReceived ?? 0) + likes
 }
 
 function generateCode(): string {
@@ -114,7 +121,7 @@ export function joinSession(redis: Redis, clientId: string, code: string, name: 
     if (!session) return null
 
     // rejoining keeps songsSung and isHost; only the name can change
-    const existing = session.clients[clientId]
+    const existing = Object.hasOwn(session.clients, clientId) ? session.clients[clientId] : undefined
     if (existing) existing.name = name
     else session.clients[clientId] = { name, isHost: false }
     await saveSession(redis, session)
@@ -122,15 +129,15 @@ export function joinSession(redis: Redis, clientId: string, code: string, name: 
   })
 }
 
-export function addToQueue(redis: Redis, clientId: string, code: string, item: Omit<QueueItem, 'id' | 'addedBy' | 'addedById'>): Promise<Session | null> {
+export function addToQueue(redis: Redis, clientId: string, code: string, item: Omit<QueueItem, 'id' | 'addedBy' | 'addedById'>): Promise<{ session: Session; songId: string } | null> {
   return withSessionLock(redis, code, async () => {
     const session = await getSession(redis, code)
-    if (!session || !session.clients[clientId]) return null
+    if (!session || !Object.hasOwn(session.clients, clientId)) return null
 
     const queueItem: QueueItem = {
       ...item,
       id: crypto.randomUUID(),
-      addedBy: session.clients[clientId].name,
+      addedBy: session.clients[clientId]!.name,
       addedById: clientId,
     }
 
@@ -143,6 +150,24 @@ export function addToQueue(redis: Redis, clientId: string, code: string, item: O
       session.queue.splice(fairInsertIndex(session, clientId), 0, queueItem)
     }
 
+    await saveSession(redis, session)
+    return { session, songId: queueItem.id }
+  })
+}
+
+// Only the singer can take their own queued song off the list. The song playing now is never in `queue`,
+// so it cannot be removed here. An id not in the queue (already removed, or never existed) is a no-op that
+// returns the session, so a double tap is harmless. Another singer's song returns null (route answers 403).
+export function removeFromQueue(redis: Redis, clientId: string, code: string, songId: string): Promise<Session | null> {
+  return withSessionLock(redis, code, async () => {
+    const session = await getSession(redis, code)
+    if (!session || !Object.hasOwn(session.clients, clientId)) return null
+
+    const item = session.queue.find((q) => q.id === songId)
+    if (!item) return session
+    if (item.addedById !== clientId) return null
+
+    session.queue = session.queue.filter((q) => q.id !== songId)
     await saveSession(redis, session)
     return session
   })
@@ -157,6 +182,7 @@ export function advanceQueue(redis: Redis, clientId: string, code: string, expec
     if (expectedSongId !== undefined && session.currentSong?.id !== expectedSongId) return { session, previousVotes: null }
 
     const previousVotes = session.currentSong ? { ...session.votes } : null
+    if (session.currentSong) awardLikes(session, session.currentSong.addedById, session.votes.likes)
 
     if (session.queue.length > 0) {
       session.currentSong = session.queue.shift()!
@@ -192,7 +218,7 @@ export function reorderQueue(redis: Redis, clientId: string, code: string, order
 export function castVote(redis: Redis, clientId: string, code: string, vote: 'like' | 'dislike'): Promise<Session | null> {
   return withSessionLock(redis, code, async () => {
     const session = await getSession(redis, code)
-    if (!session || !session.currentSong || !session.clients[clientId]) return null
+    if (!session || !session.currentSong || !Object.hasOwn(session.clients, clientId)) return null
     if (session.votes.voters.includes(clientId)) return session
 
     session.votes.voters.push(clientId)
@@ -210,7 +236,7 @@ export function serializeSession(session: Session) {
   return {
     code: session.code,
     // clientId é credencial: nunca sai do servidor
-    clients: Object.values(session.clients).map(({ name, isHost }) => ({ name, isHost })),
+    clients: Object.values(session.clients).map(({ name, isHost, likesReceived }) => ({ name, isHost, likesReceived: likesReceived ?? 0 })),
     queue: session.queue.map(publicItem),
     currentSong: session.currentSong && publicItem(session.currentSong),
     status: session.status,

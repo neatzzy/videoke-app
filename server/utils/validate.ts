@@ -24,11 +24,21 @@ export function parseCode(value: unknown): string {
 }
 
 export function parseClientId(value: unknown): string {
-  return text(value, 'Identificação do cliente', 64, 1)
+  const id = text(value, 'Identificação do cliente', 64, 1)
+  // O id vira chave de `session.clients`: nomes de Object.prototype não podem ser aceitos.
+  if (id in Object.prototype || id === 'prototype') invalid('Identificação do cliente')
+  return id
 }
 
 export function parseName(value: unknown): string {
   return text(value, 'Nome', 24, 1)
+}
+
+// Pusher socket_id: "<digits>.<digits>".
+const SOCKET_ID_RE = /^\d+\.\d+$/
+
+export function parseSocketId(value: unknown): string {
+  return typeof value === 'string' && SOCKET_ID_RE.test(value) ? value : invalid('Conexão')
 }
 
 export function parseVote(value: unknown): 'like' | 'dislike' {
@@ -40,8 +50,12 @@ export function parseIds(value: unknown): string[] {
   return value.map((id) => text(id, 'Ordem da fila', 64, 1))
 }
 
+export function parseRequiredSongId(value: unknown): string {
+  return text(value, 'Música', 64, 1)
+}
+
 export function parseSongId(value: unknown): string | undefined {
-  return value == null ? undefined : text(value, 'Música', 64, 1)
+  return value == null ? undefined : parseRequiredSongId(value)
 }
 
 export function parseSong(body: Record<string, unknown>) {

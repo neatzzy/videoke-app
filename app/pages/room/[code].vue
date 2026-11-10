@@ -1,6 +1,16 @@
 <script setup lang="ts">
 const route = useRoute()
-const { session, currentSong, queue, votes, previousVotes, error, addSong, vote, resumeSession } = useKaraoke()
+const { session, currentSong, queue, votes, previousVotes, error, addSong, removeSong, isMine, vote, resumeSession } = useKaraoke()
+
+// Vibração curta de confirmação; sem efeito onde a API não existe (Safari iOS) ou com "reduzir movimento".
+function haptic(ms: number) {
+  try {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    navigator.vibrate?.(ms)
+  } catch {
+    // API indisponível: segue sem feedback tátil
+  }
+}
 
 type Tab = 'live' | 'search' | 'queue'
 // Tab lives in the URL so the phone's back button returns to the previous tab instead of leaving the room
@@ -18,11 +28,13 @@ const searchResults = ref<{ videoId: string; title: string; artist: string; thum
 const searching = ref(false)
 const addedIds = ref<Set<string>>(new Set())
 
+const resuming = ref(false)
 onMounted(async () => {
   // Session survives client-side navigation (module-level useState) but not a
   // hard reload — resume it from the URL's room code before giving up on it.
   if (session.value) return
-  const ok = await resumeSession(route.params.code as string)
+  resuming.value = true
+  const ok = await resumeSession(route.params.code as string).finally(() => { resuming.value = false })
   if (!ok) navigateTo('/join')
 })
 
@@ -53,15 +65,28 @@ async function addToQueue(item: (typeof searchResults.value)[number]) {
   try {
     await addSong({ videoId: item.videoId, title: item.title, artist: item.artist, thumbnail: item.thumbnail, duration: '' })
     addedIds.value.add(item.videoId)
+    haptic(20)
     activeTab.value = 'queue'
   } catch {
     flashError('Não foi possível adicionar a música. Tente de novo.')
   }
 }
 
+// Evita toque duplo enquanto a remoção está em andamento
+const removingId = ref<string | null>(null)
+async function removeFromQueue(item: { id: string; title: string }) {
+  if (removingId.value) return
+  removingId.value = item.id
+  const ok = await removeSong(item.id)
+  removingId.value = null
+  if (ok) haptic(20)
+  else flashError('Não foi possível remover a música. Tente de novo.')
+}
+
 async function castVote(v: 'like' | 'dislike') {
   if (myVote.value) return
   myVote.value = v
+  haptic(30)
   try {
     await vote(v)
   } catch {
@@ -74,7 +99,7 @@ async function castVote(v: 'like' | 'dislike') {
 <template>
   <div class="h-dvh flex flex-col bg-surface overflow-hidden">
     <!-- Top bar -->
-    <header class="flex items-center justify-between px-4 pt-6 pb-3 flex-shrink-0">
+    <header class="flex items-center justify-between pl-[calc(1rem_+_env(safe-area-inset-left))] pr-[calc(1rem_+_env(safe-area-inset-right))] pt-[calc(1.5rem_+_env(safe-area-inset-top))] pb-3 flex-shrink-0">
       <AppLogo />
       <span v-if="session?.code" class="px-3 py-1 rounded-full bg-highlight text-xs font-bold font-mono tracking-[2px]">
         {{ session.code }}
@@ -82,10 +107,15 @@ async function castVote(v: 'like' | 'dislike') {
     </header>
 
     <!-- Content area (scrollable) -->
-    <main class="flex-1 overflow-y-auto scrollbar-thin px-4 pt-2 pb-4">
+    <main class="flex-1 overflow-y-auto scrollbar-thin pl-[calc(1rem_+_env(safe-area-inset-left))] pr-[calc(1rem_+_env(safe-area-inset-right))] pt-2 pb-4">
+      <Transition name="tab" mode="out-in">
+      <div :key="resuming ? 'resuming' : activeTab">
+
+      <!-- ══ RESUMING ══ -->
+      <p v-if="resuming" role="status" class="py-16 text-center text-sm text-subdued animate-pulse">Entrando na sala…</p>
 
       <!-- ══ TAB: AO VIVO ══ -->
-      <template v-if="activeTab === 'live'">
+      <template v-else-if="activeTab === 'live'">
 
         <!-- Previous votes result -->
         <Transition name="fade">
@@ -96,11 +126,11 @@ async function castVote(v: 'like' | 'dislike') {
             <span class="text-xs font-bold tracking-label text-subdued uppercase">Última performance</span>
             <div class="flex gap-4 text-sm font-bold">
               <span class="flex items-center gap-1.5 text-accent">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 9l-6-6-6 6M12 4v16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 {{ previousVotes.likes }}
               </span>
               <span class="flex items-center gap-1.5 text-negative">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 15l-6 6-6-6M12 20V4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 {{ previousVotes.dislikes }}
               </span>
             </div>
@@ -127,7 +157,7 @@ async function castVote(v: 'like' | 'dislike') {
           <h2 class="mt-4 text-2xl font-bold leading-tight line-clamp-2">{{ currentSong.title }}</h2>
           <p class="mt-1 text-sm text-subdued">{{ currentSong.artist }}</p>
           <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-highlight">
-            <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-[11px] font-bold">
+            <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
               {{ currentSong.addedBy.charAt(0).toUpperCase() }}
             </span>
             <span class="text-xs font-bold">{{ currentSong.addedBy }}</span>
@@ -145,7 +175,7 @@ async function castVote(v: 'like' | 'dislike') {
               ]"
               @click="castVote('like')"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 9l-6-6-6 6M12 4v16" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               Curtir
             </button>
             <button
@@ -159,12 +189,12 @@ async function castVote(v: 'like' | 'dislike') {
               ]"
               @click="castVote('dislike')"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="#f3727f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 15l-6 6-6-6M12 20V4" stroke="#f3727f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               Não curtir
             </button>
           </div>
 
-          <p class="mt-3 text-center text-xs text-subdued">
+          <p class="mt-3 text-center text-xs text-subdued" aria-live="polite">
             <template v-if="myVote">Voto registrado! · </template>
             {{ votes.total }} votos · {{ votes.likes }} curtidas · {{ votes.dislikes }} não curtidas
           </p>
@@ -209,7 +239,17 @@ async function castVote(v: 'like' | 'dislike') {
           {{ searching ? 'Buscando...' : 'Resultados' }}
         </p>
 
-        <div class="flex flex-col gap-0.5">
+        <div v-if="searching" class="flex flex-col gap-0.5" aria-hidden="true">
+          <div v-for="n in 3" :key="n" class="flex items-center gap-3 p-2 animate-pulse">
+            <div class="w-14 h-10 rounded bg-highlight flex-shrink-0" />
+            <div class="flex-1 min-w-0 flex flex-col gap-2">
+              <div class="h-3 w-3/4 rounded bg-highlight" />
+              <div class="h-2.5 w-1/2 rounded bg-highlight" />
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="flex flex-col gap-0.5">
           <div
             v-for="item in searchResults"
             :key="item.videoId"
@@ -230,7 +270,7 @@ async function castVote(v: 'like' | 'dislike') {
               :aria-label="`${item.title} já está na fila`"
               class="w-11 h-11 rounded-full bg-accent flex items-center justify-center flex-shrink-0"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5 9-10" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l5 5 9-10" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </span>
             <button
               v-else
@@ -265,10 +305,10 @@ async function castVote(v: 'like' | 'dislike') {
             <p class="text-sm font-bold text-accent truncate">{{ currentSong.title }}</p>
             <p class="mt-0.5 text-xs text-subdued truncate">{{ currentSong.addedBy }} · {{ currentSong.artist }}</p>
           </div>
-          <span class="ml-auto px-2 py-0.5 rounded-full bg-highlight text-[10.5px] font-semibold flex-shrink-0">Tocando agora</span>
+          <span class="ml-auto px-2 py-0.5 rounded-full bg-highlight text-xs font-semibold flex-shrink-0">Tocando agora</span>
         </div>
 
-        <div class="flex flex-col gap-0.5">
+        <TransitionGroup name="queue" tag="div" class="flex flex-col gap-0.5">
           <div
             v-for="(item, idx) in queue"
             :key="item.id"
@@ -279,13 +319,26 @@ async function castVote(v: 'like' | 'dislike') {
               <p class="text-sm font-bold truncate">{{ item.title }}</p>
               <p class="mt-0.5 text-xs text-subdued truncate">{{ item.addedBy }} · {{ item.artist }}</p>
             </div>
+            <button
+              v-if="isMine(item.id)"
+              type="button"
+              :aria-label="`Remover ${item.title} da fila`"
+              :disabled="removingId === item.id"
+              class="ml-auto w-11 h-11 -mr-2 rounded-full text-subdued hover:text-white flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-40
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              @click="removeFromQueue(item)"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+            </button>
           </div>
-        </div>
+        </TransitionGroup>
 
         <p v-if="queue.length === 0 && !currentSong" class="text-center text-subdued text-sm py-12">
           Fila vazia
         </p>
       </template>
+      </div>
+      </Transition>
     </main>
 
     <!-- Error toast -->
@@ -293,28 +346,28 @@ async function castVote(v: 'like' | 'dislike') {
       <div
         v-if="error"
         role="alert"
-        class="fixed left-4 right-4 bottom-20 z-50 px-4 py-3 rounded-lg bg-highlight text-white text-sm text-center shadow-[rgba(0,0,0,.5)_0_8px_24px]"
+        class="fixed left-[calc(1rem_+_env(safe-area-inset-left))] right-[calc(1rem_+_env(safe-area-inset-right))] bottom-[calc(5rem_+_env(safe-area-inset-bottom))] z-50 px-4 py-3 rounded-lg bg-highlight text-white text-sm text-center shadow-[rgba(0,0,0,.5)_0_8px_24px]"
       >
         {{ error }}
       </div>
     </Transition>
 
     <!-- Bottom Navigation -->
-    <nav class="flex-shrink-0 flex bg-black border-t border-highlight pb-[env(safe-area-inset-bottom)]">
+    <nav aria-label="Navegação da sala" class="flex-shrink-0 flex bg-black border-t border-highlight pb-[env(safe-area-inset-bottom)]">
       <button
         v-for="tab in (['live', 'search', 'queue'] as const)"
         :key="tab"
         :aria-current="activeTab === tab ? 'true' : undefined"
         :class="[
-          'flex-1 flex flex-col items-center py-3 gap-1.5 text-[10.5px] transition-colors',
+          'flex-1 flex flex-col items-center py-3 gap-1.5 text-xs transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white',
           activeTab === tab ? 'text-accent font-bold' : 'text-subdued hover:text-white'
         ]"
         @click="activeTab = tab"
       >
-        <span v-if="tab === 'live'" class="w-2 h-2 my-[5px] rounded-full bg-current" />
-        <svg v-else-if="tab === 'search'" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
-        <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <svg v-if="tab === 'live'" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="currentColor" /></svg>
+        <svg v-else-if="tab === 'search'" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+        <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
         <span>{{ tab === 'live' ? 'Ao Vivo' : tab === 'search' ? 'Buscar' : 'Fila' }}</span>
       </button>
     </nav>
@@ -324,4 +377,11 @@ async function castVote(v: 'like' | 'dislike') {
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity 0.4s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.tab-enter-active, .tab-leave-active { transition: opacity 0.15s ease; }
+.tab-enter-from, .tab-leave-to { opacity: 0; }
+
+.queue-enter-active, .queue-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.queue-enter-from, .queue-leave-to { opacity: 0; transform: translateY(6px); }
+.queue-move { transition: transform 0.2s ease; }
 </style>

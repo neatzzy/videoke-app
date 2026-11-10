@@ -10,14 +10,14 @@ export default defineEventHandler(async (event) => {
   const song = parseSong(body)
 
   const redis = getRedis()
-  const session = await addToQueue(redis, clientId, code, song)
+  const result = await addToQueue(redis, clientId, code, song)
 
-  if (!session) {
+  if (!result) {
     throw createError({ statusCode: 403, message: 'Sala não encontrada ou sem permissão' })
   }
 
-  const serialized = serializeSession(session)
+  const serialized = serializeSession(result.session)
   await broadcastSession(code, { session: serialized })
 
-  return { session: serialized }
+  return { session: serialized, songId: result.songId }
 })

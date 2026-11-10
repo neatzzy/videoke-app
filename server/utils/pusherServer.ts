@@ -1,4 +1,5 @@
 import Pusher from 'pusher'
+import { createHash } from 'node:crypto'
 
 let _pusher: Pusher | null = null
 
@@ -16,10 +17,17 @@ export function getPusher(): Pusher {
   return _pusher
 }
 
+export const presenceChannel = (code: string) => `presence-session-${code}`
+
+// user_id é público (aparece para os demais membros): hash do clientId, que é credencial.
+export function presenceUserId(clientId: string): string {
+  return createHash('sha256').update(clientId).digest('hex')
+}
+
 // Falha do Pusher não pode virar 500: o estado já foi gravado no Redis.
 export async function broadcastSession(code: string, payload: Record<string, unknown>): Promise<void> {
   try {
-    await getPusher().trigger(`session-${code}`, 'session-update', payload)
+    await getPusher().trigger(presenceChannel(code), 'session-update', payload)
   } catch (err) {
     console.error(`[pusher] falha ao notificar a sala ${code}:`, err)
   }

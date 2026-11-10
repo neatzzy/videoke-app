@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { fairInsertIndex } from '../server/utils/sessions'
-import type { QueueItem, Session } from '../server/utils/sessions'
+import { awardLikes, fairInsertIndex, serializeSession } from '../server/utils/sessions'
+import type { QueueItem, Session, SessionClient } from '../server/utils/sessions'
 
 const item = (addedById: string): QueueItem => ({
   id: `${addedById}-${Math.random()}`,
@@ -75,5 +75,79 @@ describe('fairInsertIndex', () => {
     const before = JSON.stringify(s)
     fairInsertIndex(s, 'B')
     expect(JSON.stringify(s)).toBe(before)
+  })
+})
+
+describe('awardLikes', () => {
+  const withClients = (clients: Record<string, Partial<SessionClient>>): Session => ({
+    code: 'ABCD',
+    hostClientId: 'host',
+    clients: Object.fromEntries(
+      Object.entries(clients).map(([id, c]) => [id, { name: id, isHost: false, ...c }]),
+    ),
+    queue: [],
+    currentSong: null,
+    status: 'waiting',
+    votes: { likes: 0, dislikes: 0, voters: [] },
+  })
+
+  it('adds the likes of the finished song to the singer total', () => {
+    const s = withClients({ A: {} })
+    awardLikes(s, 'A', 4)
+    expect(s.clients.A!.likesReceived).toBe(4)
+  })
+
+  it('accumulates over several songs of the same singer', () => {
+    const s = withClients({ A: { likesReceived: 3 } })
+    awardLikes(s, 'A', 2)
+    expect(s.clients.A!.likesReceived).toBe(5)
+  })
+
+  it('ignores a singer who is no longer in the room', () => {
+    const s = withClients({ A: {} })
+    awardLikes(s, 'gone', 5)
+    expect(s.clients).not.toHaveProperty('gone')
+    expect(s.clients.A!.likesReceived).toBeUndefined()
+  })
+
+  it('does nothing when the song got no likes', () => {
+    const s = withClients({ A: { likesReceived: 2 } })
+    awardLikes(s, 'A', 0)
+    expect(s.clients.A!.likesReceived).toBe(2)
+  })
+
+  it('treats a legacy client without likesReceived as zero', () => {
+    const s = withClients({ A: { songsSung: 1 } })
+    awardLikes(s, 'A', 1)
+    expect(s.clients.A!.likesReceived).toBe(1)
+  })
+})
+
+describe('serializeSession clients', () => {
+  const base = (clients: Session['clients']): Session => ({
+    code: 'ABCD',
+    hostClientId: 'secret-host',
+    clients,
+    queue: [],
+    currentSong: null,
+    status: 'waiting',
+    votes: { likes: 0, dislikes: 0, voters: [] },
+  })
+
+  it('exposes name, isHost and likesReceived but never the clientId', () => {
+    const out = serializeSession(base({
+      'secret-host': { name: 'Ana', isHost: true, likesReceived: 7 },
+      'secret-guest': { name: 'Bia', isHost: false, likesReceived: 2 },
+    }))
+    expect(out.clients).toEqual([
+      { name: 'Ana', isHost: true, likesReceived: 7 },
+      { name: 'Bia', isHost: false, likesReceived: 2 },
+    ])
+    expect(JSON.stringify(out)).not.toContain('secret-')
+  })
+
+  it('reports likesReceived 0 for rooms created before the field existed', () => {
+    const out = serializeSession(base({ 'old-guest': { name: 'Caio', isHost: false } }))
+    expect(out.clients).toEqual([{ name: 'Caio', isHost: false, likesReceived: 0 }])
   })
 })
