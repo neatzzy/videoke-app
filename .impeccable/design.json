@@ -1,35 +1,279 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-16T11:51:36Z",
+  "generatedAt": "2026-11-10T23:06:17.000Z",
   "title": "Design System: Videoké",
   "extensions": {
     "colorMeta": {
-      "void": { "role": "neutral", "displayName": "Void", "canonical": "#060211", "tonalRamp": ["#010003", "#020107", "#04010B", "#05020F", "#060211", "#44414D", "#838188", "#C1C0C4"] },
-      "sidebar-void": { "role": "neutral", "displayName": "Sidebar Void", "canonical": "#0A0618", "tonalRamp": ["#020104", "#04020A", "#070410", "#090516", "#0A0618", "#474452", "#85838C", "#C2C1C5"] },
-      "panel": { "role": "neutral", "displayName": "Panel", "canonical": "#130924", "tonalRamp": ["#030105", "#08040E", "#0C0617", "#110820", "#130924", "#4E475B", "#898492", "#C4C2C8"] },
-      "neon-pink": { "role": "primary", "displayName": "Neon Pink", "canonical": "#FF007F", "tonalRamp": ["#260013", "#660033", "#A60053", "#E60072", "#FF007F", "#FF409F", "#FF80BF", "#FFBFDF"] },
-      "neon-cyan": { "role": "secondary", "displayName": "Neon Cyan", "canonical": "#00F0FF", "tonalRamp": ["#002426", "#006066", "#009CA6", "#00D8E6", "#00F0FF", "#40F4FF", "#80F8FF", "#BFFBFF"] },
-      "violet-glow": { "role": "tertiary", "displayName": "Violet Glow", "canonical": "#8B00FF", "tonalRamp": ["#150026", "#380066", "#5A00A6", "#7D00E6", "#8B00FF", "#A840FF", "#C580FF", "#E2BFFF"] },
-      "dim": { "role": "neutral", "displayName": "Dim", "canonical": "#8B7DA5", "tonalRamp": ["#151319", "#383242", "#5A516B", "#7D7195", "#8B7DA5", "#A89EBC", "#C5BED2", "#E2DFE9"] },
-      "button-gradient-start": { "role": "neutral", "displayName": "Button Gradient Start", "canonical": "#2A0A3E" },
-      "button-gradient-end": { "role": "neutral", "displayName": "Button Gradient End", "canonical": "#3D0A2A" }
+      "black": {
+        "role": "neutral",
+        "displayName": "Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#000000",
+          "#030303",
+          "#161616",
+          "#2E2E2E",
+          "#484848",
+          "#636363",
+          "#808080",
+          "#9E9E9E"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#121212",
+        "tonalRamp": [
+          "#000000",
+          "#010101",
+          "#070707",
+          "#121212",
+          "#1E1E1E",
+          "#2B2B2B",
+          "#393939",
+          "#474747"
+        ]
+      },
+      "elevated": {
+        "role": "neutral",
+        "displayName": "Elevated",
+        "canonical": "#181818",
+        "tonalRamp": [
+          "#000000",
+          "#020202",
+          "#0A0A0A",
+          "#181818",
+          "#272727",
+          "#373737",
+          "#474747",
+          "#585858"
+        ]
+      },
+      "highlight": {
+        "role": "neutral",
+        "displayName": "Highlight",
+        "canonical": "#1F1F1F",
+        "tonalRamp": [
+          "#000000",
+          "#030303",
+          "#0F0F0F",
+          "#1F1F1F",
+          "#303030",
+          "#424242",
+          "#555555",
+          "#696969"
+        ]
+      },
+      "hover": {
+        "role": "neutral",
+        "displayName": "Hover",
+        "canonical": "#252525",
+        "tonalRamp": [
+          "#010101",
+          "#060606",
+          "#151515",
+          "#252525",
+          "#363636",
+          "#494949",
+          "#5C5C5C",
+          "#707070"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#4D4D4D",
+        "tonalRamp": [
+          "#181818",
+          "#292929",
+          "#3A3A3A",
+          "#4D4D4D",
+          "#606060",
+          "#747474",
+          "#898989",
+          "#9E9E9E"
+        ]
+      },
+      "subdued": {
+        "role": "neutral",
+        "displayName": "Subdued",
+        "canonical": "#B3B3B3",
+        "tonalRamp": [
+          "#5F5F5F",
+          "#737373",
+          "#888888",
+          "#9D9D9D",
+          "#B3B3B3",
+          "#C9C9C9",
+          "#E0E0E0",
+          "#F7F7F7"
+        ]
+      },
+      "outline": {
+        "role": "neutral",
+        "displayName": "Outline",
+        "canonical": "#7C7C7C",
+        "tonalRamp": [
+          "#2F2F2F",
+          "#414141",
+          "#545454",
+          "#686868",
+          "#7C7C7C",
+          "#919191",
+          "#A6A6A6",
+          "#BCBCBC"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Accent Green",
+        "canonical": "#1ED760",
+        "tonalRamp": [
+          "#00752E",
+          "#008C39",
+          "#00A545",
+          "#00BE51",
+          "#1ED760",
+          "#46EF77",
+          "#8DFFA3",
+          "#EAFFED"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Accent Hover",
+        "canonical": "#3BE477",
+        "tonalRamp": [
+          "#009243",
+          "#00A74E",
+          "#00BC58",
+          "#13D165",
+          "#3BE477",
+          "#56F889",
+          "#A7FFBB",
+          "#EFFFF2"
+        ]
+      },
+      "negative": {
+        "role": "secondary",
+        "displayName": "Negative",
+        "canonical": "#F3727F",
+        "tonalRamp": [
+          "#921330",
+          "#AA2F43",
+          "#C24656",
+          "#DA5C6A",
+          "#F3727F",
+          "#FF929A",
+          "#FFB7BB",
+          "#FFD9DA"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Now-playing song title on the host screen. The single largest, glow-paired text in the system." },
-      "headline": { "displayName": "Headline", "purpose": "Page-level headings on the guest flow (e.g. 'Entre na sala')." },
-      "title": { "displayName": "Title", "purpose": "Secondary state headings, e.g. host screen's empty/waiting state." },
-      "body": { "displayName": "Body", "purpose": "Supporting text — singer names, hint copy, queue metadata." },
-      "label": { "displayName": "Label", "purpose": "Uppercase, wide-tracked kickers and form labels. The system's one recurring eyebrow style — used only for genuine labels." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título da música tocando no host. O maior texto do sistema."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título da tela de entrada (join), ex. \"Entre na sala\"."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Nome da música na aba Ao Vivo, estados vazios do host e artista no palco."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Nomes e metadados na fila, textos de apoio e mensagens."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Caixa alta com tracking 1.4px: logotipo e botão Entrar."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Rótulos da barra de abas e badges no celular (12px, o mínimo do sistema)."
+      }
     },
     "shadows": [
-      { "name": "glow-pink", "value": "text-shadow: 0 0 20px rgba(255,0,127,0.9), 0 0 40px rgba(255,0,127,0.5), 0 0 80px rgba(255,0,127,0.2)", "purpose": "Applied to the primary/live song title. Signals 'this is live/primary.'" },
-      { "name": "glow-cyan", "value": "text-shadow: 0 0 20px rgba(0,240,255,0.9), 0 0 40px rgba(0,240,255,0.5)", "purpose": "Applied to artist names and status/hint text. Signals 'this is status/secondary.'" },
-      { "name": "border-glow-pink", "value": "border: 1px solid rgba(255,0,127,0.5); box-shadow: 0 0 10px rgba(255,0,127,0.2), inset 0 0 10px rgba(255,0,127,0.05)", "purpose": "The only shadow-like value on a container — a glow standing in for elevation, never a drop shadow." },
-      { "name": "border-glow-cyan", "value": "border: 1px solid rgba(0,240,255,0.5); box-shadow: 0 0 10px rgba(0,240,255,0.2), inset 0 0 10px rgba(0,240,255,0.05)", "purpose": "Cyan variant of the border-glow, for secondary/status-active containers." }
+      {
+        "name": "cover-shadow",
+        "value": "rgba(0,0,0,0.5) 0 8px 24px",
+        "purpose": "Player do host, capa da aba Ao Vivo, placeholder de capa e toast. Único uso de sombra projetada."
+      },
+      {
+        "name": "field-ring",
+        "value": "rgb(18, 18, 18) 0 1px 0, rgb(124, 124, 124) 0 0 0 1px inset",
+        "purpose": "Anel de 1px outline do campo de texto e da pílula de busca em repouso."
+      },
+      {
+        "name": "field-ring-focus",
+        "value": "#FFFFFF 0 0 0 2px inset",
+        "purpose": "Anel de 2px branco do campo de texto e da pílula de busca em foco."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 2px #FFFFFF",
+        "purpose": "focus-visible padrão (ring-2 ring-white) em botões, cartões e linhas; nas abas é inset."
+      },
+      {
+        "name": "focus-ring-offset",
+        "value": "0 0 0 2px #121212, 0 0 0 4px #FFFFFF",
+        "purpose": "Foco do botão Entrar e dos votos (ring-offset-2 sobre surface)."
+      },
+      {
+        "name": "focus-ring-accent",
+        "value": "0 0 0 2px #000000, 0 0 0 4px #1ED760",
+        "purpose": "Foco do play do host (ring-accent com ring-offset-black). Único foco em verde."
+      }
     ],
     "motion": [
-      { "name": "transition-color", "value": "transition: color 0.2s, border-color 0.2s, background-color 0.2s", "purpose": "Default hover/focus transition on buttons and inputs — color-only, no movement." },
-      { "name": "transition-progress", "value": "transition: width 1s linear", "purpose": "Progress-bar fill advances smoothly as the song plays." }
+      {
+        "name": "transition-colors",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Hover e foco de cor, fundo e borda em botões, cartões, linhas da fila e abas (transition-colors do Tailwind)."
+      },
+      {
+        "name": "press-scale",
+        "value": "transform: scale(0.95) em :active nos votos; scale(1.05) em hover no play do host",
+        "purpose": "Retorno tátil nos botões de voto (active:scale-95) e no play do host (hover:scale-105)."
+      },
+      {
+        "name": "progress-fill",
+        "value": "transform: scaleX(); transition 1000ms linear; transform-origin: left",
+        "purpose": "Barra de progresso do player do host avança com transform, sem animar largura."
+      },
+      {
+        "name": "list-move",
+        "value": "opacity 200ms ease e transform 200ms ease; translateY(6px) na entrada e saída",
+        "purpose": "Fila do convidado (TransitionGroup \"queue\"). A fila do host não tem transição: é renderizada direto."
+      },
+      {
+        "name": "rank-move",
+        "value": "transform 400ms ease na reordenação; opacity 300ms ease na entrada e saída",
+        "purpose": "Placar da noite do host (TransitionGroup \"rank\"); a linha desliza até a nova posição sem translateY."
+      },
+      {
+        "name": "tab-fade",
+        "value": "opacity 150ms ease",
+        "purpose": "Troca de aba do convidado (transição \"tab\", out-in)."
+      },
+      {
+        "name": "fade",
+        "value": "opacity 400ms",
+        "purpose": "Toast de erro e cartão \"Última performance\" do convidado (transição \"fade\")."
+      },
+      {
+        "name": "pulse",
+        "value": "animate-pulse: opacity 1 → 0.5, 2s infinite",
+        "purpose": "Equalizador do host só enquanto toca; spinner de busca e texto \"Entrando...\" no join."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "@media (prefers-reduced-motion: reduce) { animation/transition-duration: 0.01ms !important }",
+        "purpose": "Zera animações e transições globalmente (main.css)."
+      }
     ]
   },
   "components": [
@@ -37,74 +281,123 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Full-width join/submit CTA. Muted plum-to-maroon gradient, deliberately calmer than the neon accents.",
-      "html": "<button class=\"ds-btn-primary\">Entrar</button>",
-      "css": ".ds-btn-primary { width: 100%; padding: 16px 24px; border-radius: 12px; font-weight: 700; font-size: 0.875rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.9); background: linear-gradient(to right, #2A0A3E, #3D0A2A); border: 1px solid rgba(255,0,127,0.3); transition: border-color 0.2s, color 0.2s; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { border-color: rgba(255,0,127,0.7); color: #FFFFFF; outline: none; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+      "description": "Ação principal em pílula verde com texto preto: Entrar (largura total, tela de entrada) e Buscar música (aba Ao Vivo, sem largura total).",
+      "html": "<button class='ds-btn-primary'>Entrar</button>",
+      "css": ".ds-btn-primary { width: 100%; padding: 14px 32px; border: 0; border-radius: 9999px; background: #1ED760; color: #000000; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover:not(:disabled) { background: #3BE477; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #121212, 0 0 0 4px #FFFFFF; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
     },
     {
-      "name": "Ghost Button",
+      "name": "Secondary Button",
       "kind": "button",
-      "refersTo": "button-ghost",
-      "description": "Panel-colored secondary action, e.g. the host screen's 'Próxima' control or the mode-select links.",
-      "html": "<button class=\"ds-btn-ghost\">Próxima ▶</button>",
-      "css": ".ds-btn-ghost { padding: 8px 20px; border-radius: 12px; background: #130924; border: 1px solid rgba(126,110,155,0.3); color: #FFFFFF; font-size: 0.75rem; font-weight: 600; transition: border-color 0.2s, color 0.2s; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { border-color: rgba(255,0,127,0.5); color: #FF007F; outline: none; }"
+      "refersTo": "button-secondary",
+      "description": "Ação secundária em pílula escura de 32px, com ícone à direita: Próxima no host (texto 16px).",
+      "html": "<button class='ds-btn-secondary'>Próxima<svg width='12' height='12' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M9 6l6 6-6 6' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 16px; border: 0; border-radius: 9999px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-secondary:hover { background: #252525; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Contorno de 44px no celular: + Fila (aba Buscar). Depois de adicionada, a música vira círculo verde de 44px com check preto.",
+      "html": "<button class='ds-btn-outline'>+ Fila</button>",
+      "css": ".ds-btn-outline { height: 44px; padding: 0 16px; border: 1px solid #7C7C7C; border-radius: 9999px; background: transparent; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover { border-color: #FFFFFF; } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; }"
     },
     {
       "name": "Text Input",
       "kind": "input",
       "refersTo": "input-field",
-      "description": "Join-flow name/room-code field. Panel background, pink low-opacity border, border brightens on focus.",
-      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Ex: Marina\" />",
-      "css": ".ds-input { width: 100%; padding: 14px 16px; border-radius: 12px; background: #130924; color: #FFFFFF; border: 1px solid rgba(255,0,127,0.2); font-size: 0.875rem; transition: border-color 0.2s; } .ds-input::placeholder { color: rgba(126,110,155,0.5); } .ds-input:focus { border-color: rgba(255,0,127,0.6); outline: none; }"
+      "description": "Campo de texto da tela de entrada (nome e código). Fundo highlight, anel inset cinza que vira branco em foco; a busca da aba Buscar usa pílula com o mesmo anel.",
+      "html": "<input class='ds-input' type='text' placeholder='Ex: Matt Murdock' />",
+      "css": ".ds-input { width: 100%; padding: 12px 16px; border: 0; border-radius: 4px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; box-shadow: rgb(18, 18, 18) 0 1px 0, rgb(124, 124, 124) 0 0 0 1px inset; transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: #B3B3B3; } .ds-input:focus { outline: none; box-shadow: #FFFFFF 0 0 0 2px inset; }"
     },
     {
-      "name": "Status Pill",
+      "name": "Status Badge",
       "kind": "chip",
       "refersTo": "badge-pill",
-      "description": "Room-code badge in the host navbar — black pill with a neon-pink border-glow.",
-      "html": "<span class=\"ds-pill\">SALA NEON</span>",
-      "css": ".ds-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; background: #000000; color: #FF007F; font-family: 'Inter', 'Poppins', system-ui, sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; border: 1px solid rgba(255,0,127,0.5); box-shadow: 0 0 10px rgba(255,0,127,0.2), inset 0 0 10px rgba(255,0,127,0.05); }"
+      "description": "Pílula informativa do host, 16px em negrito branco com ponto verde: contador \"online\" no cabeçalho.",
+      "html": "<span class='ds-badge'><i class='ds-badge-dot'></i>3 online</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 9999px; background: #1F1F1F; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; } .ds-badge-dot { width: 8px; height: 8px; border-radius: 9999px; background: #1ED760; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Cartão elevated de opção (início: Modo Host): título em 16px 700 e apoio em 14px subdued. O \"Última performance\" da aba Ao Vivo usa o mesmo fundo.",
+      "html": "<a class='ds-card' href='#'><strong class='ds-card-title'>Modo Host</strong><span class='ds-card-meta'>Tela principal no PC/TV</span></a>",
+      "css": ".ds-card { display: flex; flex-direction: column; gap: 2px; padding: 16px; border-radius: 8px; background: #181818; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; text-decoration: none; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-card:hover { background: #252525; } .ds-card:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-card-title { font-size: 1rem; font-weight: 700; } .ds-card-meta { font-size: 0.875rem; color: #B3B3B3; }"
     },
     {
       "name": "Queue Item",
       "kind": "custom",
-      "refersTo": "queue-item",
-      "description": "Signature component: a compact queue row with a pink position badge, bold title, and muted secondary line.",
-      "html": "<div class=\"ds-queue-item\"><span class=\"ds-queue-badge\">1</span><div><p class=\"ds-queue-title\">Sweet Caroline</p><p class=\"ds-queue-meta\">Carlos · Neil Diamond</p></div></div>",
-      "css": ".ds-queue-item { display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 8px; background: rgba(6,2,17,0.6); transition: background-color 0.2s; } .ds-queue-item:hover { background: rgba(6,2,17,0.8); } .ds-queue-badge { flex-shrink: 0; width: 20px; height: 20px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #FF007F; background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); } .ds-queue-title { font-size: 11px; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-queue-meta { font-size: 10px; color: #7E6E9B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }"
+      "refersTo": "queue-row",
+      "description": "Linha da fila no celular (aba Fila): posição em subdued, título 14px 700, quem pediu · artista em 12px subdued. Sem fundo; a música tocando ganha fundo #252525 e badge \"Tocando agora\".",
+      "html": "<div class='ds-queue-item'><span class='ds-queue-pos'>1</span><div class='ds-queue-text'><p class='ds-queue-title'>Sweet Caroline</p><p class='ds-queue-meta'>Carlos · Neil Diamond</p></div></div>",
+      "css": ".ds-queue-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; } .ds-queue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; } .ds-queue-text { min-width: 0; } .ds-queue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-queue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
+    },
+    {
+      "name": "Host Queue Item",
+      "kind": "custom",
+      "refersTo": "queue-row",
+      "description": "Linha da fila no host (lateral de 340px): posição 16px, capa 40px, título 16px 700, quem pediu · artista 14px. O item 1 tem fundo highlight e badge \"Próxima\". Os botões Mover para cima/baixo (32px) reordenam sem arrastar; o de cima fica desabilitado no item 1 e o de baixo no último.",
+      "html": "<div class='ds-hqueue-item ds-hqueue-next'><span class='ds-hqueue-pos'>1</span><div class='ds-hqueue-thumb'></div><div class='ds-hqueue-text'><p class='ds-hqueue-title'>Sweet Caroline</p><p class='ds-hqueue-meta'>Carlos · Neil Diamond</p></div><span class='ds-hqueue-badge'>Próxima</span><div class='ds-hqueue-moves'><button class='ds-move' aria-label='Mover para cima' disabled><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M6 15l6-6 6 6' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button><button class='ds-move' aria-label='Mover para baixo'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M6 9l6 6 6-6' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div></div>",
+      "css": ".ds-hqueue-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; cursor: grab; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hqueue-item:hover, .ds-hqueue-next { background: #1F1F1F; } .ds-hqueue-pos { width: 20px; flex-shrink: 0; text-align: center; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; color: #B3B3B3; } .ds-hqueue-next .ds-hqueue-pos { color: #1ED760; font-weight: 700; } .ds-hqueue-thumb { width: 40px; height: 40px; flex-shrink: 0; border-radius: 4px; background: #4D4D4D; } .ds-hqueue-text { min-width: 0; flex: 1; } .ds-hqueue-title { margin: 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 1rem; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-meta { margin: 2px 0 0; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; color: #B3B3B3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-hqueue-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 9999px; background: #4D4D4D; color: #FFFFFF; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 600; } .ds-hqueue-moves { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; } .ds-move { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: #181818; color: #FFFFFF; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-move:hover { background: #252525; } .ds-move:focus-visible { outline: none; box-shadow: 0 0 0 2px #FFFFFF; } .ds-move:disabled { opacity: 0.4; pointer-events: none; }"
+    },
+    {
+      "name": "Bottom Tab Bar",
+      "kind": "nav",
+      "description": "Barra inferior do convidado no celular: Ao Vivo, Buscar, Fila. Fundo preto, borda superior highlight, ícone de 18px acima do rótulo em 12px. Aba ativa em accent 700; inativas em subdued, branco no hover.",
+      "html": "<nav class='ds-tabs' aria-label='Navegação da sala'><button class='ds-tab ds-tab-active' aria-current='true'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' aria-hidden='true'><circle cx='12' cy='12' r='7' fill='currentColor'/></svg>Ao Vivo</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' aria-hidden='true'><circle cx='11' cy='11' r='7' stroke='currentColor' stroke-width='2.2'/><path d='M21 21l-4-4' stroke='currentColor' stroke-width='2.2' stroke-linecap='round'/></svg>Buscar</button><button class='ds-tab'><svg width='18' height='18' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M4 6h16M4 12h16M4 18h10' stroke='currentColor' stroke-width='2.2' stroke-linecap='round'/></svg>Fila</button></nav>",
+      "css": ".ds-tabs { display: flex; background: #000000; border-top: 1px solid #1F1F1F; padding-bottom: env(safe-area-inset-bottom); } .ds-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 0; border: 0; background: transparent; color: #B3B3B3; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.75rem; cursor: pointer; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tab:hover { color: #FFFFFF; } .ds-tab:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #FFFFFF; } .ds-tab-active, .ds-tab-active:hover { color: #1ED760; font-weight: 700; }"
+    },
+    {
+      "name": "Vote Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Par de votos da aba Ao Vivo, 48px em pílula: Curtir (verde, texto preto) e Não curtir (contorno outline, ícone negative, texto branco). Depois de votar, o escolhido fica ativo e o outro cai para 40% de opacidade.",
+      "html": "<div class='ds-vote'><button class='ds-vote-like'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M18 9l-6-6-6 6M12 4v16' stroke='#000000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>Curtir</button><button class='ds-vote-dislike'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'><path d='M18 15l-6 6-6-6M12 20V4' stroke='#F3727F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>Não curtir</button></div>",
+      "css": ".ds-vote { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .ds-vote button { height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9999px; font-family: Inter, 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 0.875rem; font-weight: 700; cursor: pointer; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-vote button:disabled { cursor: not-allowed; } .ds-vote button:active:not(:disabled) { transform: scale(0.95); } .ds-vote button:focus-visible { outline: none; box-shadow: 0 0 0 2px #121212, 0 0 0 4px #FFFFFF; } .ds-vote-like { border: 0; background: #1ED760; color: #000000; } .ds-vote-like:hover:not(:disabled) { background: #3BE477; } .ds-vote-dislike { border: 1px solid #7C7C7C; background: transparent; color: #FFFFFF; } .ds-vote-dislike:hover:not(:disabled) { border-color: #FFFFFF; }"
     }
   ],
   "narrative": {
-    "northStar": "The Living Room Rave",
-    "overview": "Videoké takes the neon lighting rig of a real karaoke venue and installs it in someone's living room. The palette is the same deep-purple-black and pink/cyan glow you'd find in a proper show, but the tone stays domestic and playful — this is friends passing a phone around, not a nightclub console. Glow is the string-lights-and-spotlights of the party, never a mood the copy or interactions need to match. The system explicitly rejects the generic-karaoke-app look: no cheap bordered lists, no default form-library styling, no stock microphone clip-art. It also stays out of corporate-SaaS territory — no dashboard card-grids, no admin-tool chrome. Every surface is either the show (host screen) or the invite (guest phone flow), never a settings page.",
+    "northStar": "The Dark Jukebox",
+    "overview": "Videoké é uma jukebox escura e plana: fundo preto, painéis em degraus de cinza-carvão e um único verde vivo para tudo que é ação ou está tocando. A tela do host é o palco (player grande, fila ao lado); o celular do convidado é o controle remoto (buscar, votar, ver a fila). A referência é a família dos players de música em tema escuro — familiar de imediato, sem curva de aprendizado numa festa. O tom é direto e doméstico: português simples, rótulos curtos (\"Ao Vivo\", \"Buscar\", \"Fila\"), sem emoji, sem decoração que não ajude a achar a próxima ação.",
     "keyCharacteristics": [
-      "Deep near-black purple as the base, never a neutral gray or white canvas.",
-      "Two-color neon signal system: pink for primary/active/singing-now, cyan for status/secondary info.",
-      "Text glow (text-shadow) substitutes for elevation — depth comes from light, not shadow.",
-      "Heavy, geometric sans throughout; no serif, no script.",
-      "Generous corner rounding (8–12px) and pill shapes for anything touchable."
+      "Base preta com superfícies em degraus (`black` → `surface` → `elevated` → `highlight` → `hover`); profundidade vem do degrau de cor, não de sombra.",
+      "Um único acento: `accent` (#1ED760). Verde = ação primária, \"tocando agora\", ativo, online.",
+      "Formas: pílula (`rounded-full`) para tudo que se toca; `rounded-lg` para cartões; `rounded-md` para linhas de lista; `rounded` (4px) só no campo de texto.",
+      "Inter em pesos 400–800. Títulos em 700–800, nunca mais leves.",
+      "Plano: sem glow, sem gradientes decorativos, sem translucidez."
     ],
     "rules": [
-      { "name": "The Two-Signal Rule", "body": "Only pink and cyan carry meaning. Pink = primary/active/live-now. Cyan = status/secondary/connected. Never swap their roles, never introduce a third signal color.", "section": "colors" },
-      { "name": "The No-True-Neutral Rule", "body": "There is no plain gray or plain white-on-dark in this system. Every 'neutral' (Dim, Panel, Void, Sidebar Void) carries the same purple hue at a different depth. A gray that doesn't lean purple is a bug, not a shortcut.", "section": "colors" },
-      { "name": "The One Weight Rule", "body": "Headings are always 900 (black) or nothing close to it — no medium-weight headlines. If it's a heading, it's the heaviest weight in the stack.", "section": "typography" },
-      { "name": "The Glow-Not-Shadow Rule", "body": "Never add a conventional dark drop-shadow to imply elevation. If something needs to feel 'lifted,' lighten its background one step (Void → Panel) or give it a border-glow, never a black shadow.", "section": "elevation" }
+      {
+        "name": "Regra do Acento Único",
+        "body": "Verde significa \"isto é uma ação ou está acontecendo agora\". Não introduza um segundo acento. `negative` é exceção semântica (erro/dislike), não cor de marca.",
+        "section": "colors"
+      },
+      {
+        "name": "Regra dos Tokens",
+        "body": "Cor vem do token. Os hex soltos que existem hoje (ver \"Lacunas conhecidas\") são dívida, não padrão a copiar.",
+        "section": "colors"
+      },
+      {
+        "name": "Regra do Peso",
+        "body": "Títulos são 700 ou 800. Não há peso 500 nem 300 no sistema.",
+        "section": "typography"
+      }
     ],
     "dos": [
-      "Do keep every background a step on the purple-black ramp (Void → Sidebar Void → Panel) — never introduce a true gray or white surface.",
-      "Do use text-glow and border-glow as the only 'elevation' — a lighter background step is the fallback when glow isn't appropriate.",
-      "Do keep primary actions on the muted plum-to-maroon gradient, reserving full-saturation neon pink for live/active state, not button fills.",
-      "Do keep labels/kickers uppercase and wide-tracked, but only on genuine labels (form fields, section headers like 'FILA') — not decoratively above every section.",
-      "Do keep the tone playful and domestic in copy and motion even though the palette is venue-grade neon — this is a house party, not a nightclub console."
+      "**Do** usar os tokens do Tailwind (`bg-surface`, `bg-elevated`, `text-subdued`, `bg-accent`) em vez de hex.",
+      "**Do** reservar o verde para ação primária e estado \"tocando/ativo/online\".",
+      "**Do** separar camadas com o degrau de cor; sombra só nas capas, no player e no toast.",
+      "**Do** manter pílulas para o que se toca e `rounded-lg` para cartões.",
+      "**Do** manter alvo de toque ≥ 44px no celular, anel `focus-visible` e `role=\"alert\"` nos erros.",
+      "**Do** escrever em português e curto; sem emoji."
     ],
     "donts": [
-      "Don't build generic-karaoke-app UI: bordered list rows, default form-library styling, stock microphone clip-art. That's the explicit anti-reference.",
-      "Don't drift toward corporate SaaS: no dashboard card-grids, no admin-tool chrome, no settings-page density.",
-      "Don't add conventional dark drop-shadows anywhere; this system has no shadow-based elevation.",
-      "Don't introduce a third accent color. Pink and cyan are the only signal colors — anything else (green/red for votes) stays a narrow, literal exception, never a new brand color.",
-      "Don't use a plain gray. If something needs to be muted, it's Dim (#8B7DA5) or a low-opacity version of an existing token, always purple-tinted.",
-      "Don't drop Dim below ~90% opacity for text that carries real information (labels, nav state, placeholders) — anything more transparent falls under the 4.5:1 AA floor on both Void and Panel. Reserve low-opacity Dim for genuinely decorative/supporting copy only.",
-      "Don't let the mood tip nightclub-serious — no cold, austere, console-like styling; warmth comes through in copy, pacing, and rounded, tactile shapes, not just color."
+      "**Don't** adicionar um segundo acento nem usar o verde como decoração.",
+      "**Don't** usar glow, gradiente decorativo ou blur em cartões.",
+      "**Don't** usar texto em `muted` ou `outline`; só `subdued` e branco carregam informação.",
+      "**Don't** introduzir pesos 300/500 ou uma segunda família de fonte.",
+      "**Don't** criar novos cinzas soltos; se faltar um degrau, adicione um token."
     ]
   }
 }

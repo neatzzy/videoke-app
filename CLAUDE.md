@@ -34,4 +34,4 @@ No test suite or linter is configured. Requires a `.env` at the repo root — se
 
 ## Design Context
 
-This project has `PRODUCT.md` (strategic: register, users, purpose, brand personality) and `DESIGN.md` (visual: colors, typography, components — north star "The Living Room Rave", a neon karaoke-venue look kept warm and playful rather than nightclub-serious). Read both before making UI changes. `/impeccable` commands read these automatically.
+This project has `PRODUCT.md` (strategic: register, users, purpose, brand personality) and `DESIGN.md` (visual: colors, typography, components — north star "The Dark Jukebox", a flat dark UI with a single green accent; it documents the implemented look, not a neon direction). Read both before making UI changes. `/impeccable` commands read these automatically.

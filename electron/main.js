@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron')
+const { app, BrowserWindow, dialog, powerSaveBlocker } = require('electron')
 const path = require('node:path')
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -6,6 +6,7 @@ const isDev = process.env.NODE_ENV === 'development'
 // VIDEOKE_URL sobrescreve o deploy padrão (útil para testar um preview).
 const DEPLOY_URL = 'https://videoke-app-wine.vercel.app'
 const HOST_URL = isDev ? 'http://localhost:3000' : (process.env.VIDEOKE_URL || DEPLOY_URL)
+let blockerId = null
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -26,6 +27,13 @@ function createWindow() {
     dialog.showErrorBox('KaraokeLive', `Não foi possível abrir ${HOST_URL}/host\n${err.message}`)
   })
   if (isDev) win.webContents.openDevTools({ mode: 'detach' })
+
+  // A TV não pode entrar em descanso no meio da música
+  if (blockerId === null) blockerId = powerSaveBlocker.start('prevent-display-sleep')
+  win.on('closed', () => {
+    if (blockerId !== null) powerSaveBlocker.stop(blockerId)
+    blockerId = null
+  })
 }
 
 app.whenReady().then(createWindow)

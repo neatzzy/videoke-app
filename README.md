@@ -56,6 +56,10 @@ pnpm run electron:build  # empacota o app desktop (dist-electron/)
 - `/join` — convidado entra com nome + código da sala
 - `/room/[code]` — convidado busca músicas, vota e acompanha a fila pelo celular
 
+## Instalar no celular
+
+Para o convidado não precisar digitar o código de novo: abra a sala no navegador do celular e use **Adicionar à tela inicial** (Chrome/Android: menu ⋮; Safari/iOS: botão Compartilhar). O atalho abre em `/join`, em tela cheia. Continua exigindo rede: não há modo offline.
+
 ## Design
 
 `PRODUCT.md` e `DESIGN.md` documentam o contexto estratégico e o sistema visual (paleta neon, tipografia, componentes) do projeto — mantidos via a skill "Impeccable" do Claude Code.

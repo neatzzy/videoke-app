@@ -1,58 +1,59 @@
 ---
 name: Videoké
-description: A neon karaoke party — big-screen host show plus phone-based queueing for guests.
+description: Karaokê caseiro — o host mostra a música e a fila na TV; os convidados pedem músicas pelo celular, sem instalar nada.
 colors:
-  void: "#060211"
-  sidebar-void: "#0A0618"
-  panel: "#130924"
-  neon-pink: "#FF007F"
-  neon-cyan: "#00F0FF"
-  violet-glow: "#8B00FF"
-  dim: "#8B7DA5"
-  button-gradient-start: "#2A0A3E"
-  button-gradient-end: "#3D0A2A"
+  black: "#000000"
+  surface: "#121212"
+  elevated: "#181818"
+  highlight: "#1F1F1F"
+  hover: "#252525"
+  muted: "#4D4D4D"
+  subdued: "#B3B3B3"
+  outline: "#7C7C7C"
+  accent: "#1ED760"
+  accent-hover: "#3BE477"
+  negative: "#F3727F"
 typography:
   display:
-    fontFamily: "Inter, Poppins, system-ui, sans-serif"
-    fontSize: "3rem"
-    fontWeight: 900
+    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
+    fontSize: "64px"
+    fontWeight: 800
     lineHeight: 1.1
     letterSpacing: "normal"
   headline:
-    fontFamily: "Inter, Poppins, system-ui, sans-serif"
+    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "2.25rem"
-    fontWeight: 900
-    lineHeight: 1.15
+    fontWeight: 800
+    lineHeight: 1.25
     letterSpacing: "normal"
   title:
-    fontFamily: "Inter, Poppins, system-ui, sans-serif"
-    fontSize: "1.875rem"
-    fontWeight: 900
-    lineHeight: 1.2
+    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 700
+    lineHeight: 1.33
     letterSpacing: "normal"
   body:
-    fontFamily: "Inter, Poppins, system-ui, sans-serif"
+    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.43
     letterSpacing: "normal"
   label:
-    fontFamily: "Inter, Poppins, system-ui, sans-serif"
+    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 700
-    lineHeight: 1.3
-    letterSpacing: "0.15em"
+    lineHeight: 1.33
+    letterSpacing: "1.4px"
   micro:
-    fontFamily: "Inter, Poppins, system-ui, sans-serif"
-    fontSize: "0.625rem"
+    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
+    fontSize: "0.75rem"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "normal"
 rounded:
-  sm: "2px"
-  md: "8px"
-  lg: "12px"
-  xl: "16px"
+  default: "4px"
+  md: "6px"
+  lg: "8px"
   full: "9999px"
 spacing:
   xs: "8px"
@@ -62,168 +63,198 @@ spacing:
   xl: "32px"
 components:
   button-primary:
-    backgroundColor: "linear-gradient({colors.button-gradient-start}, {colors.button-gradient-end})"
-    textColor: "#FFFFFF"
-    rounded: "{rounded.lg}"
-    padding: "16px 24px"
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.black}"
+    rounded: "{rounded.full}"
+    padding: "14px 32px"
   button-primary-hover:
-    backgroundColor: "linear-gradient({colors.button-gradient-start}, {colors.button-gradient-end})"
+    backgroundColor: "{colors.accent-hover}"
+    textColor: "{colors.black}"
+  button-secondary:
+    backgroundColor: "{colors.highlight}"
     textColor: "#FFFFFF"
-  button-ghost:
-    backgroundColor: "{colors.panel}"
+    rounded: "{rounded.full}"
+    padding: "0 16px"
+  button-outline:
+    backgroundColor: "transparent"
     textColor: "#FFFFFF"
-    rounded: "{rounded.lg}"
-    padding: "8px 20px"
+    rounded: "{rounded.full}"
+    padding: "0 16px"
   input-field:
-    backgroundColor: "{colors.panel}"
+    backgroundColor: "{colors.highlight}"
     textColor: "#FFFFFF"
-    rounded: "{rounded.lg}"
-    padding: "14px 16px"
+    rounded: "{rounded.default}"
+    padding: "12px 16px"
   badge-pill:
-    backgroundColor: "#000000"
-    textColor: "{colors.neon-pink}"
+    backgroundColor: "{colors.highlight}"
+    textColor: "{colors.subdued}"
     rounded: "{rounded.full}"
     padding: "4px 12px"
+  card:
+    backgroundColor: "{colors.elevated}"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  queue-row:
+    backgroundColor: "transparent"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
 ---
 
 # Design System: Videoké
 
+> Este documento descreve o visual **implementado** (decisão de manter o design atual, nov/2026). A versão anterior descrevia uma direção neon rosa/ciano ("The Living Room Rave") que nunca chegou ao código; ela foi descartada. Os tokens abaixo são os de `tailwind.config.ts` e `app/assets/css/main.css`.
+
 ## 1. Overview
 
-**Creative North Star: "The Living Room Rave"**
+**Creative North Star: "The Dark Jukebox"**
 
-Videoké takes the neon lighting rig of a real karaoke venue and installs it in someone's living room. The palette is the same deep-purple-black and pink/cyan glow you'd find in a proper show, but the tone stays domestic and playful — this is friends passing a phone around, not a nightclub console. Glow is the string-lights-and-spotlights of the party, never a mood the copy or interactions need to match.
+Videoké é uma jukebox escura e plana: fundo preto, painéis em degraus de cinza-carvão e um único verde vivo para tudo que é ação ou está tocando. A tela do host é o palco (player grande, fila ao lado); o celular do convidado é o controle remoto (buscar, votar, ver a fila). A referência é a família dos players de música em tema escuro — familiar de imediato, sem curva de aprendizado numa festa.
 
-The system explicitly rejects the generic-karaoke-app look: no cheap bordered lists, no default form-library styling, no stock microphone clip-art. It also stays out of corporate-SaaS territory — no dashboard card-grids, no admin-tool chrome. Every surface is either the show (host screen) or the invite (guest phone flow), never a settings page.
+O tom é direto e doméstico: português simples, rótulos curtos ("Ao Vivo", "Buscar", "Fila"), sem emoji, sem decoração que não ajude a achar a próxima ação.
 
-**Key Characteristics:**
+**Características principais:**
 
-- Deep near-black purple as the base, never a neutral gray or white canvas.
-- Two-color neon signal system: pink for primary/active/singing-now, cyan for status/secondary info.
-- Text glow (`text-shadow`) substitutes for elevation — depth comes from light, not shadow.
-- Heavy, geometric sans throughout; no serif, no script.
-- Generous corner rounding (8–12px) and pill shapes for anything touchable.
+- Base preta com superfícies em degraus (`black` → `surface` → `elevated` → `highlight` → `hover`); profundidade vem do degrau de cor, não de sombra.
+- Um único acento: `accent` (#1ED760). Verde = ação primária, "tocando agora", ativo, online.
+- Formas: pílula (`rounded-full`) para tudo que se toca; `rounded-lg` para cartões; `rounded-md` para linhas de lista; `rounded` (4px) só no campo de texto.
+- Inter em pesos 400–800. Títulos em 700–800, nunca mais leves.
+- Plano: sem glow, sem gradientes decorativos, sem translucidez.
+
+**Risco de marca reconhecido:** a paleta verde sobre cinza-carvão e o logotipo circular de play lembram muito o Spotify. A decisão foi manter. Se o produto ganhar identidade própria, o primeiro lugar a mexer é `accent` e o `AppLogo.vue`; como os componentes usam tokens (`bg-accent`, `text-accent`), a troca é feita em `tailwind.config.ts`.
 
 ## 2. Colors
 
-A near-black purple stage lit by two neon signal colors, with a warm violet-to-maroon gradient reserved for the one primary call-to-action.
+Um preto de palco, quatro degraus de carvão, dois cinzas de texto e um verde.
 
-### Primary
+### Primária
 
-- **Neon Pink** (#FF007F): The show's main light. Used for the active/primary accent — the "now singing" equalizer and glow, active-state borders, the queue position badges, and anywhere something is *live* or *primary*.
+- **Accent** (#1ED760): único acento. Botão primário (Entrar, Buscar música, Curtir), barras do equalizador, barra de progresso, número da posição 1 na fila, título da música tocando, aba ativa, ponto "online", check de música já adicionada. **Accent Hover** (#3BE477) é o estado hover desses botões.
 
-### Secondary
+### Superfícies
 
-- **Neon Cyan** (#00F0FF): The status color. Reserved for live/connected information — the artist name under a glowing title, the "N online" indicator, the room-code hint text. Never used for primary actions.
+- **Black** (#000000): raiz da tela do host (moldura entre os painéis), barra inferior de abas do convidado e `body`.
+- **Surface** (#121212): fundo de página dos fluxos mobile (`index`, `join`, `room`, `error`) e dos painéis do host (palco e lateral da fila).
+- **Elevated** (#181818): cartões (opções do `index`, cartão do QR no host, "Última performance"), placeholder de capa e botão da página de erro.
+- **Highlight** (#1F1F1F): campos de texto, chips, badges, item 1 da fila, botão "Próxima", toast.
+- **Hover** (#252525): hover dos cartões; fundo da linha "tocando agora" na aba Fila do convidado.
 
-### Tertiary
+### Texto e linhas
 
-- **Violet Glow** (#8B00FF): Appears only as the far end of the pink→violet progress-bar gradient. Not a standalone UI color; it exists to make the progress fill feel like it's moving through light, not just filling a bar.
+- **Subdued** (#B3B3B3): texto secundário e placeholders (8,93:1 sobre `surface`). Único cinza de texto; texto principal é branco.
+- **Muted** (#4D4D4D): trilha da barra de progresso, avatares, placeholders de capa e badge "Próxima". Não usar para texto.
+- **Outline** (#7C7C7C): borda dos botões de contorno ("Não curtir", "+ Fila") e anel do campo de texto.
 
-### Neutral
+### Semântica
 
-- **Void** (#060211): The base background for every full-screen surface (host stage, join screen). Near-black with a purple cast, never true `#000`.
-- **Sidebar Void** (#0A0618): A slightly deeper variant of Void, used only to separate the host screen's queue sidebar from the main stage.
-- **Panel** (#130924): Card/container background — form fields, the navbar strip, badges. One step lighter than Void so containers read as physically raised without a shadow.
-- **Dim** (#8B7DA5): Muted purple-gray for secondary text, placeholders, dividers, and inactive borders. This is the *only* gray in the system; it always carries the brand's purple hue, never a true neutral gray. Lightened from an earlier #7E6E9B during polish — the original only hit 4.48:1 on Void and 4.20:1 on Panel, both under the 4.5:1 AA floor for body text; this value clears both with margin.
-- **Button Gradient** (#2A0A3E → #3D0A2A): A muted plum-to-maroon gradient used exclusively for the primary CTA button background — deliberately calmer than the neon accents so the one action that matters doesn't have to compete with the show's own lighting.
+- **Negative** (#F3727F): erros de formulário e o "Não curtir" (6,71:1 sobre `surface`). É o único vermelho do sistema.
 
-### Named Rules
+### Regras
 
-**The Two-Signal Rule.** Only pink and cyan carry meaning. Pink = primary/active/live-now. Cyan = status/secondary/connected. Never swap their roles, never introduce a third signal color.
+**Regra do Acento Único.** Verde significa "isto é uma ação ou está acontecendo agora". Não introduza um segundo acento. `negative` é exceção semântica (erro/dislike), não cor de marca.
 
-**The No-True-Neutral Rule.** There is no plain gray or plain white-on-dark in this system. Every "neutral" (Dim, Panel, Void, Sidebar Void) carries the same purple hue at a different depth. A gray that doesn't lean purple is a bug, not a shortcut.
+**Regra dos Tokens.** Cor vem do token. Os hex soltos que existem hoje (ver "Lacunas conhecidas") são dívida, não padrão a copiar.
 
 ## 3. Typography
 
-**Display/Body Font:** Inter, with Poppins and system-ui as fallbacks (single family, no pairing)
+**Fonte:** Inter (auto-hospedada pelo `@nuxt/fonts`, pesos 400/600/700/800, `display: swap`), com `Helvetica Neue`, `helvetica`, `arial`, `sans-serif` como fallback. Uma família só. Código de sala usa `font-mono` do Tailwind.
 
-**Character:** One geometric sans carries the whole system at font-weight 900 (black) for anything that needs presence, and 400–700 for everything supporting. The heaviness is what makes headlines feel like a marquee; there's no second typeface competing for attention.
+### Hierarquia
 
-### Hierarchy
+- **Display** (800, 64px, 1.1): título da música tocando no host. O maior texto do sistema.
+- **Headline** (800, 2.25rem/36px `text-4xl`): título da tela de entrada ("Entre na sala"). O código da sala no host usa `text-5xl` com `font-mono`, 800 e `tracking-[12px]`.
+- **Title** (700, 1.5rem/24px `text-2xl`): nome da música na aba Ao Vivo, estados vazios do host, artista no palco (em `subdued`).
+- **Body** (400–700, 0.875rem/14px `text-sm`): nomes de música na fila, textos de apoio, mensagens. Nomes de música em 700; metadados em 400 `subdued`.
+- **Label** (700, 0.75rem/12px, `tracking-label` 1.4px): "AGORA CANTANDO", logotipo "VIDEOKÉ", botão Entrar, "Última performance", pílula "SALA". Caixa alta, só em rótulos de verdade.
+- **Micro** (700, 0.75rem/12px): rótulos da barra de abas, badges "Próxima" e "Tocando agora" no celular. No host nada fica abaixo de 14px, porque a tela é lida a metros de distância.
 
-- **Display** (900, 3rem/48px `text-5xl`, line-height 1.1): The now-playing song title on the host screen — the single largest, most important text in the system, paired with a pink text-glow.
-- **Headline** (900, 2.25rem/36px `text-4xl`, line-height 1.15): Page-level headings on the guest flow, e.g. "Entre na sala."
-- **Title** (900, 1.875rem/30px `text-3xl`, line-height 1.2): Secondary state headings, e.g. the host screen's "Aguardando músicas..." empty state.
-- **Body** (400, 0.875rem/14px, line-height 1.5): Paragraph and supporting text — singer names, hint copy, queue metadata. Kept short; nothing here runs past a phrase or two.
-- **Label** (700, 0.75rem/12px, letter-spacing 0.15em, uppercase): Form labels ("SEU NOME"), section kickers ("AGORA CANTANDO", "FILA"), and status text. Always uppercase, always wide-tracked — this is the system's one recurring "eyebrow" text style, used sparingly and only for genuine labels, never decoratively above every section.
-- **Micro** (700, 0.625rem/10px, line-height 1.3): Queue-row metadata (position badges, "added by · artist" secondary lines), counters, and timestamps — the smallest text in the system, for compact, high-density rows where Body would be too loose. Not tracked or uppercase like Label; this is dense data, not a section marker.
+Códigos de sala têm tracking próprio: `4px` no campo do `join`, `2px` no `room`, `12px` no host.
 
-A monospace stack appears narrowly for the room code itself (input, badges, hint text) — it's a functional cue that the code is literal characters to type, not a second brand typeface.
+### Regras
 
-### Named Rules
-
-**The One Weight Rule.** Headings are always 900 (black) or nothing close to it — no medium-weight headlines. If it's a heading, it's the heaviest weight in the stack.
+**Regra do Peso.** Títulos são 700 ou 800. Não há peso 500 nem 300 no sistema.
 
 ## 4. Elevation
 
-Videoké is flat by design — there is no `box-shadow`-based elevation system. Depth is communicated through **light**, not shadow: a lighter panel color (`#130924`) sitting on a darker void (`#060211`) implies a raised surface, and glow (`text-shadow` on headlines, a soft outer `box-shadow` used only as a border-glow on active elements) stands in for the lift a shadow would normally give.
+Plano por padrão. A separação vem do degrau de cor (`surface` → `elevated` → `highlight`) e de bordas de 1px `outline` em botões de contorno. No host, os painéis `surface` ficam sobre a moldura `black` com `gap-2`, o que lê como blocos encaixados.
 
-### Shadow Vocabulary
+### Vocabulário de sombra
 
-- **Text glow — pink** (`text-shadow: 0 0 20px rgba(255,0,127,.9), 0 0 40px rgba(255,0,127,.5), 0 0 80px rgba(255,0,127,.2)`): Applied to the primary song title. Signals "this is live/primary."
-- **Text glow — cyan** (`text-shadow: 0 0 20px rgba(0,240,255,.9), 0 0 40px rgba(0,240,255,.5)`): Applied to artist names and the room-code hint. Signals "this is status/secondary."
-- **Border glow — pink** (`box-shadow: 0 0 10px rgba(255,0,127,.2), inset 0 0 10px rgba(255,0,127,.05)` with a 1px pink border): The only place a shadow-like value appears on a container, and it's a glow, not a drop shadow.
-- **Border glow — cyan**: Same treatment, cyan variant.
+- **Sombra de capa** (`rgba(0,0,0,.5) 0 8px 24px`): player do host, capa da aba Ao Vivo, placeholder de capa, toast. Único uso de sombra projetada.
+- **Anel do campo** (`inset`): `.field` tem anel de 1px `outline` em repouso e de 2px branco em foco. A busca do `room` repete o mesmo valor inline com `focus-within`.
+- **Anel de foco**: `focus-visible:ring-2 ring-white` em praticamente todo botão; `ring-accent` só no play do host.
 
-### Named Rules
-
-**The Glow-Not-Shadow Rule.** Never add a conventional dark drop-shadow to imply elevation. If something needs to feel "lifted," lighten its background one step (Void → Panel) or give it a border-glow, never a black shadow.
+Não há glow, `text-shadow`, `backdrop-blur` nem translucidez.
 
 ## 5. Components
 
-Everything touchable is rounded and a little glowing — tactile and playful, built for someone fumbling with their phone mid-party, not a precise console.
+### Botão primário
 
-### Buttons
+Pílula `accent` com texto preto, 700, caixa alta e `tracking-label` no Entrar; `py-3.5 px-8` e largura total no `join`. Hover `accent-hover`. Desabilitado: `opacity-50`, sem hover. Botões de voto: `h-12`, pílula; Curtir em `accent`, "Não curtir" em contorno `outline` com texto `negative`; ambos com `active:scale-95`.
 
-- **Shape:** Generously rounded (`rounded-xl`, 12px) on primary/ghost buttons; fully pill-shaped (`rounded-full`) on badges and status chips.
-- **Primary:** The join-flow submit button uses the muted plum-to-maroon gradient (#2A0A3E → #3D0A2A) with a translucent pink border (30% opacity), white/90 text, bold, wide letter-spacing. Deliberately calmer than the neon accents elsewhere — the one action that matters shouldn't have to shout over the show's own lighting.
-- **Hover / Focus:** Border opacity steps up (30% → 70%) and text goes to full white; transitions are color-only, ~200ms, no movement.
-- **Ghost (mode-select / "Próxima" controls):** Panel-colored background, a colored border matching its context (pink or cyan at low opacity), text and border both brighten on hover. No fill change.
+### Botão secundário e de contorno
 
-### Badges / Pills
+Secundário: pílula `highlight` (ex.: "Próxima" no host, `h-8 px-4`). Contorno: pílula transparente, borda `outline`, borda branca no hover (ex.: "+ Fila", `h-11 px-4 text-xs`). A página de erro usa `rounded-lg` `elevated` com `min-h/min-w 44px`.
 
-- **Style:** Small, pill-shaped (`rounded-full`), black or panel background with a low-opacity colored border and matching text color. Used for the room-code chip, the "online" count, and queue position numbers.
-- **State:** Static — these are informational, not interactive.
+### Campo de texto (`.field`)
 
-### Cards / Containers
+Fundo `highlight`, texto branco, placeholder `subdued`, `px-4 py-3 text-base`, `rounded` (4px), anel inset descrito em Elevation. A busca do convidado é outra variação: `label` `rounded-full` com ícone de lupa, mesmo anel.
 
-- **Corner Style:** `rounded-xl` (12px) for panels and queue items; `rounded-lg` (8px) for compact list rows; `rounded-2xl` (16px) for standout emphasis cards — the host sidebar's "next up" card and the guest vote buttons.
-- **Background:** Panel (#130924) on Void, or Void/60% on Sidebar Void for queue-item rows — always a lighter step than whatever it sits on.
-- **Shadow Strategy:** None; see Elevation. Separation comes from the background-color step, not a shadow.
-- **Border:** 1px, Dim at 10–20% opacity, or a neon color at 20–40% opacity when the container is meant to feel "active."
-- **Internal Padding:** Compact — `p-2.5`–`p-4` (10–16px) for queue rows and badges; `px-6 py-4`+ for full-width panels.
+### Barra inferior de abas (convidado)
 
-### Inputs / Fields
+`bg-black`, borda superior `highlight`, `pb-[env(safe-area-inset-bottom)]`. Três abas `flex-1` (Ao Vivo, Buscar, Fila), ícone de 18px acima do rótulo em 12px. Ativa: `accent` e 700; inativa: `subdued`, hover branco. "Ao Vivo" usa um ponto em SVG com o mesmo box de 18px dos outros ícones.
 
-- **Style:** Panel-colored background, `rounded-xl`, 1px pink border at 20% opacity, no visible focus ring — focus is communicated by the border brightening to 60% opacity.
-- **Focus:** Border-color transition only (no glow, no outline) — kept subtle so the input doesn't compete with the show-style glow used elsewhere.
-- **Error:** Inline pink text below the field, centered, same pink as the primary accent — errors don't get a separate color.
+### Fila
 
-### Navigation
+Linha `rounded-md px-3 py-2`: número (`w-5`; o 1º em `accent`), capa de 40px, título 700 truncado, subtítulo `subdued` "quem pediu · artista". No host, a linha é arrastável (`cursor-grab`) e tem botões "Mover para cima/baixo" (`w-8 h-8`, com `aria-label`) para reordenar sem arrastar; o item 1 tem fundo `highlight` e badge "Próxima". Na aba Fila do convidado, a música tocando tem fundo `hover`, equalizador e badge "Tocando agora".
 
-- **Style:** A thin translucent panel strip (`bg-panel/60`) with a bottom hairline border (Dim at 10%). Logo + mic emoji on the left, live status (online count in cyan, room-code pill in pink) on the right. No hover states — this bar is informational, not a menu.
+### Player do host
 
-### Queue List (signature component)
+Palco com player 16:9 dimensionado por container query, título em Display e chip do cantor (pílula `highlight` com avatar de inicial) por 5 s no início de cada música; depois, rodapé de 72px com capa, play circular branco (`w-8 h-8`), "Próxima", barra de progresso `h-1` (`muted` com preenchimento `accent` animado por `transform: scaleX()`, `duration-1000`) e contagem da fila. Ao fim da música, um overlay "Placar final" aparece por 5 s antes do avanço automático. A lateral da fila traz o cartão "Placar da noite" (top 5 cantores com curtidas, em `highlight`), oculto quando ninguém tem curtidas. O QR para entrada fica num cartão `bg-white` (160px no canto, 220px no estado vazio).
 
-The right-hand sidebar on the host screen: a vertically stacked list of compact rows, each with a pink circular position badge, a bold white song title (truncated to one line), and a muted secondary line combining who queued it and the artist. Rows are flat (Void/60% background) and only lighten slightly on hover — this list is meant to be glanced at, not interacted with directly from the host screen.
+### Logotipo e equalizador
+
+`AppLogo.vue`: círculo `accent` com triângulo de play e duas ondas pretas, seguido de "VIDEOKÉ" em 800 com `tracking-label`. O equalizador é um grupo de 3–4 barras `accent`; no host pulsa com `animate-pulse` só enquanto toca.
+
+### Toast e erro
+
+Toast: `fixed` acima da barra de abas, `highlight`, `rounded-lg`, `role="alert"`, some em 4 s com fade de 0.4s. Erro de formulário: texto `negative` `text-sm` centralizado, `role="alert"`.
+
+### Movimento
+
+Transições curtas de cor/sombra (150ms padrão do Tailwind), `hover:scale-105` no play, `active:scale-95` nos votos. `prefers-reduced-motion` zera animações e transições globalmente (`main.css`).
+
+### Layout
+
+- **Host:** `h-screen w-screen p-2 gap-2 bg-black`; palco `flex-1` e lateral da fila de 340px; sem breakpoints (é uma tela de TV).
+- **Mobile:** `h-dvh`/`min-h-dvh`, `px-4`–`px-6`, `max-w-sm` no `join`. Alvos de toque de 44–48px nas ações principais.
 
 ## 6. Do's and Don'ts
 
 ### Do
 
-- **Do** keep every background a step on the purple-black ramp (Void → Sidebar Void → Panel) — never introduce a true gray or white surface.
-- **Do** use text-glow and border-glow as the only "elevation" — a lighter background step is the fallback when glow isn't appropriate.
-- **Do** keep primary actions on the muted plum-to-maroon gradient, reserving full-saturation neon pink for live/active state, not button fills.
-- **Do** keep labels/kickers uppercase and wide-tracked, but only on genuine labels (form fields, section headers like "FILA") — not decoratively above every section.
-- **Do** keep the tone playful and domestic in copy and motion even though the palette is venue-grade neon — this is a house party, not a nightclub console.
+- **Do** usar os tokens do Tailwind (`bg-surface`, `bg-elevated`, `text-subdued`, `bg-accent`) em vez de hex.
+- **Do** reservar o verde para ação primária e estado "tocando/ativo/online".
+- **Do** separar camadas com o degrau de cor; sombra só nas capas, no player e no toast.
+- **Do** manter pílulas para o que se toca e `rounded-lg` para cartões.
+- **Do** manter alvo de toque ≥ 44px no celular, anel `focus-visible` e `role="alert"` nos erros.
+- **Do** escrever em português e curto; sem emoji.
 
 ### Don't
 
-- **Don't** build generic-karaoke-app UI: bordered list rows, default form-library styling, stock microphone clip-art. That's the explicit anti-reference.
-- **Don't** drift toward corporate SaaS: no dashboard card-grids, no admin-tool chrome, no settings-page density.
-- **Don't** add conventional dark drop-shadows anywhere; this system has no shadow-based elevation.
-- **Don't** introduce a third accent color. Pink and cyan are the only signal colors — anything else (green/red for votes) stays a narrow, literal exception, never a new brand color.
-- **Don't** use a plain gray. If something needs to be muted, it's Dim (#8B7DA5) or a low-opacity version of an existing token, always purple-tinted.
-- **Don't** drop Dim below ~90% opacity for text that carries real information (labels, nav state, placeholders) — anything more transparent falls under the 4.5:1 AA floor on both Void and Panel. Reserve low-opacity Dim for genuinely decorative/supporting copy only.
-- **Don't** let the mood tip nightclub-serious — no cold, austere, console-like styling; warmth comes through in copy, pacing, and rounded, tactile shapes, not just color.
+- **Don't** adicionar um segundo acento nem usar o verde como decoração.
+- **Don't** usar glow, gradiente decorativo ou blur em cartões.
+- **Don't** usar texto em `muted` ou `outline`; só `subdued` e branco carregam informação.
+- **Don't** introduzir pesos 300/500 ou uma segunda família de fonte.
+- **Don't** criar novos cinzas soltos; se faltar um degrau, adicione um token.
+
+## 7. Lacunas conhecidas
+
+Divergências entre o sistema e o código, para corrigir em passes futuros:
+
+- **Hex soltos fora dos tokens:** `#eeeeee` e `#181818` nas pílulas do host, `#3a3a3a` no gradiente do player, `#272727` no hover dos resultados de busca, `#f3727f` e `#fff` inline em SVG e sombras, `bg-white` nos botões e cartões do host. Candidatos a tokens.
+- **Dois estilos de campo:** `.field` (4px) e a busca (pílula).
+- **Mistura de idiomas:** "Entrar como Client" e placeholder "Ex: NEON" (código que o gerador nunca produz).
+- **Viewport e safe areas:** o meta viewport usa `viewport-fit=cover` e o header, o toast e a lateral da sala aplicam `env(safe-area-inset-*)`, mas a barra de abas ainda é full-bleed, sem inset lateral em paisagem.
+- **Layouts não verificados em tela real:** o placar da noite e os botões de reordenar na lateral de 340px do host precisam de conferência em TV 1080p.

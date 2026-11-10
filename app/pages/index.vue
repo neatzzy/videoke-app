@@ -15,7 +15,7 @@
                focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
       >
         <div class="w-12 h-12 rounded-md bg-highlight flex items-center justify-center shrink-0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="3" y="4" width="18" height="12" rx="2" stroke="#fff" stroke-width="1.8" />
             <path d="M9 20h6M12 16v4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
           </svg>
@@ -32,7 +32,7 @@
                focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
       >
         <div class="w-12 h-12 rounded-md bg-highlight flex items-center justify-center shrink-0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="7" y="2" width="10" height="20" rx="2" stroke="#fff" stroke-width="1.8" />
             <path d="M11 19h2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
           </svg>

@@ -3,8 +3,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   devServer: { host: '0.0.0.0' },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/fonts'],
   css: ['~/assets/css/main.css'],
+  // Inter self-hosted pelo @nuxt/fonts (sem <link> bloqueante); 'Inter' casa com tailwind.config.ts e main.css.
+  fonts: {
+    families: [{ name: 'Inter', weights: [400, 600, 700, 800], display: 'swap' }],
+  },
   // Telão e sala são 100% client-side (dependem de Pusher/localStorage); /join segue com SSR.
   routeRules: {
     '/host': { ssr: false },
@@ -13,9 +17,15 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'pt-BR' },
+      meta: [
+        // viewport-fit=cover libera env(safe-area-inset-*) no app instalado (room/[code].vue).
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        { name: 'theme-color', content: '#000000' },
+      ],
       link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap' },
+        { rel: 'manifest', href: '/manifest.webmanifest' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
       ],
     },
   },
