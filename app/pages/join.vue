@@ -61,7 +61,7 @@ function submit() {
               id="join-code"
               v-model="code"
               type="text"
-              placeholder="Ex: NEON"
+              placeholder="Ex: ABCD"
               maxlength="4"
               autocomplete="off"
               autocapitalize="characters"

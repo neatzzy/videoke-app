@@ -10,9 +10,28 @@ const activeTab = computed<Tab>({
   set: (tab) => { navigateTo({ query: tab === 'live' ? {} : { tab } }) },
 })
 
+// ≥ 768px (md): "Ao Vivo" e "Fila" viram uma visão só ("duo", duas colunas). A URL não muda sozinha.
+// matchMedia só no mount: a página é ssr:false, mas o setup não toca em window.
+const isWide = ref(false)
+let wideQuery: MediaQueryList | undefined
+const onWideChange = (e: MediaQueryListEvent) => { isWide.value = e.matches }
+onMounted(() => {
+  wideQuery = window.matchMedia('(min-width: 768px)')
+  isWide.value = wideQuery.matches
+  wideQuery.addEventListener('change', onWideChange)
+})
+onUnmounted(() => wideQuery?.removeEventListener('change', onWideChange))
+
+type View = Tab | 'duo'
+const effectiveTab = computed<View>(() => (isWide.value && activeTab.value !== 'search' ? 'duo' : activeTab.value))
+// Em duo a fila já está visível, então a barra marca "Ao Vivo"
+const navTab = computed<Tab>(() => (effectiveTab.value === 'duo' ? 'live' : activeTab.value))
+const navTabs = computed<Tab[]>(() => (isWide.value ? ['live', 'search'] : ['live', 'search', 'queue']))
+const frame = computed(() => (effectiveTab.value === 'duo' ? 'max-w-4xl' : 'max-w-xl'))
+
 // Ícone da aba: "Ao Vivo" troca o contorno pelo disco cheio quando ativa
 function tabIcon(tab: Tab) {
-  if (tab === 'live') return activeTab.value === 'live' ? 'live-fill' as const : 'live' as const
+  if (tab === 'live') return navTab.value === 'live' ? 'live-fill' as const : 'live' as const
   return tab === 'search' ? 'search' as const : 'list' as const
 }
 
@@ -137,7 +156,7 @@ async function castVote(v: 'like' | 'dislike') {
 
 <template>
   <div class="h-dvh flex flex-col bg-surface overflow-hidden">
-    <div class="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col">
+    <div :class="['mx-auto flex min-h-0 w-full flex-1 flex-col', frame]">
       <!-- Top bar -->
       <header class="page-x page-top pb-3 flex items-center gap-3 flex-shrink-0 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-1">
         <span v-if="session?.code" class="px-3 py-1 rounded-full bg-highlight text-xs font-bold font-mono tracking-[2px]">
@@ -160,16 +179,28 @@ async function castVote(v: 'like' | 'dislike') {
       </header>
 
       <!-- Content area (scrollable) -->
-      <main class="page-x min-h-0 flex-1 overflow-y-auto scrollbar-thin pt-2 pb-4 [@media(max-height:500px)]:pt-1">
-        <div class="relative">
+      <!-- Duo: cada coluna rola sozinha, então main não rola; abaixo de md a altura é automática como antes -->
+      <main
+        :class="[
+          'page-x min-h-0 flex-1 pt-2 pb-4 [@media(max-height:500px)]:pt-1',
+          effectiveTab === 'duo' ? 'flex flex-col overflow-hidden' : 'overflow-y-auto scrollbar-thin'
+        ]"
+      >
+        <div class="relative min-h-0 flex-1">
           <Transition name="tab">
-            <div :key="resuming ? 'resuming' : activeTab">
+            <div :key="resuming ? 'resuming' : effectiveTab" :class="effectiveTab === 'duo' && 'h-full'">
 
               <!-- ══ RESUMING ══ -->
               <p v-if="resuming" role="status" class="py-16 text-center text-sm text-subdued animate-pulse">Entrando na sala…</p>
 
-              <!-- ══ TAB: AO VIVO ══ -->
-              <template v-else-if="activeTab === 'live'">
+              <div v-else :class="effectiveTab === 'duo' && 'grid grid-rows-1 grid-cols-2 gap-6 h-full'">
+
+              <!-- ══ AO VIVO (aba ou coluna da duo) ══ -->
+              <section
+                v-if="effectiveTab === 'duo' || effectiveTab === 'live'"
+                aria-label="Ao Vivo"
+                :class="effectiveTab === 'duo' && 'min-h-0 overflow-y-auto scrollbar-thin'"
+              >
 
                 <!-- Previous votes result -->
                 <Transition name="fade">
@@ -177,7 +208,7 @@ async function castVote(v: 'like' | 'dislike') {
                     v-if="previousVotes"
                     class="mb-4 p-4 rounded-lg bg-elevated flex items-center justify-between"
                   >
-                    <span class="text-xs font-bold tracking-label text-subdued uppercase">Última performance</span>
+                    <span class="text-xs font-bold text-subdued">Última performance</span>
                     <div class="flex gap-4 text-sm font-bold">
                       <span class="flex items-center gap-1.5 text-accent">
                         <AppIcon name="arrow-up" :size="16" />
@@ -192,31 +223,37 @@ async function castVote(v: 'like' | 'dislike') {
                 </Transition>
 
                 <!-- Current Song -->
-                <div v-if="currentSong">
-                  <p class="flex items-center gap-2 text-xs font-bold tracking-label text-subdued">
-                    <Equalizer :playing="isPlaying" :bars="4" size="sm" />
-                    AGORA CANTANDO
-                  </p>
+                <!-- Paisagem baixa de celular (≤500px de altura, <768px de largura): capa à esquerda, título e votos à direita, para votar sem rolar -->
+                <div v-if="currentSong" class="[@media(max-height:500px)_and_(max-width:767px)]:flex [@media(max-height:500px)_and_(max-width:767px)]:items-start [@media(max-height:500px)_and_(max-width:767px)]:gap-4">
+                  <div class="[@media(max-height:500px)_and_(max-width:767px)]:w-[38%] [@media(max-height:500px)_and_(max-width:767px)]:shrink-0">
+                    <p class="flex items-center gap-2 text-xs font-bold text-subdued">
+                      <Equalizer :playing="isPlaying" :bars="4" size="sm" />
+                      Agora cantando
+                    </p>
 
-                  <img
-                    v-if="currentSong.thumbnail"
-                    :src="currentSong.thumbnail"
-                    alt=""
-                    class="mt-3 w-full aspect-video object-cover rounded-lg bg-muted shadow-[rgba(0,0,0,.5)_0_8px_24px]"
-                  >
-                  <div v-else class="mt-3 w-full aspect-video rounded-lg bg-gradient-to-b from-muted to-elevated shadow-[rgba(0,0,0,.5)_0_8px_24px]" />
-
-                  <h2 class="mt-4 text-2xl font-bold leading-tight line-clamp-2">{{ currentSong.title }}</h2>
-                  <p class="mt-1 text-sm text-subdued">{{ currentSong.artist }}</p>
-                  <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-highlight">
-                    <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
-                      {{ currentSong.addedBy.charAt(0).toUpperCase() }}
-                    </span>
-                    <span class="text-sm font-bold">{{ currentSong.addedBy }}</span>
+                    <img
+                      v-if="currentSong.thumbnail"
+                      :src="currentSong.thumbnail"
+                      alt=""
+                      class="mt-3 w-full aspect-video object-cover rounded-lg bg-muted shadow-cover"
+                    >
+                    <div v-else class="mt-3 w-full aspect-video rounded-lg bg-elevated shadow-cover flex items-center justify-center">
+                      <AppIcon name="music" :size="32" class="text-muted" />
+                    </div>
                   </div>
 
-                  <!-- Vote buttons -->
-                  <div class="mt-5 grid grid-cols-2 gap-3">
+                  <div class="[@media(max-height:500px)_and_(max-width:767px)]:min-w-0 [@media(max-height:500px)_and_(max-width:767px)]:flex-1">
+                    <h2 class="mt-4 text-2xl font-bold leading-tight line-clamp-2 [@media(max-height:500px)_and_(max-width:767px)]:mt-0">{{ currentSong.title }}</h2>
+                    <p class="mt-1 text-sm text-subdued">{{ currentSong.artist }}</p>
+                    <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-highlight">
+                      <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                        {{ currentSong.addedBy.charAt(0).toUpperCase() }}
+                      </span>
+                      <span class="text-sm font-bold">{{ currentSong.addedBy }}</span>
+                    </div>
+
+                    <!-- Vote buttons -->
+                    <div class="mt-5 grid grid-cols-2 gap-3 [@media(max-height:500px)_and_(max-width:767px)]:mt-3">
                     <button
                       :disabled="!!myVote"
                       :class="[
@@ -246,10 +283,11 @@ async function castVote(v: 'like' | 'dislike') {
                     </button>
                   </div>
 
-                  <p class="mt-3 text-center text-sm text-subdued" aria-live="polite">
-                    <template v-if="myVote">Voto registrado! · </template>
-                    {{ votes.total }} votos · {{ votes.likes }} curtidas · {{ votes.dislikes }} não curtidas
-                  </p>
+                    <p class="mt-3 text-center text-sm text-subdued" aria-live="polite">
+                      <template v-if="myVote">Voto registrado! · </template>
+                      {{ votes.total }} votos · {{ votes.likes }} curtidas · {{ votes.dislikes }} não curtidas
+                    </p>
+                  </div>
                 </div>
 
                 <!-- No song playing -->
@@ -264,14 +302,15 @@ async function castVote(v: 'like' | 'dislike') {
                     Buscar música
                   </button>
                 </div>
-              </template>
+              </section>
 
-              <!-- ══ TAB: BUSCAR ══ -->
-              <template v-else-if="activeTab === 'search'">
+              <!-- ══ BUSCAR (tela cheia, sempre contida em max-w-xl) ══ -->
+              <template v-if="effectiveTab === 'search'">
                 <form class="sticky top-0 bg-surface pb-2" @submit.prevent="search">
+                  <!-- Pílula, então não é o .field (4px): mesmo anel inset de outline 1px e branco 2px em foco, com a linha de 1px de surface embaixo -->
                   <label
                     class="flex items-center gap-3 px-4 py-3 rounded-full bg-highlight transition-shadow duration-fast ease-standard
-                           shadow-[rgb(18,18,18)_0_1px_0,rgb(124,124,124)_0_0_0_1px_inset] focus-within:shadow-[#fff_0_0_0_2px_inset]"
+                           shadow-[0_1px_0_theme(colors.surface),inset_0_0_0_1px_theme(colors.outline)] focus-within:shadow-[inset_0_0_0_2px_theme(colors.white)]"
                   >
                     <AppIcon name="search" :size="18" :class="['flex-shrink-0 text-subdued', searching && 'animate-pulse']" />
                     <input
@@ -342,8 +381,12 @@ async function castVote(v: 'like' | 'dislike') {
                 </div>
               </template>
 
-              <!-- ══ TAB: FILA ══ -->
-              <template v-else-if="activeTab === 'queue'">
+              <!-- ══ FILA (aba ou coluna da duo) ══ -->
+              <section
+                v-if="effectiveTab === 'duo' || effectiveTab === 'queue'"
+                aria-label="Fila"
+                :class="effectiveTab === 'duo' && 'min-h-0 overflow-y-auto scrollbar-thin'"
+              >
                 <h2 class="text-2xl font-bold mb-4">Fila</h2>
 
                 <!-- Currently playing -->
@@ -384,7 +427,8 @@ async function castVote(v: 'like' | 'dislike') {
                 <p v-if="queue.length === 0 && !currentSong" class="text-center text-subdued text-sm py-12">
                   Fila vazia
                 </p>
-              </template>
+              </section>
+              </div>
             </div>
           </Transition>
         </div>
@@ -399,7 +443,7 @@ async function castVote(v: 'like' | 'dislike') {
         class="fixed inset-x-0 bottom-[calc(5rem_+_env(safe-area-inset-bottom))] z-50 page-x pointer-events-none"
       >
         <div
-          class="mx-auto max-w-xl pointer-events-auto flex items-center gap-2 pl-4 pr-1 py-1 rounded-lg bg-highlight text-white text-sm shadow-[rgba(0,0,0,.5)_0_8px_24px]"
+          class="mx-auto max-w-xl pointer-events-auto flex items-center gap-2 pl-4 pr-1 py-1 rounded-lg bg-highlight text-white text-sm shadow-cover"
           @mouseenter="holdError"
           @mouseleave="releaseError"
           @focusin="holdError"
@@ -421,19 +465,19 @@ async function castVote(v: 'like' | 'dislike') {
 
     <!-- Bottom Navigation: fundo full-bleed, abas contidas na largura da sala -->
     <nav aria-label="Navegação da sala" class="safe-bottom flex-shrink-0 bg-black border-t border-highlight">
-      <div class="mx-auto flex w-full max-w-xl">
+      <div :class="['mx-auto flex w-full', frame]">
         <button
-          v-for="tab in (['live', 'search', 'queue'] as const)"
+          v-for="tab in navTabs"
           :key="tab"
-          :aria-current="activeTab === tab ? 'true' : undefined"
+          :aria-current="navTab === tab ? 'true' : undefined"
           :class="[
             'flex-1 flex flex-col items-center py-3 gap-1.5 text-xs transition-colors duration-fast ease-standard',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white',
-            activeTab === tab ? 'text-accent font-bold' : 'text-subdued hover:text-white'
+            navTab === tab ? 'text-accent font-bold' : 'text-subdued hover:text-white'
           ]"
           @click="activeTab = tab"
         >
-          <AppIcon :name="tabIcon(tab)" :size="18" :filled="activeTab === tab" />
+          <AppIcon :name="tabIcon(tab)" :size="18" :filled="navTab === tab" />
           <span>{{ tab === 'live' ? 'Ao Vivo' : tab === 'search' ? 'Buscar' : 'Fila' }}</span>
         </button>
       </div>

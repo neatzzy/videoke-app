@@ -19,6 +19,10 @@ export default {
       fontFamily: {
         sans: ['Inter', 'Helvetica Neue', 'helvetica', 'arial', 'sans-serif'],
       },
+      boxShadow: {
+        // Única sombra projetada do sistema: capas, player e toast.
+        cover: 'rgba(0, 0, 0, 0.5) 0 8px 24px',
+      },
       letterSpacing: {
         label: '1.4px',
       },

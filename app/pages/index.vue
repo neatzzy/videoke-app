@@ -33,7 +33,7 @@
             <AppIcon name="user" :size="24" />
           </div>
           <div class="text-left">
-            <p class="m-0 font-bold text-base text-white">Entrar como Client</p>
+            <p class="m-0 font-bold text-base text-white">Entrar como convidado</p>
             <p class="m-0 mt-0.5 text-sm text-subdued">Vote e adicione músicas pelo celular</p>
           </div>
         </NuxtLink>

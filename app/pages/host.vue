@@ -78,28 +78,68 @@ const FADE_TRANSITION = {
 
 // Placar do fim da música (5 s) e avanço automático. Some quando a música muda, o host pula
 // ou cancela (botão, Esc). Cancelar mantém a música terminada; "Próxima" continua valendo.
+// Pausar guarda o tempo restante e retoma dele.
 const AUTO_ADVANCE_MS = 5000
 const endedScore = ref<{ likes: number, dislikes: number } | null>(null)
+const countdownPaused = ref(false)
+const countdownSec = ref(AUTO_ADVANCE_MS / 1000)
 let advanceTimer: ReturnType<typeof setTimeout> | null = null
+let countdownTick: ReturnType<typeof setInterval> | null = null
+// Tempo restante quando a contagem (re)começou, e o instante em que começou a correr.
+let remainingMs = AUTO_ADVANCE_MS
+let runningSince = 0
 // Id da música já contada: evita que um ENDED repetido do YouTube reabra o placar após cancelar.
 let endedSongId: string | null = null
 
-function cancelAutoAdvance() {
+function timeLeftMs() {
+  return countdownPaused.value ? remainingMs : remainingMs - (Date.now() - runningSince)
+}
+
+function updateCountdownLabel() {
+  countdownSec.value = Math.max(0, Math.ceil(timeLeftMs() / 1000))
+}
+
+function startCountdown() {
+  runningSince = Date.now()
+  advanceTimer = setTimeout(() => { cancelAutoAdvance(); nextSong() }, remainingMs)
+  // Tick de 250 ms só para o rótulo: ele muda uma vez por segundo, sem drift visível.
+  countdownTick = setInterval(updateCountdownLabel, 250)
+}
+
+function stopCountdown() {
   if (advanceTimer !== null) clearTimeout(advanceTimer)
+  if (countdownTick !== null) clearInterval(countdownTick)
   advanceTimer = null
+  countdownTick = null
+}
+
+function cancelAutoAdvance() {
+  stopCountdown()
+  countdownPaused.value = false
   endedScore.value = null
+}
+
+function togglePause() {
+  if (!endedScore.value) return
+  if (countdownPaused.value) {
+    countdownPaused.value = false
+    startCountdown()
+  } else {
+    remainingMs = timeLeftMs()
+    stopCountdown()
+    countdownPaused.value = true
+    updateCountdownLabel()
+  }
 }
 
 function onSongEnded() {
   const id = currentSong.value?.id
-  if (!id || advanceTimer !== null || endedSongId === id) return
+  if (!id || endedScore.value || endedSongId === id) return
   endedSongId = id
   endedScore.value = { likes: votes.value.likes, dislikes: votes.value.dislikes }
-  advanceTimer = setTimeout(() => {
-    advanceTimer = null
-    endedScore.value = null
-    nextSong()
-  }, AUTO_ADVANCE_MS)
+  remainingMs = AUTO_ADVANCE_MS
+  countdownSec.value = AUTO_ADVANCE_MS / 1000
+  startCountdown()
 }
 
 // Botão "Próxima" e "Avançar agora": cancelam a contagem antes de pular, para não avançar duas vezes.
@@ -259,7 +299,7 @@ watch(playerReady, (ready) => {
 </script>
 
 <template>
-  <div class="h-dvh w-full flex flex-col gap-2 pt-2 page-x pb-[max(0.5rem,env(safe-area-inset-bottom))] overflow-hidden bg-black select-none">
+  <div class="h-dvh w-full flex flex-col gap-2 pt-2 pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(0.5rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] overflow-hidden bg-black select-none">
     <div class="flex-1 flex gap-2 min-h-0">
       <!-- ═══ MAIN PANEL: player + now singing ═══ -->
       <section aria-label="Palco" class="relative flex-1 flex flex-col min-w-0 rounded-lg bg-surface">
@@ -272,9 +312,9 @@ watch(playerReady, (ready) => {
             </div>
             <div
               v-if="session?.code"
-              class="px-5 py-2 rounded-full bg-[#eeeeee] text-elevated text-base font-bold tracking-label"
+              class="px-5 py-2 rounded-full bg-white text-elevated text-base font-bold"
             >
-              SALA&nbsp;{{ session.code }}
+              Sala&nbsp;{{ session.code }}
             </div>
           </div>
         </header>
@@ -285,21 +325,26 @@ watch(playerReady, (ready) => {
           <div class="relative flex-1 min-h-0 [container-type:size]">
             <div
               class="absolute top-0 left-1/2 -translate-x-1/2 h-[100cqh] w-[min(100cqw,calc(100cqh*16/9))] rounded-lg overflow-hidden
-                     bg-gradient-to-br from-[#3a3a3a] to-elevated shadow-[rgba(0,0,0,.5)_0_8px_24px]
+                     bg-elevated shadow-cover
                      [&>*]:absolute [&>*]:inset-0 [&>*]:w-full [&>*]:h-full"
             >
+              <!-- Placeholder até o player carregar; o iframe do YouTube cobre este fundo -->
+              <div class="flex items-center justify-center text-muted" aria-hidden="true">
+                <AppIcon name="music" :size="32" />
+              </div>
               <div id="yt-player" />
             </div>
           </div>
 
           <Transition v-bind="FADE_TRANSITION">
-            <div v-if="currentSong && showInfo" class="flex items-end justify-between gap-8 flex-shrink-0">
-              <div class="min-w-0">
-                <p class="flex items-center gap-2.5 text-sm font-bold tracking-label text-subdued">
+            <!-- Quando não cabe lado a lado, o cartão do QR desce para baixo do título; em telas baixas ele fica compacto -->
+            <div v-if="currentSong && showInfo" class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 flex-shrink-0">
+              <div class="flex-1 min-w-[min(100%,24rem)]">
+                <p class="flex items-center gap-2.5 text-sm font-bold text-subdued whitespace-nowrap">
                   <Equalizer :playing="isPlaying" />
-                  AGORA CANTANDO
+                  Agora cantando
                 </p>
-                <h1 class="mt-2 text-[clamp(32px,5vw,64px)] font-extrabold leading-[1.1] truncate">{{ currentSong.title }}</h1>
+                <h1 class="mt-2 text-[clamp(32px,5vw,64px)] font-extrabold leading-[1.1] line-clamp-2 break-words">{{ currentSong.title }}</h1>
                 <p class="mt-1 text-2xl text-subdued truncate">{{ currentSong.artist }}</p>
                 <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-4 rounded-full bg-highlight">
                   <span class="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-base font-bold">
@@ -309,14 +354,14 @@ watch(playerReady, (ready) => {
                 </div>
               </div>
 
-              <div v-if="session?.code" class="flex items-center gap-4 py-3 pl-3 pr-4 rounded-lg bg-elevated flex-shrink-0">
-                <div class="p-1.5 rounded-md bg-white">
+              <div v-if="session?.code" class="flex items-center gap-4 py-3 pl-3 pr-4 rounded-lg bg-elevated shrink-0 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:gap-3">
+                <div class="p-1.5 rounded-md bg-white [@media(max-height:700px)]:[&>div]:!size-[112px]">
                   <QrCode :value="joinUrl" :size="160" />
                 </div>
                 <div>
                   <p class="text-base font-bold">Entre pelo celular</p>
                   <p class="mt-1 text-sm text-subdued">Escaneie o QR code ou use o código</p>
-                  <p class="mt-2 text-base font-bold font-mono tracking-label">{{ session.code }}</p>
+                  <p class="mt-2 text-base font-bold font-mono">{{ session.code }}</p>
                 </div>
               </div>
             </div>
@@ -336,8 +381,8 @@ watch(playerReady, (ready) => {
                 <QrCode :value="joinUrl" :size="220" />
               </div>
               <div class="text-left">
-                <p class="text-sm font-bold tracking-label text-subdued">OU DIGITE O CÓDIGO</p>
-                <div class="mt-3 px-12 py-4 rounded-full bg-[#eeeeee] text-elevated text-5xl font-extrabold tracking-[12px]">
+                <p class="text-sm font-bold text-subdued">Ou digite o código</p>
+                <div class="mt-3 px-12 py-4 rounded-full bg-white text-elevated text-5xl font-extrabold tracking-[12px]">
                   {{ session.code }}
                 </div>
               </div>
@@ -347,7 +392,8 @@ watch(playerReady, (ready) => {
 
         <!-- Placar do fim da música: o texto vai também para leitores de tela via região sr-only -->
         <p class="sr-only" aria-live="polite">
-          <template v-if="endedScore">Placar final: {{ endedScore.likes }} curtidas, {{ endedScore.dislikes }} não curtiram. Próxima música em instantes.</template>
+          <!-- Só o início é anunciado: o rótulo visual muda a cada segundo e fica fora do aria-live -->
+          <template v-if="endedScore">Placar final: {{ endedScore.likes }} curtidas, {{ endedScore.dislikes }} não curtiram. Próxima música em {{ AUTO_ADVANCE_MS / 1000 }} segundos.</template>
         </p>
         <Transition v-bind="FADE_TRANSITION">
           <div
@@ -355,11 +401,11 @@ watch(playerReady, (ready) => {
             class="absolute inset-0 z-10 flex items-center justify-center bg-surface rounded-lg"
           >
             <div class="w-[min(90%,640px)] text-center px-10 py-8 rounded-lg bg-elevated">
-              <p class="text-sm font-bold tracking-label text-subdued">PLACAR FINAL</p>
+              <p class="text-sm font-bold text-subdued">Placar final</p>
               <p class="mt-2 text-4xl font-extrabold truncate">{{ currentSong?.title }}</p>
               <div class="mt-6 flex items-center justify-center gap-12">
                 <div>
-                  <p class="text-6xl font-extrabold text-accent">{{ endedScore.likes }}</p>
+                  <p class="text-6xl font-extrabold text-white">{{ endedScore.likes }}</p>
                   <p class="mt-1 text-base text-subdued">curtidas</p>
                 </div>
                 <div>
@@ -367,14 +413,20 @@ watch(playerReady, (ready) => {
                   <p class="mt-1 text-base text-subdued">não curtiram</p>
                 </div>
               </div>
-              <!-- Contagem regressiva: encolhe com scaleX até o avanço automático -->
+              <!-- Contagem regressiva: encolhe com scaleX até o avanço automático; pausar congela a animação -->
               <div class="mt-6 h-1 rounded-sm bg-muted overflow-hidden" aria-hidden="true">
                 <div
                   class="countdown h-full w-full origin-left rounded-sm bg-accent"
-                  :style="{ animationDuration: `${AUTO_ADVANCE_MS}ms` }"
+                  :style="{
+                    animationDuration: `${AUTO_ADVANCE_MS}ms`,
+                    animationPlayState: countdownPaused ? 'paused' : 'running',
+                  }"
                 />
               </div>
-              <p class="mt-3 text-base text-subdued">Próxima música em instantes</p>
+              <!-- Rótulo em texto: é a contagem para quem não vê a barra (reduced motion). Não é anunciado a cada segundo. -->
+              <p aria-live="off" class="mt-3 text-base text-subdued tabular-nums">
+                {{ countdownPaused ? `Contagem pausada em ${countdownSec} s` : `Próxima música em ${countdownSec} s` }}
+              </p>
               <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
                 <button
                   type="button"
@@ -385,6 +437,15 @@ watch(playerReady, (ready) => {
                   @click="cancelAutoAdvance"
                 >
                   Cancelar avanço
+                </button>
+                <button
+                  type="button"
+                  class="min-h-11 px-6 rounded-full bg-highlight hover:bg-hover text-base font-bold
+                         transition-colors duration-fast ease-standard
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  @click="togglePause"
+                >
+                  {{ countdownPaused ? 'Retomar' : 'Pausar' }}
                 </button>
                 <button
                   type="button"
@@ -447,15 +508,15 @@ watch(playerReady, (ready) => {
             >
             <div v-else class="w-10 h-10 rounded bg-muted flex-shrink-0" />
             <div class="min-w-0 flex-1">
-              <p class="text-base font-bold truncate">{{ item.title }}</p>
+              <p class="text-base font-bold line-clamp-2 break-words">{{ item.title }}</p>
               <p class="mt-0.5 text-sm text-subdued truncate">{{ item.addedBy }} · {{ item.artist }}</p>
+              <span
+                v-if="idx === 0"
+                class="mt-1 inline-block px-2 py-0.5 rounded-full bg-muted text-sm font-semibold"
+              >
+                Próxima
+              </span>
             </div>
-            <span
-              v-if="idx === 0"
-              class="px-2 py-0.5 rounded-full bg-muted text-sm font-semibold flex-shrink-0"
-            >
-              Próxima
-            </span>
             <!-- Fora do fluxo: o título ocupa a linha inteira; aparece com hover, foco por teclado ou em telas sem hover -->
             <div
               class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1.5 p-1 rounded-md bg-highlight opacity-0
@@ -510,7 +571,7 @@ watch(playerReady, (ready) => {
                 {{ idx + 1 }}
               </span>
               <span class="flex-1 min-w-0 text-base font-bold truncate">{{ singer.name }}</span>
-              <span class="text-sm font-bold text-accent flex-shrink-0">
+              <span class="text-sm font-bold text-white flex-shrink-0">
                 {{ singer.likesReceived }} {{ singer.likesReceived === 1 ? 'curtida' : 'curtidas' }}
               </span>
             </li>
