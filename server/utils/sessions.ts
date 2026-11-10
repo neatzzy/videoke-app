@@ -167,12 +167,15 @@ export async function castVote(redis: Redis, clientId: string, code: string, vot
   return session
 }
 
+const publicItem = ({ addedById: _addedById, ...item }: QueueItem) => item
+
 export function serializeSession(session: Session) {
   return {
     code: session.code,
-    clients: session.clients,
-    queue: session.queue,
-    currentSong: session.currentSong,
+    // clientId é credencial: nunca sai do servidor
+    clients: Object.values(session.clients).map(({ name, isHost }) => ({ name, isHost })),
+    queue: session.queue.map(publicItem),
+    currentSong: session.currentSong && publicItem(session.currentSong),
     status: session.status,
     votes: {
       likes: session.votes.likes,

@@ -26,8 +26,8 @@ onMounted(async () => {
   if (!ok) navigateTo('/join')
 })
 
-// Reset vote when song changes
-watch(currentSong, () => { myVote.value = null })
+// Reset vote only when the song id changes; session-update re-creates the object and would clear it otherwise
+watch(() => currentSong.value?.id, () => { myVote.value = null })
 
 async function search() {
   if (!searchQuery.value.trim()) return

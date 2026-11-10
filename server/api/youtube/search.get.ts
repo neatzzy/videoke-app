@@ -1,37 +1,54 @@
-export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const q = query.q as string
+interface YouTubeSearchResponse {
+  items?: {
+    id?: { videoId?: string }
+    snippet?: {
+      title: string
+      channelTitle: string
+      thumbnails?: { medium?: { url: string }; default?: { url: string } }
+    }
+  }[]
+}
 
-  if (!q?.trim()) {
-    throw createError({ statusCode: 400, message: 'Parâmetro q obrigatório' })
-  }
+const normalize = (q: unknown) => (typeof q === 'string' ? q.trim().toLowerCase().slice(0, 80) : '')
 
-  const apiKey = process.env.API_KEY
-  if (!apiKey) {
-    throw createError({ statusCode: 500, message: 'YouTube API key não configurada' })
-  }
+// Cache por 24h: cada busca custa 100 unidades da cota diária da YouTube Data API.
+export default defineCachedEventHandler(async (event) => {
+  const q = normalize(getQuery(event).q)
+  if (!q) throw createError({ statusCode: 400, message: 'Parâmetro q obrigatório' })
 
-  const url = new URL('https://www.googleapis.com/youtube/v3/search')
-  url.searchParams.set('part', 'snippet')
-  url.searchParams.set('type', 'video')
-  url.searchParams.set('q', `${q} karaoke`)
-  url.searchParams.set('key', apiKey)
-  url.searchParams.set('maxResults', '10')
-  url.searchParams.set('videoCategoryId', '10') // Music category
+  const { youtubeApiKey } = useRuntimeConfig(event)
+  if (!youtubeApiKey) throw createError({ statusCode: 500, message: 'Busca indisponível' })
 
-  const response = await fetch(url.toString())
-  const data = await response.json() as any
+  const data = await $fetch<YouTubeSearchResponse>('https://www.googleapis.com/youtube/v3/search', {
+    query: {
+      part: 'snippet',
+      type: 'video',
+      q: `${q} karaoke`,
+      key: youtubeApiKey,
+      maxResults: 10,
+      videoCategoryId: 10, // categoria Música
+      videoEmbeddable: 'true', // só vídeos que tocam no player do host
+    },
+    timeout: 8000,
+  }).catch(() => {
+    // Não repassa a mensagem do Google ao cliente.
+    throw createError({ statusCode: 502, message: 'Não foi possível buscar no YouTube' })
+  })
 
-  if (!response.ok) {
-    throw createError({ statusCode: response.status, message: data.error?.message ?? 'Erro na API do YouTube' })
-  }
-
-  const items = (data.items ?? []).map((item: any) => ({
-    videoId: item.id.videoId,
-    title: item.snippet.title,
-    artist: item.snippet.channelTitle,
-    thumbnail: item.snippet.thumbnails.medium?.url ?? item.snippet.thumbnails.default?.url,
-  }))
+  const items = (data.items ?? []).flatMap((item) => {
+    const videoId = item.id?.videoId
+    const snippet = item.snippet
+    if (!videoId || !snippet) return []
+    return [{
+      videoId,
+      title: snippet.title,
+      artist: snippet.channelTitle,
+      thumbnail: snippet.thumbnails?.medium?.url ?? snippet.thumbnails?.default?.url ?? '',
+    }]
+  })
 
   return { items }
+}, {
+  maxAge: 60 * 60 * 24,
+  getKey: (event) => normalize(getQuery(event).q),
 })

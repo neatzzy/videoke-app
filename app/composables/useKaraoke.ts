@@ -8,12 +8,11 @@ export interface QueueItem {
   thumbnail: string
   duration: string
   addedBy: string
-  addedById: string
 }
 
 export interface KaraokeSession {
   code: string
-  clients: Record<string, { name: string; isHost: boolean; songsSung?: number }>
+  clients: { name: string; isHost: boolean }[]
   queue: QueueItem[]
   currentSong: QueueItem | null
   status: 'waiting' | 'playing'
@@ -42,7 +41,7 @@ export const useKaraoke = () => {
   const currentSong = computed(() => session.value?.currentSong ?? null)
   const queue = computed(() => session.value?.queue ?? [])
   const votes = computed(() => session.value?.votes ?? { likes: 0, dislikes: 0, total: 0 })
-  const clientCount = computed(() => Object.keys(session.value?.clients ?? {}).length)
+  const clientCount = computed(() => session.value?.clients.length ?? 0)
 
   function subscribe(code: string) {
     if (typeof window === 'undefined') return
@@ -95,7 +94,7 @@ export const useKaraoke = () => {
     }
   }
 
-  async function addSong(item: Omit<QueueItem, 'id' | 'addedBy' | 'addedById'>) {
+  async function addSong(item: Omit<QueueItem, 'id' | 'addedBy'>) {
     if (!session.value) return
     const clientId = getOrCreateClientId()
     await $fetch('/api/session/add-song', {

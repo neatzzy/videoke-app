@@ -20,6 +20,8 @@ Crie um `.env` na raiz com:
 
 ```bash
 # YouTube Data API (busca de músicas)
+# Lida em nuxt.config.ts como runtimeConfig.youtubeApiKey. Em produção, prefira
+# NUXT_YOUTUBE_API_KEY no ambiente de execução: API_KEY vira default no build do servidor.
 API_KEY=
 
 # Upstash Redis (persistência da sessão)

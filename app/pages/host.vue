@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { QueueItem } from '~/composables/useKaraoke'
 
-const { createSession, nextSong, session, currentSong, queue, clientCount, reorderQueue } = useKaraoke()
+const { createSession, resumeSession, nextSong, session, currentSong, queue, clientCount, reorderQueue } = useKaraoke()
 
 // Local mirror of the queue so a drag can reorder it live; re-synced from the
 // server whenever nothing is being dragged (dragIndex null).
@@ -87,7 +87,10 @@ let progressInterval: ReturnType<typeof setInterval>
 
 onMounted(async () => {
   try {
-    await createSession('Host')
+    // resumeSession resolves false for a missing/expired room, so fall through to a new one
+    const saved = localStorage.getItem('karaoke:hostCode')
+    if (!(saved && await resumeSession(saved))) await createSession('Host')
+    localStorage.setItem('karaoke:hostCode', session.value!.code)
   } catch {
     sessionFailed.value = true
     return

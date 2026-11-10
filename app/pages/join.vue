@@ -81,9 +81,6 @@ function submit() {
         </button>
       </form>
 
-      <p class="text-center text-xs text-subdued mt-8">
-        Dica: use o código <b class="text-white font-mono">NEON</b> para testar
-      </p>
     </main>
   </div>
 </template>

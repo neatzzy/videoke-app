@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   app: {
     head: {
+      htmlAttrs: { lang: 'pt-BR' },
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap' },
@@ -14,6 +15,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    youtubeApiKey: process.env.API_KEY || '', // NUXT_YOUTUBE_API_KEY sobrescreve em runtime
     public: {
       pusherKey: '',    // set via NUXT_PUBLIC_PUSHER_KEY
       pusherCluster: 'mt1', // set via NUXT_PUBLIC_PUSHER_CLUSTER
