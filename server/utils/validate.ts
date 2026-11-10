@@ -1,7 +1,7 @@
 import { createError } from 'h3'
 
 // Alfabeto de generateCode() em sessions.ts (sem I e O).
-const CODE_RE = /^[ABCDEFGHJKLMNPQRSTUVWXYZ]{4}$/
+const CODE_RE = /^[A-HJ-NP-Z]{4}$/
 const VIDEO_ID_RE = /^[\w-]{11}$/
 const THUMB_PREFIX = 'https://i.ytimg.com/'
 

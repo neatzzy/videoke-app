@@ -95,8 +95,8 @@ export const useKaraoke = () => {
       })
       session.value = data.session
       subscribe(data.session.code)
-    } catch (err: any) {
-      error.value = err.data?.message ?? 'Sala não encontrada'
+    } catch (err) {
+      error.value = (err as { data?: { message?: string } }).data?.message ?? 'Sala não encontrada'
     }
   }
 

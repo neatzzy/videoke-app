@@ -43,8 +43,19 @@ const joinUrl = computed(() => `${siteUrl}/join?code=${session.value?.code ?? ''
 const showInfo = ref(false)
 let infoTimer: ReturnType<typeof setTimeout>
 
-// YouTube IFrame Player
-let player: any = null
+// YouTube IFrame Player (minimal typing of the parts of the API used here)
+interface YTPlayer {
+  playVideo(): void
+  pauseVideo(): void
+  loadVideoById(videoId: string): void
+  getCurrentTime?(): number
+  getDuration?(): number
+}
+interface YTGlobal { Player: new (el: string, opts: object) => YTPlayer }
+type YTWindow = Window & { YT?: YTGlobal, onYouTubeIframeAPIReady?: () => void }
+const ytWindow = () => window as YTWindow
+
+let player: YTPlayer | null = null
 const playerReady = ref(false)
 const isPlaying = ref(false)
 const currentTime = ref(0)
@@ -55,19 +66,21 @@ const progress = computed(() =>
 )
 
 function formatTime(s: number) {
-  if (!s || isNaN(s)) return '0:00'
+  if (!s || Number.isNaN(s)) return '0:00'
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 }
 
 function togglePlay() {
   if (!player || !playerReady.value) return
-  isPlaying.value ? player.pauseVideo() : player.playVideo()
+  if (isPlaying.value) player.pauseVideo()
+  else player.playVideo()
 }
 
 function initPlayer() {
-  if (!import.meta.client || !(window as any).YT) return
+  const YT = import.meta.client ? ytWindow().YT : undefined
+  if (!YT) return
 
-  player = new (window as any).YT.Player('yt-player', {
+  player = new YT.Player('yt-player', {
     height: '100%',
     width: '100%',
     videoId: '',
@@ -76,7 +89,7 @@ function initPlayer() {
       onReady: () => { playerReady.value = true },
       // Blocked or unavailable video: skip it so the screen never stalls. With an empty queue this clears currentSong and the error does not repeat.
       onError: () => { if (currentSong.value) nextSong() },
-      onStateChange: (e: any) => {
+      onStateChange: (e: { data: number }) => {
         // YT.PlayerState.PLAYING = 1
         isPlaying.value = e.data === 1
         // YT.PlayerState.ENDED = 0
@@ -102,11 +115,11 @@ onMounted(async () => {
   }
 
   // Load YouTube IFrame API
-  if (!(window as any).YT) {
+  if (!ytWindow().YT) {
     const script = document.createElement('script')
     script.src = 'https://www.youtube.com/iframe_api'
     document.head.appendChild(script)
-    ;(window as any).onYouTubeIframeAPIReady = initPlayer
+    ytWindow().onYouTubeIframeAPIReady = initPlayer
   } else {
     initPlayer()
   }
@@ -144,7 +157,7 @@ watch(
 
 // Load song as soon as the player is ready (handles first song after page load).
 watch(playerReady, (ready) => {
-  if (ready && currentSong.value) {
+  if (ready && player && currentSong.value) {
     player.loadVideoById(currentSong.value.videoId)
   }
 })
@@ -268,13 +281,13 @@ watch(playerReady, (ready) => {
             v-for="(item, idx) in localQueue"
             :key="item.id"
             draggable="true"
-            @dragstart="onDragStart(idx)"
-            @dragover.prevent="onDragOver(idx)"
-            @dragend="onDragEnd"
             :class="[
               'flex items-center gap-3 px-3 py-2 rounded-md cursor-grab active:cursor-grabbing transition-colors',
               idx === 0 ? 'bg-highlight' : 'hover:bg-highlight'
             ]"
+            @dragstart="onDragStart(idx)"
+            @dragover.prevent="onDragOver(idx)"
+            @dragend="onDragEnd"
           >
             <span :class="['w-5 text-center text-sm flex-shrink-0', idx === 0 ? 'text-accent font-bold' : 'text-subdued']">
               {{ idx + 1 }}
@@ -285,7 +298,7 @@ watch(playerReady, (ready) => {
               alt=""
               draggable="false"
               class="w-10 h-10 rounded object-cover bg-muted flex-shrink-0"
-            />
+            >
             <div v-else class="w-10 h-10 rounded bg-muted flex-shrink-0" />
             <div class="min-w-0">
               <p class="text-sm font-bold truncate">{{ item.title }}</p>
@@ -312,7 +325,7 @@ watch(playerReady, (ready) => {
             :src="currentSong.thumbnail"
             alt=""
             class="w-12 h-12 rounded-md object-cover bg-muted flex-shrink-0"
-          />
+          >
           <div v-else class="w-12 h-12 rounded-md bg-muted flex-shrink-0" />
           <div class="min-w-0">
             <p class="text-sm font-bold truncate">{{ currentSong.title }}</p>
@@ -323,18 +336,18 @@ watch(playerReady, (ready) => {
         <div class="flex-1 flex flex-col items-center gap-1.5">
           <div class="flex items-center gap-4">
             <button
-              @click="togglePlay"
               :aria-label="isPlaying ? 'Pausar' : 'Tocar'"
               class="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:scale-105 transition-transform
                      focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              @click="togglePlay"
             >
               <svg v-if="isPlaying" width="12" height="12" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="#000" /><rect x="14" y="4" width="4" height="16" fill="#000" /></svg>
               <svg v-else width="12" height="12" viewBox="0 0 24 24"><polygon points="7,4 20,12 7,20" fill="#000" /></svg>
             </button>
             <button
-              @click="nextSong()"
               class="h-8 flex items-center gap-2 px-4 rounded-full bg-highlight hover:bg-hover text-sm font-bold transition-colors
                      focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              @click="nextSong()"
             >
               Próxima
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>

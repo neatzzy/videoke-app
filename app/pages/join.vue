@@ -44,7 +44,7 @@ function submit() {
             autocapitalize="words"
             maxlength="24"
             class="field"
-          />
+          >
         </div>
 
         <div>
@@ -61,7 +61,7 @@ function submit() {
             spellcheck="false"
             class="field font-mono tracking-[4px] uppercase"
             @input="code = code.toUpperCase()"
-          />
+          >
         </div>
 
         <p v-if="error" role="alert" class="text-negative text-sm text-center -mt-2">{{ error }}</p>

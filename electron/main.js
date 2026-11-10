@@ -1,21 +1,13 @@
 const { app, BrowserWindow, dialog } = require('electron')
-const path = require('path')
+const path = require('node:path')
 
 const isDev = process.env.NODE_ENV === 'development'
 // O host é uma casca: API, Redis e Pusher vivem no deploy web.
-// TODO: definir a URL real do deploy (ou exportar VIDEOKE_URL no ambiente de build/execução).
-const PLACEHOLDER_URL = 'https://SEU-DEPLOY.vercel.app'
-const HOST_URL = isDev ? 'http://localhost:3000' : (process.env.VIDEOKE_URL || PLACEHOLDER_URL)
+// VIDEOKE_URL sobrescreve o deploy padrão (útil para testar um preview).
+const DEPLOY_URL = 'https://videoke-app-wine.vercel.app'
+const HOST_URL = isDev ? 'http://localhost:3000' : (process.env.VIDEOKE_URL || DEPLOY_URL)
 
 function createWindow() {
-  if (!isDev && HOST_URL === PLACEHOLDER_URL) {
-    const msg = 'URL do deploy não configurada. Defina VIDEOKE_URL ou atualize PLACEHOLDER_URL em electron/main.js.'
-    console.error(msg)
-    dialog.showErrorBox('KaraokeLive', msg)
-    app.quit()
-    return
-  }
-
   const win = new BrowserWindow({
     width: 1920,
     height: 1080,

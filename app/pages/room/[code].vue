@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
-const { session, currentSong, queue, votes, previousVotes, error, addSong, nextSong, vote, resumeSession } = useKaraoke()
+const { session, currentSong, queue, votes, previousVotes, error, addSong, vote, resumeSession } = useKaraoke()
 
 type Tab = 'live' | 'search' | 'queue'
 // Tab lives in the URL so the phone's back button returns to the previous tab instead of leaving the room
@@ -121,7 +121,7 @@ async function castVote(v: 'like' | 'dislike') {
             :src="currentSong.thumbnail"
             alt=""
             class="mt-3 w-full aspect-video object-cover rounded-lg bg-muted shadow-[rgba(0,0,0,.5)_0_8px_24px]"
-          />
+          >
           <div v-else class="mt-3 w-full aspect-video rounded-lg bg-gradient-to-b from-muted to-elevated shadow-[rgba(0,0,0,.5)_0_8px_24px]" />
 
           <h2 class="mt-4 text-2xl font-bold leading-tight line-clamp-2">{{ currentSong.title }}</h2>
@@ -136,7 +136,6 @@ async function castVote(v: 'like' | 'dislike') {
           <!-- Vote buttons -->
           <div class="mt-5 grid grid-cols-2 gap-3">
             <button
-              @click="castVote('like')"
               :disabled="!!myVote"
               :class="[
                 'h-12 rounded-full bg-accent text-black text-sm font-bold flex items-center justify-center gap-2 transition-all',
@@ -144,12 +143,12 @@ async function castVote(v: 'like' | 'dislike') {
                 myVote === 'dislike' ? 'opacity-40' : 'enabled:hover:bg-accent-hover enabled:active:scale-95',
                 myVote && 'cursor-not-allowed'
               ]"
+              @click="castVote('like')"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 9l-6-6-6 6M12 4v16" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               Curtir
             </button>
             <button
-              @click="castVote('dislike')"
               :disabled="!!myVote"
               :class="[
                 'h-12 rounded-full bg-transparent border text-sm font-bold flex items-center justify-center gap-2 transition-all',
@@ -158,6 +157,7 @@ async function castVote(v: 'like' | 'dislike') {
                 myVote === 'like' ? 'opacity-40' : 'enabled:hover:border-white enabled:active:scale-95',
                 myVote && 'cursor-not-allowed'
               ]"
+              @click="castVote('dislike')"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6 6-6-6M12 20V4" stroke="#f3727f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               Não curtir
@@ -175,9 +175,9 @@ async function castVote(v: 'like' | 'dislike') {
           <h2 class="text-2xl font-bold">Nenhuma música tocando</h2>
           <p class="text-sm text-subdued">Adicione uma música na fila!</p>
           <button
-            @click="activeTab = 'search'"
             class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-bold tracking-label uppercase transition-colors
                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            @click="activeTab = 'search'"
           >
             Buscar música
           </button>
@@ -186,7 +186,7 @@ async function castVote(v: 'like' | 'dislike') {
 
       <!-- ══ TAB: BUSCAR ══ -->
       <template v-else-if="activeTab === 'search'">
-        <form @submit.prevent="search" class="sticky top-0 bg-surface pb-2">
+        <form class="sticky top-0 bg-surface pb-2" @submit.prevent="search">
           <label
             class="flex items-center gap-3 px-4 py-3 rounded-full bg-highlight transition-shadow
                    shadow-[rgb(18,18,18)_0_1px_0,rgb(124,124,124)_0_0_0_1px_inset] focus-within:shadow-[#fff_0_0_0_2px_inset]"
@@ -201,7 +201,7 @@ async function castVote(v: 'like' | 'dislike') {
               aria-label="Buscar música no YouTube"
               placeholder="Buscar música no YouTube..."
               class="flex-1 min-w-0 bg-transparent text-base text-white placeholder-subdued focus:outline-none"
-            />
+            >
           </label>
         </form>
 
@@ -219,7 +219,7 @@ async function castVote(v: 'like' | 'dislike') {
               :src="item.thumbnail"
               alt=""
               class="w-14 h-10 object-cover rounded flex-shrink-0 bg-muted"
-            />
+            >
             <div class="flex-1 min-w-0">
               <p class="text-sm font-bold truncate">{{ item.title }}</p>
               <p class="mt-0.5 text-xs text-subdued truncate">{{ item.artist }}</p>
@@ -234,10 +234,10 @@ async function castVote(v: 'like' | 'dislike') {
             </span>
             <button
               v-else
-              @click="addToQueue(item)"
               :aria-label="`Adicionar ${item.title} à fila`"
               class="h-11 px-4 rounded-full border border-outline hover:border-white text-xs font-bold flex-shrink-0 transition-colors
                      focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              @click="addToQueue(item)"
             >
               + Fila
             </button>
@@ -304,13 +304,13 @@ async function castVote(v: 'like' | 'dislike') {
       <button
         v-for="tab in (['live', 'search', 'queue'] as const)"
         :key="tab"
-        @click="activeTab = tab"
         :aria-current="activeTab === tab ? 'true' : undefined"
         :class="[
           'flex-1 flex flex-col items-center py-3 gap-1.5 text-[10.5px] transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white',
           activeTab === tab ? 'text-accent font-bold' : 'text-subdued hover:text-white'
         ]"
+        @click="activeTab = tab"
       >
         <span v-if="tab === 'live'" class="w-2 h-2 my-[5px] rounded-full bg-current" />
         <svg v-else-if="tab === 'search'" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2" /><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>

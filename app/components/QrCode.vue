@@ -7,6 +7,7 @@ const svg = computed(() => renderSVG(props.value, { border: 0 }))
 
 <template>
   <!-- svg comes from uqr, built from our own URL — not user HTML -->
+  <!-- eslint-disable vue/no-v-html -->
   <div
     role="img"
     :aria-label="`QR code: ${value}`"
