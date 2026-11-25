@@ -105,7 +105,7 @@ components:
 
 # Design System: Palquinho
 
-> Este documento descreve o visual **implementado** (decisão de manter o design atual, nov/2026, com a rebrand para Palquinho: a paleta derivada do Spotify foi aposentada e a identidade passou a ser "Luz de Palco"). A versão anterior descrevia uma direção neon rosa/ciano ("The Living Room Rave") que nunca chegou ao código; ela foi descartada. Os tokens abaixo são os de `tailwind.config.ts` e `app/assets/css/main.css`. Esta versão registra o estado após a pausa do avanço automático, a sala em duas colunas (a partir de 768px) e a passada de textos e tokens; o que ficou pendente está em "Lacunas conhecidas".
+> Este documento descreve o visual **implementado** (rebrand para Palquinho, nov/2026: a paleta derivada do Spotify foi aposentada e a identidade passou a ser "Luz de Palco"; estrutura, componentes e movimento seguem os mesmos). A versão anterior descrevia uma direção neon rosa/ciano ("The Living Room Rave") que nunca chegou ao código; ela foi descartada. Os tokens abaixo são os de `tailwind.config.ts` e `app/assets/css/main.css`. Esta versão registra o estado após a pausa do avanço automático, a sala em duas colunas (a partir de 768px) e a passada de textos e tokens; o que ficou pendente está em "Lacunas conhecidas".
 
 ## 1. Overview
 
