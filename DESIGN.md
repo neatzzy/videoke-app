@@ -1,17 +1,17 @@
 ---
-name: Videoké
-description: Karaokê caseiro — o host mostra a música e a fila na TV; os convidados pedem músicas pelo celular, sem instalar nada.
+name: Palquinho
+description: O karaokê da sala de casa — o anfitrião mostra a música e a fila na TV; os convidados pedem músicas e votam pelo celular, sem instalar nada.
 colors:
   black: "#000000"
-  surface: "#121212"
-  elevated: "#181818"
-  highlight: "#1F1F1F"
-  hover: "#252525"
-  muted: "#4D4D4D"
-  subdued: "#B3B3B3"
-  outline: "#7C7C7C"
-  accent: "#1ED760"
-  accent-hover: "#3BE477"
+  surface: "#16120F"
+  elevated: "#1E1915"
+  highlight: "#27211C"
+  hover: "#312A24"
+  muted: "#574D44"
+  subdued: "#C2B8AD"
+  outline: "#8A7F74"
+  accent: "#FFB020"
+  accent-hover: "#FFC24D"
   negative: "#F3727F"
 typography:
   display:
@@ -44,12 +44,6 @@ typography:
     fontWeight: 400
     lineHeight: 1.43
     letterSpacing: "normal"
-  label:
-    fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
-    fontSize: "0.875rem"
-    fontWeight: 700
-    lineHeight: 1.43
-    letterSpacing: "1.4px"
   micro:
     fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "0.75rem"
@@ -109,61 +103,61 @@ components:
     padding: "8px 12px"
 ---
 
-# Design System: Videoké
+# Design System: Palquinho
 
-> Este documento descreve o visual **implementado** (decisão de manter o design atual, nov/2026). A versão anterior descrevia uma direção neon rosa/ciano ("The Living Room Rave") que nunca chegou ao código; ela foi descartada. Os tokens abaixo são os de `tailwind.config.ts` e `app/assets/css/main.css`. Esta versão registra o estado após a pausa do avanço automático, a sala em duas colunas (a partir de 768px) e a passada de textos e tokens; o que ficou pendente está em "Lacunas conhecidas".
+> Este documento descreve o visual **implementado** (decisão de manter o design atual, nov/2026, com a rebrand para Palquinho: a paleta derivada do Spotify foi aposentada e a identidade passou a ser "Luz de Palco"). A versão anterior descrevia uma direção neon rosa/ciano ("The Living Room Rave") que nunca chegou ao código; ela foi descartada. Os tokens abaixo são os de `tailwind.config.ts` e `app/assets/css/main.css`. Esta versão registra o estado após a pausa do avanço automático, a sala em duas colunas (a partir de 768px) e a passada de textos e tokens; o que ficou pendente está em "Lacunas conhecidas".
 
 ## 1. Overview
 
-**Creative North Star: "The Dark Jukebox"**
+**Creative North Star: "Luz de Palco"**
 
-Videoké é uma jukebox escura e plana: fundo preto, painéis em degraus de cinza-carvão e um único verde vivo para tudo que é ação ou está tocando. A tela do host é o palco (player grande, fila ao lado); o celular do convidado é o controle remoto (buscar, votar, ver a fila). A referência é a família dos players de música em tema escuro — familiar de imediato, sem curva de aprendizado numa festa.
+Palquinho é um palco escuro de sala de casa: fundo preto, painéis em degraus de carvão quente e uma única luz âmbar de holofote para tudo que é ação ou está acontecendo agora. A tela do host é o palco (player grande, fila ao lado); o celular do convidado é o controle remoto (buscar, votar, ver a fila e o placar da noite). A referência é a sala de estar com luz de palco, não a balada: familiar de imediato, sem curva de aprendizado numa festa.
 
 O tom é direto e doméstico: português simples, rótulos curtos ("Ao Vivo", "Buscar", "Fila"), sem emoji, sem decoração que não ajude a achar a próxima ação.
 
 **Características principais:**
 
 - Base preta com superfícies em degraus (`black` → `surface` → `elevated` → `highlight` → `hover`); profundidade vem do degrau de cor, não de sombra.
-- Um único acento: `accent` (#1ED760). Verde = ação primária, "tocando agora", ativo, online.
+- Um único acento: `accent` (#FFB020). Âmbar = ação primária, "tocando agora", ativo, online.
 - Formas: pílula (`rounded-full`) para tudo que se toca; `rounded-lg` para cartões; `rounded-md` para linhas de lista; `rounded` (4px) só no campo de texto e nas miniaturas.
 - Inter em pesos 400–800. Títulos em 700–800, nunca mais leves.
 - Ícones de um sistema só (`AppIcon`): traço de 2px, `currentColor`, viewBox 24, tamanhos 16/18/20/24/32.
 - Movimento curto: 150ms e 250ms numa curva só; nada de animação decorativa.
 - Plano: sem glow, sem gradientes decorativos, sem translucidez.
 
-**Risco de marca reconhecido:** a paleta verde sobre cinza-carvão e o logotipo circular de play lembram muito o Spotify. A decisão foi manter. Se o produto ganhar identidade própria, o primeiro lugar a mexer é `accent` e o `AppLogo.vue`; como os componentes usam tokens (`bg-accent`, `text-accent`), a troca é feita em `tailwind.config.ts`.
+**Rebrand (nov/2026):** a paleta verde sobre cinza-carvão e o logotipo circular de play lembravam o Spotify (risco de trade dress). Ambos foram aposentados: a paleta é carvão quente com acento âmbar, e o logotipo é uma luminária de palco. Os componentes usam tokens (`bg-accent`, `text-accent`), então a troca foi feita só em `tailwind.config.ts`.
 
 ## 2. Colors
 
-Um preto de palco, quatro degraus de carvão, dois cinzas de texto e um verde.
+Um preto de palco, quatro degraus de carvão quente, dois tons de texto e um âmbar.
 
 ### Primária
 
-- **Accent** (#1ED760): único acento. Botões de ação (Entrar, Buscar música, Curtir, Avançar agora), equalizador, barra de progresso e de contagem do avanço, anel de foco do play do host, número da posição 1 na fila do host e no placar da noite, título da música tocando na aba Fila, aba ativa, ponto "online", check de música já adicionada, ícone de vibração ativo. **Accent Hover** (#3BE477) é o hover desses botões.
+- **Accent** (#FFB020): único acento. Botões de ação (Entrar, Buscar música, Curtir, Avançar agora), equalizador, barra de progresso e de contagem do avanço, anel de foco do play do host, número da posição 1 na fila do host e no placar da noite, título da música tocando na aba Fila, aba ativa, ponto "online", check de música já adicionada, ícone de vibração ativo. **Accent Hover** (#FFC24D) é o hover desses botões.
 - Exceção registrada: a seta e o número de curtidas em "Última performance" (aba Ao Vivo) usam accent. Os números de pontuação do placar final e do placar da noite são brancos. Ver "Lacunas conhecidas".
 
 ### Superfícies
 
 - **Black** (#000000): raiz da tela do host (moldura entre os painéis), barra inferior de abas da sala e `body`.
-- **Surface** (#121212): fundo de página das telas de convidado (`index`, `join`, `room`, `error`), painéis do host (palco e lateral da fila) e a sobreposição do placar final.
-- **Elevated** (#181818): cartões (opções do `index`, cartão do QR no host, "Última performance", "Placar da noite"), fundo do player do host, placeholder de capa, botões de mover da fila do host e botão da página de erro.
-- **Highlight** (#1F1F1F): campos de texto, pílulas e badges (chip do cantor, contador da fila, "Tocando agora"), item 1 da fila do host, botão "Próxima", botões "Cancelar avanço" e "Pausar" do placar final, toast, linhas do "Placar da noite" e o bloco dos botões de mover.
-- **Hover** (#252525): hover dos cartões, botões e linhas; fundo da música tocando na aba Fila do convidado.
+- **Surface** (#16120F): fundo de página das telas de convidado (`index`, `join`, `room`, `error`), painéis do host (palco e lateral da fila) e a sobreposição do placar final.
+- **Elevated** (#1E1915): cartões (opções do `index`, cartão do QR no host, "Última performance", "Placar da noite"), fundo do player do host, placeholder de capa, botões de mover da fila do host e botão da página de erro.
+- **Highlight** (#27211C): campos de texto, pílulas e badges (chip do cantor, contador da fila, "Tocando agora"), item 1 da fila do host, botão "Próxima", botões "Cancelar avanço" e "Pausar" do placar final, toast, linhas do "Placar da noite" e o bloco dos botões de mover.
+- **Hover** (#312A24): hover dos cartões, botões e linhas; fundo da música tocando na aba Fila do convidado.
 
 ### Texto e linhas
 
-- **Subdued** (#B3B3B3): texto secundário e placeholders (8,93:1 sobre `surface`). Único cinza de texto; texto principal é branco.
-- **Muted** (#4D4D4D): trilhas da barra de progresso e da contagem, avatares, placeholders de capa (incluindo o ícone de placeholder), badge "Próxima" do host. Não usar para texto.
-- **Outline** (#7C7C7C): borda dos botões de contorno ("+ Fila", "Não curtir") e anel do campo de texto.
+- **Subdued** (#C2B8AD): texto secundário e placeholders (9,54:1 sobre `surface`). Único cinza de texto; texto principal é branco.
+- **Muted** (#574D44): trilhas da barra de progresso e da contagem, avatares, placeholders de capa (incluindo o ícone de placeholder), badge "Próxima" do host. Não usar para texto.
+- **Outline** (#8A7F74): borda dos botões de contorno ("+ Fila", "Não curtir") e anel do campo de texto.
 - **Branco** (#FFFFFF, sem token): texto principal, anel de foco e fundo de QR, play do host e pílulas de código. Ver "Lacunas conhecidas".
 
 ### Semântica
 
-- **Negative** (#F3727F): erros de formulário, o "Não curtir" (texto e ícone), o número de não curtidas no placar final e em "Última performance" (6,71:1 sobre `surface`). É o único vermelho do sistema.
+- **Negative** (#F3727F): erros de formulário, o "Não curtir" (texto e ícone), o número de não curtidas no placar final e em "Última performance" (6,67:1 sobre `surface`). É o único vermelho do sistema.
 
 ### Regras
 
-**Regra do Acento Único.** Verde significa "isto é uma ação ou está acontecendo agora". Não introduza um segundo acento. `negative` é exceção semântica (erro/dislike), não cor de marca.
+**Regra do Acento Único.** Âmbar significa "isto é uma ação ou está acontecendo agora". Não introduza um segundo acento. `negative` é exceção semântica (erro/dislike), não cor de marca.
 
 **Regra dos Tokens.** Cor vem do token ou de `currentColor`. Os valores soltos que sobram estão em "Lacunas conhecidas" e são dívida, não padrão a copiar.
 
@@ -178,7 +172,7 @@ Um preto de palco, quatro degraus de carvão, dois cinzas de texto e um verde.
 - **Title** (700, 1.5rem/24px `text-2xl`, 1.33): nome da música na aba Ao Vivo da sala, títulos de estado vazio e cabeçalho "Fila" da sala. No palco do host, o artista usa a mesma medida em `subdued` e peso 400.
 - **Item** (700, 1rem/16px `text-base`, 1.5): nome da música em linha de lista (fila do convidado, resultados de busca, fila e placar da noite do host), título da música tocando na aba Fila e botões de ação do host ("Próxima").
 - **Body** (400, 0.875rem/14px `text-sm`, 1.43): metadados ("quem pediu · artista" em `subdued`), posição na fila da sala, textos de apoio, mensagens e toast. No host, nenhum texto fica abaixo de 14px, porque a tela é lida a metros de distância.
-- **Label** (700, 0.875rem/14px, 1.43, letter-spacing 1.4px, caixa alta): botões de ação em caixa alta ("Entrar" e "Buscar música"). O logotipo "VIDEOKÉ" usa o mesmo tracking com peso 800 e tamanho próprio (28px na entrada, 18px no host).
+- *Label* (caixa alta com tracking) foi aposentado na rebrand: nenhum texto usa caixa alta com tracking. O logotipo "palquinho" usa peso 800 e tamanho próprio, sem tracking (28px na entrada, 18px no host).
 - **Micro** (700 ativa / 400 inativa, 0.75rem/12px `text-xs`): rótulos da barra de abas da sala, legenda "Última performance" e badge "Tocando agora" (600). Não há texto menor que 12px.
 - **Números de destaque** (só no host): código da sala em 48px (`text-5xl`, 800, `tracking-[12px]`, fonte do sistema); pontuação do placar final em 60px (`text-6xl`, 800).
 
@@ -195,7 +189,7 @@ Plano por padrão. A separação vem do degrau de cor (`surface` → `elevated` 
 ### Vocabulário de sombra
 
 - **Sombra de capa** (`shadow-cover`, `rgba(0,0,0,.5) 0 8px 24px`): player do host, capa da aba Ao Vivo, placeholder de capa e toast. Único uso de sombra projetada.
-- **Anel do campo** (`inset`): `.field` tem anel de 1px `outline` em repouso e de 2px branco em foco, com valores literais em `main.css`. A busca do convidado repete o padrão com `theme()` nos tokens `surface`, `outline` e branco.
+- **Anel do campo** (`inset`): `.field` tem anel de 1px `outline` em repouso e de 2px branco em foco, escrito com `theme()` em `main.css`; a busca do convidado usa o mesmo padrão.
 - **Anel de foco**: `focus-visible:ring-2 ring-white` em praticamente todo botão, cartão e linha; com `ring-offset-2 ring-offset-surface` nos botões de voto e no Entrar; nas abas o anel é `inset`; `ring-accent` (com `ring-offset-black`) só no play do host.
 
 Não há glow, `text-shadow`, `backdrop-blur` nem translucidez de superfície.
@@ -204,7 +198,7 @@ Não há glow, `text-shadow`, `backdrop-blur` nem translucidez de superfície.
 
 ### Botão primário
 
-Pílula `accent` com texto preto, 700, 14px, caixa alta e `tracking-label`, em "Entrar" (`min-h-[44px]`, `py-3.5 px-8`, largura total na tela de entrada) e "Buscar música" (mesmo padding, sem largura total). Hover `accent-hover`. Desabilitado: `opacity-50`, sem hover.
+Pílula `accent` com texto preto, 700, 14px, em frase (sem caixa alta nem tracking), em "Entrar" (`min-h-[44px]`, `py-3.5 px-8`, largura total na tela de entrada) e "Buscar música" (mesmo padding, sem largura total). Hover `accent-hover`. Desabilitado: `opacity-50`, sem hover.
 
 ### Botões de voto
 
@@ -243,7 +237,7 @@ Na lateral, o "Placar da noite" (cartão `elevated`, top 5 cantores com curtidas
 
 ### Logotipo, equalizador e ícones
 
-- **Logotipo** (`AppLogo.vue`): círculo `accent` (`fill-accent`) com triângulo de play e duas ondas em `black` (`fill-black`, `stroke-black`), seguido de "VIDEOKÉ" em 800 com `tracking-label`. 48px com texto de 28px na entrada e 32px com texto de 18px no host. Não aparece na sala do convidado.
+- **Logotipo** (`AppLogo.vue`): luminária de palco pendurada (fio curto e cúpula em meio-círculo), feixe de luz trapezoidal e mancha elíptica no chão, tudo em `accent` (`fill-accent`), sem disco de fundo. Seguido de "palquinho" em minúsculas, 800, sem tracking. 48px com texto de 28px na entrada e 32px com texto de 18px no host. Não aparece na sala do convidado.
 - **Equalizador** (`Equalizer.vue`): grupo de 4 barras `accent` por padrão (3 na aba Fila), barras de 3px (2px no tamanho `sm`) e altura de 14px (12px `sm`, 16px `md`). Toca só enquanto a música toca; cada barra tem ritmo e fase próprios. Parado, as barras ficam em alturas distintas (0,6 / 1 / 0,4 / 0,8), e o mesmo acontece com reduced-motion.
 - **Ícones** (`AppIcon.vue`): traço de 2px, `stroke-linecap` e `linejoin` arredondados, `currentColor`, `aria-hidden`. Tamanhos 16, 18, 20, 24 e 32px. A lista de nomes é fechada: search, list, live (e live-fill), chevron-up/down/right, arrow-up/down, play, pause, x, check, music, thumbs-up/down, host, user, more, vibrate, vibrate-off. Polegares são o voto; setas aparecem só no resultado de votos ("Última performance"); chevrons servem para reordenar e para "Próxima" e "Voltar". Ícones não usam hex.
 
@@ -282,7 +276,7 @@ Dois tempos e uma curva, expostos como variáveis em `main.css` (`--motion-fast`
 ### Do
 
 - **Do** usar os tokens do Tailwind (`bg-surface`, `bg-elevated`, `text-subdued`, `bg-accent`) e `currentColor` em ícones, em vez de hex.
-- **Do** reservar o verde para ação primária e estado "tocando/ativo/online".
+- **Do** reservar o âmbar para ação primária e estado "tocando/ativo/online".
 - **Do** separar camadas com o degrau de cor; sombra só nas capas, no player e no toast.
 - **Do** manter pílulas para o que se toca e `rounded-lg` para cartões.
 - **Do** usar `duration-fast`, `duration-base` e `ease-standard` em qualquer transição nova, e animar só `opacity` e `transform` em entradas e saídas.
@@ -292,9 +286,9 @@ Dois tempos e uma curva, expostos como variáveis em `main.css` (`--motion-fast`
 
 ### Don't
 
-- **Don't** adicionar um segundo acento nem usar o verde como decoração. A seta de "Última performance" é exceção registrada, não modelo.
+- **Don't** adicionar um segundo acento nem usar o âmbar como decoração. A seta de "Última performance" é exceção registrada, não modelo.
 - **Don't** usar glow, `text-shadow`, blur ou gradiente decorativo em cartões e painéis. Não há gradiente no sistema.
-- **Don't** criar eyebrows ou kickers em caixa alta com tracking (ex.: um rótulo "AGORA CANTANDO" acima do título). O piso de qualidade proíbe; os existentes são defeito carregado, não regra.
+- **Don't** criar eyebrows ou kickers em caixa alta com tracking (ex.: um rótulo "AGORA CANTANDO" acima do título). O piso de qualidade proíbe.
 - **Don't** usar texto em `muted` ou `outline`; só `subdued` e branco carregam informação.
 - **Don't** usar setas para reordenar nem polegares para resultado: chevrons reordenam, setas mostram o total de votos.
 - **Don't** introduzir pesos 300/500 ou uma segunda família de fonte.
@@ -313,7 +307,7 @@ Divergências entre o sistema e o código, para corrigir em passes futuros. Nada
 **Divergências em aberto**
 
 - **`bg-white` sem token:** cartão de QR, play do host, pílula da sala e código grande do host. O `tailwind.config.ts` não define `white`; o fundo claro vem do padrão do Tailwind. Decidir se vira token ou se fica como exceção de QR e código.
-- **Literais restantes em `main.css`:** sombra do `.field` (`rgb(18,18,18)` e `rgb(124,124,124)`), foco do `.field` (`#fff`), `#000` no `body` e `rgba(179,179,179,0.3)` na barra de rolagem. A busca do convidado já usa `theme()`, então há duas formas de escrever o mesmo anel.
+- **Literais restantes em `main.css`:** foco do `.field` (`#fff`) e `#000` no `body`. A sombra do `.field`, a barra de rolagem e a busca do convidado já usam `theme()`.
 - **Pontuação em accent:** a seta e o número de curtidas de "Última performance" usam `accent`. Decidir se fica como dado positivo ou vira branco, como o placar final e o placar da noite.
 - **Texto truncado:** o nome da música no placar final (36px, `truncate`) e o nome e o artista na barra inferior do host (`truncate`) cortam com reticências.
 - **Título longo no palco:** mais de 2 linhas é cortado com reticências (`line-clamp-2`).

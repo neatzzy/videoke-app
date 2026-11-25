@@ -4,11 +4,13 @@ withDefaults(defineProps<{ size?: number; textClass?: string }>(), { size: 24, t
 
 <template>
   <div class="flex items-center gap-2.5">
-    <svg :width="size" :height="size" viewBox="0 0 64 64" class="shrink-0" aria-hidden="true">
-      <circle cx="32" cy="32" r="32" class="fill-accent" />
-      <polygon points="20,19 20,45 38,32" class="fill-black" />
-      <path d="M43 26q4 6 0 12M49 21q8 11 0 22" fill="none" class="stroke-black" stroke-width="3" stroke-linecap="round" />
+    <!-- Marca: luminária de palco (cúpula + feixe) e a mancha de luz no chão. -->
+    <svg :width="size" :height="size" viewBox="0 0 64 64" class="shrink-0 fill-accent" aria-hidden="true">
+      <rect x="30.5" y="0" width="3" height="6" rx="1.5"/>
+      <path d="M18 18a14 13 0 0 1 28 0z"/>
+      <polygon points="23,21 41,21 58,48 6,48"/>
+      <ellipse cx="32" cy="56" rx="28" ry="5"/>
     </svg>
-    <span :class="['font-extrabold tracking-label', textClass]">VIDEOKÉ</span>
+    <span :class="['font-extrabold', textClass]">palquinho</span>
   </div>
 </template>

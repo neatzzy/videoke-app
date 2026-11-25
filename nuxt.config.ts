@@ -16,11 +16,13 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      title: 'Palquinho',
       htmlAttrs: { lang: 'pt-BR' },
       meta: [
         // viewport-fit=cover libera env(safe-area-inset-*) no app instalado (room/[code].vue).
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'theme-color', content: '#000000' },
+        { name: 'description', content: 'O karaokê da sala de casa: pede do celular, canta na TV.' },
       ],
       link: [
         { rel: 'manifest', href: '/manifest.webmanifest' },

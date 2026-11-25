@@ -295,7 +295,7 @@ async function castVote(v: 'like' | 'dislike') {
                   <h2 class="text-2xl font-bold">Nenhuma música tocando</h2>
                   <p class="text-sm text-subdued">Adicione uma música na fila!</p>
                   <button
-                    class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-bold tracking-label uppercase transition-colors duration-fast ease-standard
+                    class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-bold transition-colors duration-fast ease-standard
                            focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                     @click="activeTab = 'search'"
                   >

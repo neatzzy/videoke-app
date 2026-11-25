@@ -78,7 +78,7 @@ function submit() {
             type="submit"
             :disabled="loading || !name.trim() || !code.trim()"
             class="mt-2 w-full min-h-[44px] py-3.5 px-8 rounded-full bg-accent hover:bg-accent-hover text-black
-                   text-sm font-bold tracking-label uppercase transition-colors duration-fast ease-standard
+                   text-sm font-bold transition-colors duration-fast ease-standard
                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface
                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-accent"
           >

@@ -5,15 +5,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: '#121212',
-        elevated: '#181818',
-        highlight: '#1f1f1f',
-        hover: '#252525',
-        muted: '#4d4d4d',
-        subdued: '#b3b3b3',
-        outline: '#7c7c7c',
-        accent: '#1ed760',
-        'accent-hover': '#3be477',
+        surface: '#16120f',
+        elevated: '#1e1915',
+        highlight: '#27211c',
+        hover: '#312a24',
+        muted: '#574d44',
+        subdued: '#c2b8ad',
+        outline: '#8a7f74',
+        accent: '#ffb020',
+        'accent-hover': '#ffc24d',
         negative: '#f3727f',
       },
       fontFamily: {
@@ -22,9 +22,6 @@ export default {
       boxShadow: {
         // Única sombra projetada do sistema: capas, player e toast.
         cover: 'rgba(0, 0, 0, 0.5) 0 8px 24px',
-      },
-      letterSpacing: {
-        label: '1.4px',
       },
       spacing: {
         page: '1.25rem',

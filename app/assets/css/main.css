@@ -29,10 +29,10 @@
 }
 
 @layer components {
-  /* Spotify-style text field: hairline inset border, white ring on focus */
+  /* Text field: hairline inset border, white ring on focus */
   .field {
     @apply w-full bg-highlight text-white placeholder-subdued text-base px-4 py-3 rounded focus:outline-none;
-    box-shadow: rgb(18, 18, 18) 0 1px 0, rgb(124, 124, 124) 0 0 0 1px inset;
+    box-shadow: theme('colors.surface') 0 1px 0, theme('colors.outline') 0 0 0 1px inset;
     transition: box-shadow var(--motion-fast) var(--ease-standard);
   }
 
@@ -78,7 +78,7 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(179, 179, 179, 0.3);
+    background: theme('colors.subdued / 30%');
     border-radius: 2px;
   }
 }

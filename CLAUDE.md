@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Videoké — home karaoke. Host screen (PC/TV via Electron) shows the playing song and live queue; guests search songs and join the queue from their phone, no install, just a room code. Nuxt 4 + Vue 3 + Tailwind, Electron for the host desktop shell, Pusher for realtime sync, Upstash Redis for session persistence, YouTube Data API for song search.
+Palquinho — home karaoke (repo/package still named videoke-app). Host screen (PC/TV via Electron) shows the playing song and live queue; guests search songs and join the queue from their phone, no install, just a room code. Nuxt 4 + Vue 3 + Tailwind, Electron for the host desktop shell, Pusher for realtime sync, Upstash Redis for session persistence, YouTube Data API for song search.
 
 ## Commands
 
@@ -34,4 +34,4 @@ No test suite or linter is configured. Requires a `.env` at the repo root — se
 
 ## Design Context
 
-This project has `PRODUCT.md` (strategic: register, users, purpose, brand personality) and `DESIGN.md` (visual: colors, typography, components — north star "The Dark Jukebox", a flat dark UI with a single green accent; it documents the implemented look, not a neon direction). Read both before making UI changes. `/impeccable` commands read these automatically.
+This project has `PRODUCT.md` (strategic: register, users, purpose, brand personality) and `DESIGN.md` (visual: colors, typography, components — north star "Luz de Palco", a flat dark UI with a single amber accent; it documents the implemented look, not a neon direction). Read both before making UI changes. `/impeccable` commands read these automatically.

@@ -17,7 +17,7 @@
   },
   "build": {
     "appId": "com.karaokelive.app",
-    "productName": "KaraokeLive",
+    "productName": "Palquinho",
     "files": [
       "electron/**/*"
     ],
