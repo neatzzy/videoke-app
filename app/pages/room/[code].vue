@@ -47,6 +47,7 @@ const searching = ref(false)
 const addedIds = ref<Set<string>>(new Set())
 
 const resuming = ref(false)
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 onMounted(async () => {
   // Session survives client-side navigation (module-level useState) but not a
   // hard reload — resume it from the URL's room code before giving up on it.
@@ -284,8 +285,8 @@ async function castVote(v: 'like' | 'dislike') {
                   </div>
 
                     <p class="mt-3 text-center text-sm text-subdued" aria-live="polite">
-                      <template v-if="myVote">Voto registrado! · </template>
-                      {{ votes.total }} votos · {{ votes.likes }} curtidas · {{ votes.dislikes }} não curtidas
+                      <template v-if="myVote">Voto registrado · </template>
+                      {{ plural(votes.total, 'voto', 'votos') }} · {{ plural(votes.likes, 'curtida', 'curtidas') }} · {{ plural(votes.dislikes, 'não curtida', 'não curtidas') }}
                     </p>
                   </div>
                 </div>
@@ -293,7 +294,7 @@ async function castVote(v: 'like' | 'dislike') {
                 <!-- No song playing -->
                 <div v-else class="flex flex-col items-center justify-center py-16 text-center gap-2">
                   <h2 class="text-2xl font-bold">Nenhuma música tocando</h2>
-                  <p class="text-sm text-subdued">Adicione uma música na fila!</p>
+                  <p class="text-sm text-subdued">Adicione uma música na fila</p>
                   <button
                     class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-bold transition-colors duration-fast ease-standard
                            focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
@@ -318,14 +319,24 @@ async function castVote(v: 'like' | 'dislike') {
                       type="search"
                       enterkeyhint="search"
                       aria-label="Buscar música no YouTube"
-                      placeholder="Buscar música no YouTube..."
+                      placeholder="Buscar música"
                       class="flex-1 min-w-0 bg-transparent text-base text-white placeholder-subdued focus:outline-none"
                     >
+                    <button
+                      v-if="searchQuery"
+                      type="button"
+                      aria-label="Limpar busca"
+                      class="-m-2 p-2 rounded-full text-subdued hover:text-white transition-colors duration-fast ease-standard
+                             focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      @click="searchQuery = ''"
+                    >
+                      <AppIcon name="x" :size="18" />
+                    </button>
                   </label>
                 </form>
 
                 <p v-if="searching || searchResults.length" class="mt-3 mb-2 text-base font-bold">
-                  {{ searching ? 'Buscando...' : 'Resultados' }}
+                  {{ searching ? 'Buscando…' : 'Resultados' }}
                 </p>
 
                 <div v-if="searching" class="flex flex-col gap-0.5" aria-hidden="true">

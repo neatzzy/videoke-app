@@ -82,7 +82,7 @@ function submit() {
                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface
                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-accent"
           >
-            <span v-if="loading" class="inline-block animate-pulse">Entrando...</span>
+            <span v-if="loading" class="inline-block animate-pulse">Entrando…</span>
             <span v-else>Entrar</span>
           </button>
         </form>

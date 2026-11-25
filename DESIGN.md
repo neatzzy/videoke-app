@@ -210,7 +210,7 @@ Secundário: pílula `highlight` de 32px com `px-4`, texto 16px 700 e chevron à
 
 ### Campo de texto (`.field`)
 
-Fundo `highlight`, texto branco, placeholder `subdued`, `px-4 py-3 text-base`, `rounded` (4px), anel inset descrito em Elevation. A busca do convidado é outra variação: pílula `rounded-full` com lupa de 18px e o mesmo anel. Essa dupla de estilos está em "Lacunas conhecidas".
+Fundo `highlight`, texto branco, placeholder `subdued`, `px-4 py-3 text-base`, `rounded` (4px), anel inset descrito em Elevation. A busca do convidado é outra variação: pílula `rounded-full` com lupa de 18px, placeholder "Buscar música" e botão próprio de limpar (ícone `x` de 18px em `subdued`; o "x" nativo do navegador fica escondido) e o mesmo anel. Essa dupla de estilos está em "Lacunas conhecidas".
 
 ### Barra inferior de abas (convidado)
 
@@ -227,7 +227,7 @@ Player 16:9 dimensionado por container query (o maior retângulo 16:9 que cabe, 
 
 Nos primeiros 5 s de cada música, um bloco de informação: "Agora cantando" (14px 700 em `subdued`, com equalizador), título em Display (até 2 linhas), artista em Title em `subdued`, chip do cantor (pílula `highlight` com avatar de inicial em `muted`, 32px) e cartão de QR (`elevated`, `rounded-lg`, QR sobre `bg-white` com `rounded-md`, 160px; 112px quando a altura da janela é de 700px ou menos). Quando o título não cabe ao lado do QR, o cartão desce para baixo do título (`flex-wrap`).
 
-Depois dos 5 s, rodapé `min-h-[72px]` com capa de 48px, play circular `bg-white` de 32px (`hover:scale-105`, anel `accent` no foco), "Próxima" (Botão secundário), barra de progresso `h-1` e contagem da fila ("N na fila" ou "Fila vazia") em 16px `subdued`.
+Depois dos 5 s, rodapé `min-h-[72px]` com capa de 48px, play circular `bg-white` de 32px (hover em `subdued`, `scale(0.95)` no `:active`, anel `accent` no foco), "Próxima" (Botão secundário), barra de progresso `h-1` e contagem da fila ("N na fila" ou "Fila vazia") em 16px `subdued`.
 
 Sem música tocando: título "Nenhuma música tocando" (Title), "Escaneie o QR code com o celular" em 16px `subdued`, QR de 220px e, ao lado, o rótulo "Ou digite o código" (14px 700 em `subdued`) com o código em 48px dentro de pílula `bg-white`. Esse rótulo é frase, não caixa alta.
 
@@ -252,7 +252,7 @@ Dois tempos e uma curva, expostos como variáveis em `main.css` (`--motion-fast`
 - **Estados** (hover, foco, cor, fundo, borda): `duration-fast`, 150ms.
 - **Fades e listas:** 150 a 250ms, só `opacity` e `transform`. A troca de aba é simultânea (a aba que sai fica absoluta, sem out-in). A fila do convidado entra e sai com opacidade e `translateY(6px)` em 150ms e reordena em 250ms. O placar da noite reordena por `transform` em 250ms e entra/sai por opacidade em 150ms. Cartão "Última performance", toast e painéis do palco do host (placar final, cartão ↔ barra) usam fade de 250ms.
 - **Exceções de tempo real:** a barra de progresso do host (`duration-1000`, `ease-linear`, `scaleX`) e a contagem do avanço automático (5 s, `scaleX` de 1 a 0, com pausa por `animation-play-state`). O equalizador roda em loop, ease-in-out, alternado, com durações de 0,9 / 1,1 / 0,7 / 1,0 s; o pulso de carregamento (`animate-pulse`) tem 2 s.
-- **Retorno tátil:** votos `scale(0.95)` no `:active`; play do host `scale(1.05)` no hover, em 150ms.
+- **Retorno tátil:** votos `scale(0.95)` no `:active`; play do host `scale(0.95)` no `:active` e hover só de cor, em 150ms.
 - **Háptico** (`useHaptic.ts`, Vibration API): padrões distintos por ação. Curtir: pulso de 30 ms. Não curtir: 15-40-15 ms. Adicionar à fila: pulso de 20 ms. Remover: 10-30-10 ms, mais leve que o voto para não confundir. Desligável pelo botão de vibração no cabeçalho da sala (preferência salva no navegador); o botão só aparece onde há suporte. O háptico não dispara com `prefers-reduced-motion`.
 - **Avanço automático do host:** ao fim da música, o placar final fica 5 s e a próxima entra. Controles: "Cancelar avanço" (botão e Esc) fecha o placar e deixa a música terminada na tela, sem avançar; "Pausar" / "Retomar" guarda o tempo restante; "Avançar agora" e "Próxima" cancelam a contagem antes de pular. A contagem aparece também em texto, porque a barra zera de imediato com reduced-motion.
 - **Reduced motion:** `main.css` zera duração de animação e transição em tudo, e o equalizador fica parado em alturas distintas (0,6 / 1 / 0,4 / 0,8), não como bloco liso.

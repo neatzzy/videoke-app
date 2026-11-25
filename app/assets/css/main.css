@@ -28,6 +28,11 @@
   }
 }
 
+/* O "x" nativo do campo de busca vem azul do navegador; a sala usa o próprio botão de limpar. */
+input[type='search']::-webkit-search-cancel-button {
+  appearance: none;
+}
+
 @layer components {
   /* Text field: hairline inset border, white ring on focus */
   .field {

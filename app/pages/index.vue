@@ -7,7 +7,7 @@
     <div class="min-h-full flex flex-col items-center justify-center gap-8 page-x page-top page-bottom">
       <AppLogo :size="48" text-class="text-[28px]" />
 
-      <p class="text-subdued text-sm text-center text-balance max-w-sm">O karaokê da sala de casa: pede do celular, canta na TV.</p>
+      <p class="text-subdued text-sm text-center text-balance max-w-sm">O karaokê da sala de casa: pede do celular, canta na TV</p>
 
       <div class="flex flex-col gap-3 w-full max-w-sm">
         <NuxtLink

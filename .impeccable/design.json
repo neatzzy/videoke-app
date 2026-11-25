@@ -256,7 +256,7 @@
       },
       {
         "name": "press-scale",
-        "value": "votos: transform scale(0.95) em :active; play do host: scale(1.05) em hover, 150ms",
+        "value": "votos: transform scale(0.95) em :active; play do host: scale(0.95) em :active, hover só de cor, 150ms",
         "purpose": "Retorno tátil nos botões de voto (habilitados) e no play do host."
       },
       {

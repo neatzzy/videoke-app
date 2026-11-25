@@ -603,8 +603,8 @@ watch(playerReady, (ready) => {
             <div class="flex items-center gap-4">
               <button
                 :aria-label="isPlaying ? 'Pausar' : 'Tocar'"
-                class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-105
-                       transition-transform duration-fast ease-standard
+                class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:bg-subdued active:scale-95
+                       transition-[background-color,transform] duration-fast ease-standard
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 @click="togglePlay"
               >
