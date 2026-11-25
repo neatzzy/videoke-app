@@ -160,7 +160,7 @@ async function castVote(v: 'like' | 'dislike') {
     <div :class="['mx-auto flex min-h-0 w-full flex-1 flex-col', frame]">
       <!-- Top bar -->
       <header class="page-x page-top pb-3 flex items-center gap-3 flex-shrink-0 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-1">
-        <span v-if="session?.code" class="px-3 py-1 rounded-full bg-highlight text-xs font-bold font-mono tracking-[2px]">
+        <span v-if="session?.code" class="px-3 py-1 rounded-full bg-highlight text-xs font-medium font-mono tracking-[2px]">
           {{ session.code }}
         </span>
         <button
@@ -209,8 +209,8 @@ async function castVote(v: 'like' | 'dislike') {
                     v-if="previousVotes"
                     class="mb-4 p-4 rounded-lg bg-elevated flex items-center justify-between"
                   >
-                    <span class="text-xs font-bold text-subdued">Última performance</span>
-                    <div class="flex gap-4 text-sm font-bold">
+                    <span class="text-xs font-medium text-subdued">Última performance</span>
+                    <div class="flex gap-4 text-sm font-medium">
                       <span class="flex items-center gap-1.5 text-accent">
                         <AppIcon name="arrow-up" :size="16" />
                         {{ previousVotes.likes }}
@@ -227,7 +227,7 @@ async function castVote(v: 'like' | 'dislike') {
                 <!-- Paisagem baixa de celular (≤500px de altura, <768px de largura): capa à esquerda, título e votos à direita, para votar sem rolar -->
                 <div v-if="currentSong" class="[@media(max-height:500px)_and_(max-width:767px)]:flex [@media(max-height:500px)_and_(max-width:767px)]:items-start [@media(max-height:500px)_and_(max-width:767px)]:gap-4">
                   <div class="[@media(max-height:500px)_and_(max-width:767px)]:w-[38%] [@media(max-height:500px)_and_(max-width:767px)]:shrink-0">
-                    <p class="flex items-center gap-2 text-xs font-bold text-subdued">
+                    <p class="flex items-center gap-2 text-xs font-medium text-subdued">
                       <Equalizer :playing="isPlaying" :bars="4" size="sm" />
                       Agora cantando
                     </p>
@@ -244,13 +244,13 @@ async function castVote(v: 'like' | 'dislike') {
                   </div>
 
                   <div class="[@media(max-height:500px)_and_(max-width:767px)]:min-w-0 [@media(max-height:500px)_and_(max-width:767px)]:flex-1">
-                    <h2 class="mt-4 text-2xl font-bold leading-tight line-clamp-2 [@media(max-height:500px)_and_(max-width:767px)]:mt-0">{{ currentSong.title }}</h2>
+                    <h2 class="mt-4 text-2xl font-medium leading-tight line-clamp-2 [@media(max-height:500px)_and_(max-width:767px)]:mt-0">{{ currentSong.title }}</h2>
                     <p class="mt-1 text-sm text-subdued">{{ currentSong.artist }}</p>
                     <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-3 rounded-full bg-highlight">
-                      <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                      <span class="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
                         {{ currentSong.addedBy.charAt(0).toUpperCase() }}
                       </span>
-                      <span class="text-sm font-bold">{{ currentSong.addedBy }}</span>
+                      <span class="text-sm font-medium">{{ currentSong.addedBy }}</span>
                     </div>
 
                     <!-- Vote buttons -->
@@ -258,7 +258,7 @@ async function castVote(v: 'like' | 'dislike') {
                     <button
                       :disabled="!!myVote"
                       :class="[
-                        'h-12 rounded-full bg-accent text-black text-sm font-bold flex items-center justify-center gap-2 transition-[transform,background-color,border-color,opacity] duration-fast ease-standard',
+                        'h-12 rounded-full bg-accent text-black text-sm font-medium flex items-center justify-center gap-2 transition-[transform,background-color,border-color,opacity] duration-fast ease-standard',
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
                         myVote === 'dislike' ? 'opacity-40' : 'enabled:hover:bg-accent-hover enabled:active:scale-95',
                         myVote && 'cursor-not-allowed'
@@ -271,7 +271,7 @@ async function castVote(v: 'like' | 'dislike') {
                     <button
                       :disabled="!!myVote"
                       :class="[
-                        'h-12 rounded-full bg-transparent border text-negative text-sm font-bold flex items-center justify-center gap-2 transition-[transform,background-color,border-color,opacity] duration-fast ease-standard',
+                        'h-12 rounded-full bg-transparent border text-negative text-sm font-medium flex items-center justify-center gap-2 transition-[transform,background-color,border-color,opacity] duration-fast ease-standard',
                         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
                         myVote === 'dislike' ? 'border-white' : 'border-outline',
                         myVote === 'like' ? 'opacity-40' : 'enabled:hover:border-white enabled:active:scale-95',
@@ -288,15 +288,34 @@ async function castVote(v: 'like' | 'dislike') {
                       <template v-if="myVote">Voto registrado · </template>
                       {{ plural(votes.total, 'voto', 'votos') }} · {{ plural(votes.likes, 'curtida', 'curtidas') }} · {{ plural(votes.dislikes, 'não curtida', 'não curtidas') }}
                     </p>
+
+                    <!-- A seguir: ocupa a metade vazia da aba no celular; em duas colunas a fila já está ao lado -->
+                    <button
+                      v-if="effectiveTab === 'live' && queue[0]"
+                      type="button"
+                      class="mt-8 w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-elevated hover:bg-hover text-left transition-colors duration-fast ease-standard
+                             focus:outline-none focus-visible:ring-2 focus-visible:ring-white [@media(max-height:500px)]:hidden"
+                      @click="activeTab = 'queue'"
+                    >
+                      <div class="min-w-0 flex-1">
+                        <p class="text-xs text-subdued">A seguir</p>
+                        <p class="mt-0.5 text-base font-medium truncate">{{ queue[0].title }}</p>
+                        <p class="text-sm text-subdued truncate">{{ queue[0].addedBy }} · {{ queue[0].artist }}</p>
+                      </div>
+                      <span class="shrink-0 flex items-center gap-1 text-sm text-subdued tabular-nums">
+                        {{ queue.length }} na fila
+                        <AppIcon name="chevron-right" :size="16" />
+                      </span>
+                    </button>
                   </div>
                 </div>
 
                 <!-- No song playing -->
                 <div v-else class="flex flex-col items-center justify-center py-16 text-center gap-2">
-                  <h2 class="text-2xl font-bold">Nenhuma música tocando</h2>
+                  <h2 class="text-2xl font-medium">Nenhuma música tocando</h2>
                   <p class="text-sm text-subdued">Adicione uma música na fila</p>
                   <button
-                    class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-bold transition-colors duration-fast ease-standard
+                    class="mt-6 px-8 py-3.5 rounded-full bg-accent hover:bg-accent-hover text-black text-sm font-medium transition-colors duration-fast ease-standard
                            focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                     @click="activeTab = 'search'"
                   >
@@ -335,7 +354,7 @@ async function castVote(v: 'like' | 'dislike') {
                   </label>
                 </form>
 
-                <p v-if="searching || searchResults.length" class="mt-3 mb-2 text-base font-bold">
+                <p v-if="searching || searchResults.length" class="mt-3 mb-2 text-base font-medium">
                   {{ searching ? 'Buscando…' : 'Resultados' }}
                 </p>
 
@@ -361,7 +380,7 @@ async function castVote(v: 'like' | 'dislike') {
                       class="w-14 h-10 object-cover rounded flex-shrink-0 bg-muted"
                     >
                     <div class="flex-1 min-w-0">
-                      <p class="text-base font-bold truncate">{{ item.title }}</p>
+                      <p class="text-base font-medium truncate">{{ item.title }}</p>
                       <p class="mt-0.5 text-sm text-subdued truncate">{{ item.artist }}</p>
                     </div>
                     <span
@@ -375,7 +394,7 @@ async function castVote(v: 'like' | 'dislike') {
                     <button
                       v-else
                       :aria-label="`Adicionar ${item.title} à fila`"
-                      class="h-11 px-4 rounded-full border border-outline hover:border-white text-xs font-bold flex-shrink-0 transition-colors duration-fast ease-standard
+                      class="h-11 px-4 rounded-full border border-outline hover:border-white text-xs font-medium flex-shrink-0 transition-colors duration-fast ease-standard
                              focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       @click="addToQueue(item)"
                     >
@@ -398,13 +417,13 @@ async function castVote(v: 'like' | 'dislike') {
                 aria-label="Fila"
                 :class="effectiveTab === 'duo' && 'min-h-0 overflow-y-auto scrollbar-thin'"
               >
-                <h2 class="text-2xl font-bold mb-4">Fila</h2>
+                <h2 class="text-2xl font-medium mb-4">Fila</h2>
 
                 <!-- Currently playing -->
                 <div v-if="currentSong" class="flex items-center gap-3 p-3 mb-2 rounded-lg bg-hover">
                   <Equalizer :playing="isPlaying" :bars="3" class="w-5 justify-center flex-shrink-0" />
                   <div class="min-w-0">
-                    <p class="text-base font-bold text-accent truncate">{{ currentSong.title }}</p>
+                    <p class="text-base font-medium text-accent truncate">{{ currentSong.title }}</p>
                     <p class="mt-0.5 text-sm text-subdued truncate">{{ currentSong.addedBy }} · {{ currentSong.artist }}</p>
                   </div>
                   <span class="ml-auto px-2 py-0.5 rounded-full bg-highlight text-xs font-semibold flex-shrink-0">Tocando agora</span>
@@ -418,7 +437,7 @@ async function castVote(v: 'like' | 'dislike') {
                   >
                     <span class="w-5 text-center text-sm text-subdued flex-shrink-0">{{ idx + 1 }}</span>
                     <div class="min-w-0">
-                      <p class="text-base font-bold truncate">{{ item.title }}</p>
+                      <p class="text-base font-medium truncate">{{ item.title }}</p>
                       <p class="mt-0.5 text-sm text-subdued truncate">{{ item.addedBy }} · {{ item.artist }}</p>
                     </div>
                     <button
@@ -484,7 +503,7 @@ async function castVote(v: 'like' | 'dislike') {
           :class="[
             'flex-1 flex flex-col items-center py-3 gap-1.5 text-xs transition-colors duration-fast ease-standard',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white',
-            navTab === tab ? 'text-accent font-bold' : 'text-subdued hover:text-white'
+            navTab === tab ? 'text-accent font-medium' : 'text-subdued hover:text-white'
           ]"
           @click="activeTab = tab"
         >

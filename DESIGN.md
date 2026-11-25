@@ -17,25 +17,25 @@ typography:
   display:
     fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "64px"
-    fontWeight: 800
+    fontWeight: 600
     lineHeight: 1.1
     letterSpacing: "normal"
   headline:
     fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "2.25rem"
-    fontWeight: 800
+    fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "normal"
   title:
     fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "1.5rem"
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.33
     letterSpacing: "normal"
   item:
     fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "1rem"
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.5
     letterSpacing: "normal"
   body:
@@ -47,7 +47,7 @@ typography:
   micro:
     fontFamily: "Inter, 'Helvetica Neue', helvetica, arial, sans-serif"
     fontSize: "0.75rem"
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.3
     letterSpacing: "normal"
 rounded:
@@ -120,7 +120,7 @@ O tom é direto e doméstico: português simples, rótulos curtos ("Ao Vivo", "B
 - Base preta com superfícies em degraus (`black` → `surface` → `elevated` → `highlight` → `hover`); profundidade vem do degrau de cor, não de sombra.
 - Um único acento: `accent` (#FFB020). Âmbar = ação primária, "tocando agora", ativo, online.
 - Formas: pílula (`rounded-full`) para tudo que se toca; `rounded-lg` para cartões; `rounded-md` para linhas de lista; `rounded` (4px) só no campo de texto e nas miniaturas.
-- Inter em pesos 400–800. Títulos em 700–800, nunca mais leves.
+- Inter em pesos 400, 500 e 600; hierarquia vem do tamanho e da cor, não do peso. Só o logotipo usa 800.
 - Ícones de um sistema só (`AppIcon`): traço de 2px, `currentColor`, viewBox 24, tamanhos 16/18/20/24/32.
 - Movimento curto: 150ms e 250ms numa curva só; nada de animação decorativa.
 - Plano: sem glow, sem gradientes decorativos, sem translucidez.
@@ -163,24 +163,24 @@ Um preto de palco, quatro degraus de carvão quente, dois tons de texto e um âm
 
 ## 3. Typography
 
-**Fonte:** Inter (auto-hospedada pelo `@nuxt/fonts`, pesos 400/600/700/800, `display: swap`), com `Helvetica Neue`, `helvetica`, `arial`, `sans-serif` como fallback. Uma família só.
+**Fonte:** Inter (auto-hospedada pelo `@nuxt/fonts`, pesos 400/500/600/800 (800 só no logotipo), `display: swap`), com `Helvetica Neue`, `helvetica`, `arial`, `sans-serif` como fallback. Uma família só.
 
 ### Hierarquia
 
-- **Display** (800, `clamp(32px, 5vw, 64px)` no host, 1.1, até 2 linhas com `line-clamp-2`): título da música tocando no palco do host. O maior texto do sistema; 64px é o teto.
-- **Headline** (800, 2.25rem/36px `text-4xl`, 1.25): título da tela de entrada ("Entre na sala") e nome da música no placar final do host.
-- **Title** (700, 1.5rem/24px `text-2xl`, 1.33): nome da música na aba Ao Vivo da sala, títulos de estado vazio e cabeçalho "Fila" da sala. No palco do host, o artista usa a mesma medida em `subdued` e peso 400.
-- **Item** (700, 1rem/16px `text-base`, 1.5): nome da música em linha de lista (fila do convidado, resultados de busca, fila e placar da noite do host), título da música tocando na aba Fila e botões de ação do host ("Próxima").
+- **Display** (600, `clamp(32px, 5vw, 64px)` no host, 1.1, até 2 linhas com `line-clamp-2`): título da música tocando no palco do host. O maior texto do sistema; 64px é o teto.
+- **Headline** (600, 2.25rem/36px `text-4xl`, 1.25): título da tela de entrada ("Entre na sala") e nome da música no placar final do host.
+- **Title** (500, 1.5rem/24px `text-2xl`, 1.33): nome da música na aba Ao Vivo da sala, títulos de estado vazio e cabeçalho "Fila" da sala. No palco do host, o artista usa a mesma medida em `subdued` e peso 400.
+- **Item** (500, 1rem/16px `text-base`, 1.5): nome da música em linha de lista (fila do convidado, resultados de busca, fila e placar da noite do host), título da música tocando na aba Fila e botões de ação do host ("Próxima").
 - **Body** (400, 0.875rem/14px `text-sm`, 1.43): metadados ("quem pediu · artista" em `subdued`), posição na fila da sala, textos de apoio, mensagens e toast. No host, nenhum texto fica abaixo de 14px, porque a tela é lida a metros de distância.
 - *Label* (caixa alta com tracking) foi aposentado na rebrand: nenhum texto usa caixa alta com tracking. O logotipo "palquinho" usa peso 800 e tamanho próprio, sem tracking (28px na entrada, 18px no host).
-- **Micro** (700 ativa / 400 inativa, 0.75rem/12px `text-xs`): rótulos da barra de abas da sala, legenda "Última performance" e badge "Tocando agora" (600). Não há texto menor que 12px.
-- **Números de destaque** (só no host): código da sala em 48px (`text-5xl`, 800, `tracking-[12px]`, fonte do sistema); pontuação do placar final em 60px (`text-6xl`, 800).
+- **Micro** (500 ativa / 400 inativa, 0.75rem/12px `text-xs`): rótulos da barra de abas da sala, legenda "Última performance" e badge "Tocando agora" (600). Não há texto menor que 12px.
+- **Números de destaque** (só no host): código da sala em 48px (`text-5xl`, 600, `tracking-[12px]`, fonte do sistema); pontuação do placar final em 60px (`text-6xl`, 600).
 
 Códigos de sala usam `font-mono`: na pílula da sala (12px, tracking 2px), no campo do `join` (tracking 4px) e no código pequeno do cartão de QR do host (16px). O código grande do host não usa `font-mono`.
 
 ### Regras
 
-**Regra do Peso.** Títulos são 700 ou 800. Não há peso 500 nem 300 no sistema. O peso 600 só aparece em duas badges ("Próxima" e "Tocando agora").
+**Regra do Peso.** Texto corrido em 400; nomes, botões e rótulos em 500; títulos (Display, Headline, Title), números de destaque e as badges "Próxima" e "Tocando agora" em 600. Não há 700 nem 300; 800 é exclusivo do logotipo.
 
 ## 4. Elevation & Depth
 
@@ -198,15 +198,15 @@ Não há glow, `text-shadow`, `backdrop-blur` nem translucidez de superfície.
 
 ### Botão primário
 
-Pílula `accent` com texto preto, 700, 14px, em frase (sem caixa alta nem tracking), em "Entrar" (`min-h-[44px]`, `py-3.5 px-8`, largura total na tela de entrada) e "Buscar música" (mesmo padding, sem largura total). Hover `accent-hover`. Desabilitado: `opacity-50`, sem hover.
+Pílula `accent` com texto preto, 500, 14px, em frase (sem caixa alta nem tracking), em "Entrar" (`min-h-[44px]`, `py-3.5 px-8`, largura total na tela de entrada) e "Buscar música" (mesmo padding, sem largura total). Hover `accent-hover`. Desabilitado: `opacity-50`, sem hover.
 
 ### Botões de voto
 
-Par de pílulas de 48px (`h-12`) em grade de duas colunas, com 12px de espaço, texto de 14px 700. **Curtir** em `accent` com texto preto e polegar para cima; **Não curtir** em contorno `outline` com texto e polegar em `negative`. Depois de votar, o escolhido recebe borda branca (no "Não curtir"), e o outro cai para 40% de opacidade. Ambos com `active:scale-95` quando habilitados.
+Par de pílulas de 48px (`h-12`) em grade de duas colunas, com 12px de espaço, texto de 14px 500. **Curtir** em `accent` com texto preto e polegar para cima; **Não curtir** em contorno `outline` com texto e polegar em `negative`. Depois de votar, o escolhido recebe borda branca (no "Não curtir"), e o outro cai para 40% de opacidade. Ambos com `active:scale-95` quando habilitados.
 
 ### Botão secundário e de contorno
 
-Secundário: pílula `highlight` de 32px com `px-4`, texto 16px 700 e chevron à direita ("Próxima" no host); hover `hover`. Contorno: pílula transparente, borda `outline`, borda branca no hover ("+ Fila" na busca, `h-11 px-4 text-xs`). Depois de adicionada, a música vira círculo `accent` de 44px com check preto. Botões só de ícone (remover da fila, fechar aviso, vibração) são círculos de 44px com ícone `subdued`, branco no hover.
+Secundário: pílula `highlight` de 32px com `px-4`, texto 16px 500 e chevron à direita ("Próxima" no host); hover `hover`. Contorno: pílula transparente, borda `outline`, borda branca no hover ("+ Fila" na busca, `h-11 px-4 text-xs`). Depois de adicionada, a música vira círculo `accent` de 44px com check preto. Botões só de ícone (remover da fila, fechar aviso, vibração) são círculos de 44px com ícone `subdued`, branco no hover.
 
 ### Campo de texto (`.field`)
 
@@ -218,22 +218,23 @@ Fundo `bg-black` de borda a borda, borda superior `highlight`, `pb-[env(safe-are
 
 ### Fila
 
-- **Convidado (aba Fila):** linha `rounded-md px-3 py-2`: posição (`w-5`, 14px `subdued`), nome em Item (16px 700, truncado) e "quem pediu · artista" em Body (14px, truncado). A música tocando fica num bloco `hover` acima da lista, com equalizador de 3 barras, título em `accent` e badge "Tocando agora". Remover (só nas suas músicas) é um círculo de 44px com X.
+- **Convidado (aba Fila):** linha `rounded-md px-3 py-2`: posição (`w-5`, 14px `subdued`), nome em Item (16px 500, truncado) e "quem pediu · artista" em Body (14px, truncado). A música tocando fica num bloco `hover` acima da lista, com equalizador de 3 barras, título em `accent` e badge "Tocando agora". Remover (só nas suas músicas) é um círculo de 44px com X.
+- **Convidado (aba Ao Vivo, "A seguir"):** abaixo dos votos, só no layout de uma coluna e fora da paisagem baixa, cartão `elevated` `rounded-lg px-4 py-3` com a próxima música da fila: rótulo "A seguir" (12px `subdued`), nome em Item e "quem pediu · artista" em Body, com "N na fila" e chevron à direita. Toque abre a aba Fila.
 - **Host (lateral):** linha `rounded-md px-3 py-2`, arrastável (`cursor-grab`). Posição em 16px; capa de 40px (`rounded`, 4px); nome em Item, em até 2 linhas (`line-clamp-2`); "quem pediu · artista" em 14px, truncado. O item 1 tem fundo `highlight`, posição em `accent` e a badge "Próxima" (`muted`, 14px, 600) logo abaixo dos metadados. Os botões "Mover para cima/baixo" (36px, `rounded-md`, `elevated`, chevrons de 16px) reordenam sem arrastar: ficam num bloco `highlight` sobre o canto direito da linha, aparecem com hover ou foco por teclado e ficam sempre visíveis em dispositivos sem hover. O de cima fica desabilitado no item 1 e o de baixo no último.
 
 ### Player do host (palco)
 
 Player 16:9 dimensionado por container query (o maior retângulo 16:9 que cabe, centralizado), sobre fundo `elevated`, `rounded-lg` e sombra de capa. Enquanto o player não carrega, o ícone `music` em `muted` aparece no fundo.
 
-Nos primeiros 5 s de cada música, um bloco de informação: "Agora cantando" (14px 700 em `subdued`, com equalizador), título em Display (até 2 linhas), artista em Title em `subdued`, chip do cantor (pílula `highlight` com avatar de inicial em `muted`, 32px) e cartão de QR (`elevated`, `rounded-lg`, QR sobre `bg-white` com `rounded-md`, 160px; 112px quando a altura da janela é de 700px ou menos). Quando o título não cabe ao lado do QR, o cartão desce para baixo do título (`flex-wrap`).
+Nos primeiros 5 s de cada música, um bloco de informação: "Agora cantando" (14px 500 em `subdued`, com equalizador), título em Display (até 2 linhas), artista em Title em `subdued`, chip do cantor (pílula `highlight` com avatar de inicial em `muted`, 32px) e cartão de QR (`elevated`, `rounded-lg`, QR sobre `bg-white` com `rounded-md`, 160px; 112px quando a altura da janela é de 700px ou menos). Quando o título não cabe ao lado do QR, o cartão desce para baixo do título (`flex-wrap`).
 
 Depois dos 5 s, rodapé `min-h-[72px]` com capa de 48px, play circular `bg-white` de 32px (hover em `subdued`, `scale(0.95)` no `:active`, anel `accent` no foco), "Próxima" (Botão secundário), barra de progresso `h-1` e contagem da fila ("N na fila" ou "Fila vazia") em 16px `subdued`.
 
-Sem música tocando: título "Nenhuma música tocando" (Title), "Escaneie o QR code com o celular" em 16px `subdued`, QR de 220px e, ao lado, o rótulo "Ou digite o código" (14px 700 em `subdued`) com o código em 48px dentro de pílula `bg-white`. Esse rótulo é frase, não caixa alta.
+Sem música tocando: título "Nenhuma música tocando" (Title), "Escaneie o QR code com o celular" em 16px `subdued`, QR de 220px e, ao lado, o rótulo "Ou digite o código" (14px 500 em `subdued`) com o código em 48px, texto branco dentro de pílula `highlight`. Esse rótulo é frase, não caixa alta.
 
-Ao fim da música, o overlay "Placar final" (`surface` sobre o palco, cartão `elevated`) mostra o rótulo "Placar final" (14px 700), o título da música em Headline e as curtidas e não curtidas em 60px (curtidas em branco, não curtiram em `negative`). Abaixo, uma barra `accent` que encolhe por 5 s e a linha "Próxima música em N s" (ou "Contagem pausada em N s" quando pausada). Botões de 44px: "Cancelar avanço" e "Pausar" / "Retomar" em `highlight`, "Avançar agora" em `accent`. Esc também cancela. Sem cancelamento, a próxima música entra ao fim da contagem. Pausar guarda o tempo restante e retoma dele; o botão troca o próprio texto ("Pausar" / "Retomar"), sem `aria-pressed`.
+Ao fim da música, o overlay "Placar final" (`surface` sobre o palco, cartão `elevated`) mostra o rótulo "Placar final" (14px 500), o título da música em Headline e as curtidas e não curtidas em 60px (curtidas em branco, não curtiram em `negative`). Abaixo, uma barra `accent` que encolhe por 5 s e a linha "Próxima música em N s" (ou "Contagem pausada em N s" quando pausada). Botões de 44px: "Cancelar avanço" e "Pausar" / "Retomar" em `highlight`, "Avançar agora" em `accent`. Esc também cancela. Sem cancelamento, a próxima música entra ao fim da contagem. Pausar guarda o tempo restante e retoma dele; o botão troca o próprio texto ("Pausar" / "Retomar"), sem `aria-pressed`.
 
-Na lateral, o "Placar da noite" (cartão `elevated`, top 5 cantores com curtidas em linhas `highlight`; contagem em 14px 700 branca; primeiro lugar com a posição em `accent`) fica oculto enquanto ninguém tem curtidas. Lateral de largura `clamp(260px, 26vw, 340px)`.
+Na lateral, o "Placar da noite" (cartão `elevated`, top 5 cantores com curtidas em linhas `highlight`; contagem em 14px 500 branca; primeiro lugar com a posição em `accent`) fica oculto enquanto ninguém tem curtidas. Lateral de largura `clamp(260px, 26vw, 340px)`.
 
 ### Logotipo, equalizador e ícones
 
@@ -291,7 +292,7 @@ Dois tempos e uma curva, expostos como variáveis em `main.css` (`--motion-fast`
 - **Don't** criar eyebrows ou kickers em caixa alta com tracking (ex.: um rótulo "AGORA CANTANDO" acima do título). O piso de qualidade proíbe.
 - **Don't** usar texto em `muted` ou `outline`; só `subdued` e branco carregam informação.
 - **Don't** usar setas para reordenar nem polegares para resultado: chevrons reordenam, setas mostram o total de votos.
-- **Don't** introduzir pesos 300/500 ou uma segunda família de fonte.
+- **Don't** introduzir pesos 300/700, usar 800 fora do logotipo ou uma segunda família de fonte.
 - **Don't** criar novos cinzas soltos; se faltar um degrau, adicione um token.
 - **Don't** colocar hex em ícones ou em CSS de componente.
 
@@ -306,13 +307,13 @@ Divergências entre o sistema e o código, para corrigir em passes futuros. Nada
 
 **Divergências em aberto**
 
-- **`bg-white` sem token:** cartão de QR, play do host, pílula da sala e código grande do host. O `tailwind.config.ts` não define `white`; o fundo claro vem do padrão do Tailwind. Decidir se vira token ou se fica como exceção de QR e código.
+- **`bg-white` sem token:** cartão de QR (precisa de fundo claro para a leitura) e play do host. A pílula "Sala" e o código grande do host passaram a `highlight` com texto branco, para não competir com o âmbar. O `tailwind.config.ts` não define `white`; o fundo claro vem do padrão do Tailwind. Decidir se vira token ou se fica como exceção de QR e código.
 - **Literais restantes em `main.css`:** foco do `.field` (`#fff`) e `#000` no `body`. A sombra do `.field`, a barra de rolagem e a busca do convidado já usam `theme()`.
 - **Pontuação em accent:** a seta e o número de curtidas de "Última performance" usam `accent`. Decidir se fica como dado positivo ou vira branco, como o placar final e o placar da noite.
 - **Texto truncado:** o nome da música no placar final (36px, `truncate`) e o nome e o artista na barra inferior do host (`truncate`) cortam com reticências.
 - **Título longo no palco:** mais de 2 linhas é cortado com reticências (`line-clamp-2`).
 - **Player pequeno nos 5 s:** a 900×600, a fase de informação deixa o player com cerca de 150px de altura.
-- **Rótulos de estado em frase:** "Agora cantando" (14px 700 no host, 12px 700 na sala), "Placar final" e "Ou digite o código" (14px 700 no host) não têm token próprio. Saiu a caixa alta, mas a posição de rótulo continua. Ficam documentados onde aparecem (Componentes) e não viraram regra.
+- **Rótulos de estado em frase:** "Agora cantando" (14px 500 no host, 12px 500 na sala), "Placar final" e "Ou digite o código" (14px 500 no host) não têm token próprio. Saiu a caixa alta, mas a posição de rótulo continua. Ficam documentados onde aparecem (Componentes) e não viraram regra.
 - **Link "Voltar" da entrada (`join`):** texto `subdued` com chevron girado e alvo de 44px, sem componente próprio no sistema.
 - **Dois estilos de campo:** `.field` (4px, anel inset) e a busca (pílula com o mesmo anel).
 - **Só em desenvolvimento:** a pílula do Nuxt DevTools aparece no rodapé em modo dev. Não existe em produção.

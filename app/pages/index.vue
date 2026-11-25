@@ -19,7 +19,7 @@
             <AppIcon name="host" :size="24" />
           </div>
           <div class="text-left">
-            <p class="m-0 font-bold text-base text-white">Sou o anfitrião</p>
+            <p class="m-0 font-medium text-base text-white">Sou o anfitrião</p>
             <p class="m-0 mt-0.5 text-sm text-subdued">Abra o palco na TV ou no PC</p>
           </div>
         </NuxtLink>
@@ -33,7 +33,7 @@
             <AppIcon name="user" :size="24" />
           </div>
           <div class="text-left">
-            <p class="m-0 font-bold text-base text-white">Sou convidado</p>
+            <p class="m-0 font-medium text-base text-white">Sou convidado</p>
             <p class="m-0 mt-0.5 text-sm text-subdued">Peça músicas e vote pelo celular</p>
           </div>
         </NuxtLink>

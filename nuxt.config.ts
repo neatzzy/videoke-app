@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   // Inter self-hosted pelo @nuxt/fonts (sem <link> bloqueante); 'Inter' casa com tailwind.config.ts e main.css.
   fonts: {
-    families: [{ name: 'Inter', weights: [400, 600, 700, 800], display: 'swap' }],
+    families: [{ name: 'Inter', weights: [400, 500, 600, 800], display: 'swap' }],
   },
   // Telão e sala são 100% client-side (dependem de Pusher/localStorage); /join segue com SSR.
   routeRules: {
