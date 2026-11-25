@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   // Inter self-hosted pelo @nuxt/fonts (sem <link> bloqueante); 'Inter' casa com tailwind.config.ts e main.css.
   fonts: {
-    families: [{ name: 'Inter', weights: [400, 600, 700, 800], display: 'swap' }],
+    families: [{ name: 'Inter', weights: [400, 500, 600, 800], display: 'swap' }],
   },
   // Telão e sala são 100% client-side (dependem de Pusher/localStorage); /join segue com SSR.
   routeRules: {
@@ -16,11 +16,13 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      title: 'Palquinho',
       htmlAttrs: { lang: 'pt-BR' },
       meta: [
         // viewport-fit=cover libera env(safe-area-inset-*) no app instalado (room/[code].vue).
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'theme-color', content: '#000000' },
+        { name: 'description', content: 'O karaokê da sala de casa: pede do celular, canta na TV.' },
       ],
       link: [
         { rel: 'manifest', href: '/manifest.webmanifest' },

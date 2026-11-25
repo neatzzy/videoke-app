@@ -7,7 +7,7 @@
     <div class="min-h-full flex flex-col items-center justify-center gap-8 page-x page-top page-bottom">
       <AppLogo :size="48" text-class="text-[28px]" />
 
-      <p class="text-subdued text-sm">Escolha seu modo de acesso</p>
+      <p class="text-subdued text-sm text-center text-balance max-w-sm">O karaokê da sala de casa: pede do celular, canta na TV</p>
 
       <div class="flex flex-col gap-3 w-full max-w-sm">
         <NuxtLink
@@ -19,8 +19,8 @@
             <AppIcon name="host" :size="24" />
           </div>
           <div class="text-left">
-            <p class="m-0 font-bold text-base text-white">Modo Host</p>
-            <p class="m-0 mt-0.5 text-sm text-subdued">Tela principal no PC/TV</p>
+            <p class="m-0 font-medium text-base text-white">Sou o anfitrião</p>
+            <p class="m-0 mt-0.5 text-sm text-subdued">Abra o palco na TV ou no PC</p>
           </div>
         </NuxtLink>
 
@@ -33,8 +33,8 @@
             <AppIcon name="user" :size="24" />
           </div>
           <div class="text-left">
-            <p class="m-0 font-bold text-base text-white">Entrar como convidado</p>
-            <p class="m-0 mt-0.5 text-sm text-subdued">Vote e adicione músicas pelo celular</p>
+            <p class="m-0 font-medium text-base text-white">Sou convidado</p>
+            <p class="m-0 mt-0.5 text-sm text-subdued">Peça músicas e vote pelo celular</p>
           </div>
         </NuxtLink>
       </div>

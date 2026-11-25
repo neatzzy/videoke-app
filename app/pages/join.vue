@@ -37,12 +37,12 @@ function submit() {
       </header>
 
       <main class="flex-1 flex flex-col justify-center page-x page-bottom max-w-sm mx-auto w-full">
-        <h1 class="text-4xl font-extrabold leading-tight">Entre na sala</h1>
+        <h1 class="text-4xl font-semibold leading-tight">Entre na sala</h1>
         <p class="text-subdued text-sm mt-2">Peça o código para o anfitrião</p>
 
         <form class="flex flex-col gap-6 mt-10" @submit.prevent="submit">
           <div>
-            <label for="join-name" class="block text-sm font-bold mb-2">Seu nome</label>
+            <label for="join-name" class="block text-sm font-medium mb-2">Seu nome</label>
             <input
               id="join-name"
               v-model="name"
@@ -56,7 +56,7 @@ function submit() {
           </div>
 
           <div>
-            <label for="join-code" class="block text-sm font-bold mb-2">Código da sala</label>
+            <label for="join-code" class="block text-sm font-medium mb-2">Código da sala</label>
             <input
               id="join-code"
               v-model="code"
@@ -78,11 +78,11 @@ function submit() {
             type="submit"
             :disabled="loading || !name.trim() || !code.trim()"
             class="mt-2 w-full min-h-[44px] py-3.5 px-8 rounded-full bg-accent hover:bg-accent-hover text-black
-                   text-sm font-bold tracking-label uppercase transition-colors duration-fast ease-standard
+                   text-sm font-medium transition-colors duration-fast ease-standard
                    focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-surface
                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-accent"
           >
-            <span v-if="loading" class="inline-block animate-pulse">Entrando...</span>
+            <span v-if="loading" class="inline-block animate-pulse">Entrando…</span>
             <span v-else>Entrar</span>
           </button>
         </form>

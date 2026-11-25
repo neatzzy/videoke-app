@@ -306,13 +306,13 @@ watch(playerReady, (ready) => {
         <header class="flex items-center justify-between page-x py-4 flex-shrink-0">
           <AppLogo :size="32" text-class="text-lg" />
           <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-highlight text-base font-bold">
+            <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-highlight text-base font-medium">
               <span class="w-2 h-2 rounded-full bg-accent" aria-hidden="true" />
               {{ clientCount }} online
             </div>
             <div
               v-if="session?.code"
-              class="px-5 py-2 rounded-full bg-white text-elevated text-base font-bold"
+              class="px-5 py-2 rounded-full bg-highlight text-white text-base font-medium"
             >
               Sala&nbsp;{{ session.code }}
             </div>
@@ -340,17 +340,17 @@ watch(playerReady, (ready) => {
             <!-- Quando não cabe lado a lado, o cartão do QR desce para baixo do título; em telas baixas ele fica compacto -->
             <div v-if="currentSong && showInfo" class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 flex-shrink-0">
               <div class="flex-1 min-w-[min(100%,24rem)]">
-                <p class="flex items-center gap-2.5 text-sm font-bold text-subdued whitespace-nowrap">
+                <p class="flex items-center gap-2.5 text-sm font-medium text-subdued whitespace-nowrap">
                   <Equalizer :playing="isPlaying" />
                   Agora cantando
                 </p>
-                <h1 class="mt-2 text-[clamp(32px,5vw,64px)] font-extrabold leading-[1.1] line-clamp-2 break-words">{{ currentSong.title }}</h1>
+                <h1 class="mt-2 text-[clamp(32px,5vw,64px)] font-semibold leading-[1.1] line-clamp-2 break-words">{{ currentSong.title }}</h1>
                 <p class="mt-1 text-2xl text-subdued truncate">{{ currentSong.artist }}</p>
                 <div class="mt-3 inline-flex items-center gap-2 py-1 pl-1 pr-4 rounded-full bg-highlight">
-                  <span class="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-base font-bold">
+                  <span class="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-base font-medium">
                     {{ currentSong.addedBy.charAt(0).toUpperCase() }}
                   </span>
-                  <span class="text-base font-bold">{{ currentSong.addedBy }}</span>
+                  <span class="text-base font-medium">{{ currentSong.addedBy }}</span>
                 </div>
               </div>
 
@@ -359,9 +359,9 @@ watch(playerReady, (ready) => {
                   <QrCode :value="joinUrl" :size="160" />
                 </div>
                 <div>
-                  <p class="text-base font-bold">Entre pelo celular</p>
+                  <p class="text-base font-medium">Entre pelo celular</p>
                   <p class="mt-1 text-sm text-subdued">Escaneie o QR code ou use o código</p>
-                  <p class="mt-2 text-base font-bold font-mono">{{ session.code }}</p>
+                  <p class="mt-2 text-base font-medium font-mono">{{ session.code }}</p>
                 </div>
               </div>
             </div>
@@ -370,19 +370,19 @@ watch(playerReady, (ready) => {
 
         <div v-if="!currentSong" class="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
           <template v-if="sessionFailed">
-            <h1 class="text-2xl font-bold">Não foi possível criar a sala</h1>
+            <h1 class="text-2xl font-medium">Não foi possível criar a sala</h1>
             <p class="text-base text-subdued">Verifique sua conexão e recarregue a página.</p>
           </template>
           <template v-else>
-            <h1 class="text-2xl font-bold">Nenhuma música tocando</h1>
+            <h1 class="text-2xl font-medium">Nenhuma música tocando</h1>
             <p class="text-base text-subdued">Escaneie o QR code com o celular</p>
             <div v-if="session?.code" class="mt-4 flex flex-wrap items-center justify-center gap-10">
               <div class="p-3 rounded-lg bg-white">
                 <QrCode :value="joinUrl" :size="220" />
               </div>
               <div class="text-left">
-                <p class="text-sm font-bold text-subdued">Ou digite o código</p>
-                <div class="mt-3 px-12 py-4 rounded-full bg-white text-elevated text-5xl font-extrabold tracking-[12px]">
+                <p class="text-sm font-medium text-subdued">Ou digite o código</p>
+                <div class="mt-3 px-12 py-4 rounded-full bg-highlight text-white text-5xl font-semibold tracking-[12px]">
                   {{ session.code }}
                 </div>
               </div>
@@ -401,15 +401,15 @@ watch(playerReady, (ready) => {
             class="absolute inset-0 z-10 flex items-center justify-center bg-surface rounded-lg"
           >
             <div class="w-[min(90%,640px)] text-center px-10 py-8 rounded-lg bg-elevated">
-              <p class="text-sm font-bold text-subdued">Placar final</p>
-              <p class="mt-2 text-4xl font-extrabold truncate">{{ currentSong?.title }}</p>
+              <p class="text-sm font-medium text-subdued">Placar final</p>
+              <p class="mt-2 text-4xl font-semibold truncate">{{ currentSong?.title }}</p>
               <div class="mt-6 flex items-center justify-center gap-12">
                 <div>
-                  <p class="text-6xl font-extrabold text-white">{{ endedScore.likes }}</p>
+                  <p class="text-6xl font-semibold text-white">{{ endedScore.likes }}</p>
                   <p class="mt-1 text-base text-subdued">curtidas</p>
                 </div>
                 <div>
-                  <p class="text-6xl font-extrabold text-negative">{{ endedScore.dislikes }}</p>
+                  <p class="text-6xl font-semibold text-negative">{{ endedScore.dislikes }}</p>
                   <p class="mt-1 text-base text-subdued">não curtiram</p>
                 </div>
               </div>
@@ -431,7 +431,7 @@ watch(playerReady, (ready) => {
                 <button
                   type="button"
                   aria-label="Cancelar avanço automático"
-                  class="min-h-11 px-6 rounded-full bg-highlight hover:bg-hover text-base font-bold
+                  class="min-h-11 px-6 rounded-full bg-highlight hover:bg-hover text-base font-medium
                          transition-colors duration-fast ease-standard
                          focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   @click="cancelAutoAdvance"
@@ -440,7 +440,7 @@ watch(playerReady, (ready) => {
                 </button>
                 <button
                   type="button"
-                  class="min-h-11 px-6 rounded-full bg-highlight hover:bg-hover text-base font-bold
+                  class="min-h-11 px-6 rounded-full bg-highlight hover:bg-hover text-base font-medium
                          transition-colors duration-fast ease-standard
                          focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   @click="togglePause"
@@ -449,7 +449,7 @@ watch(playerReady, (ready) => {
                 </button>
                 <button
                   type="button"
-                  class="min-h-11 px-6 rounded-full bg-accent hover:bg-accent-hover text-black text-base font-bold
+                  class="min-h-11 px-6 rounded-full bg-accent hover:bg-accent-hover text-black text-base font-medium
                          transition-colors duration-fast ease-standard
                          focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   @click="skipToNext"
@@ -466,10 +466,10 @@ watch(playerReady, (ready) => {
       <aside aria-label="Fila de músicas" class="w-[clamp(260px,26vw,340px)] flex-shrink-0 flex flex-col rounded-lg bg-surface">
         <div class="flex items-center gap-3 px-page py-4 text-subdued flex-shrink-0">
           <AppIcon name="list" :size="20" />
-          <span class="text-base font-bold">Fila</span>
+          <span class="text-base font-medium">Fila</span>
           <span
             v-if="queue.length > 0"
-            class="ml-auto px-2 py-0.5 rounded-full bg-highlight text-white text-sm font-bold"
+            class="ml-auto px-2 py-0.5 rounded-full bg-highlight text-white text-sm font-medium"
           >
             {{ queue.length }}
           </span>
@@ -496,7 +496,7 @@ watch(playerReady, (ready) => {
             @dragover.prevent="onDragOver(idx)"
             @dragend="onDragEnd"
           >
-            <span :class="['w-5 text-center text-base flex-shrink-0', idx === 0 ? 'text-accent font-bold' : 'text-subdued']">
+            <span :class="['w-5 text-center text-base flex-shrink-0', idx === 0 ? 'text-accent font-medium' : 'text-subdued']">
               {{ idx + 1 }}
             </span>
             <img
@@ -508,7 +508,7 @@ watch(playerReady, (ready) => {
             >
             <div v-else class="w-10 h-10 rounded bg-muted flex-shrink-0" />
             <div class="min-w-0 flex-1">
-              <p class="text-base font-bold line-clamp-2 break-words">{{ item.title }}</p>
+              <p class="text-base font-medium line-clamp-2 break-words">{{ item.title }}</p>
               <p class="mt-0.5 text-sm text-subdued truncate">{{ item.addedBy }} · {{ item.artist }}</p>
               <span
                 v-if="idx === 0"
@@ -555,7 +555,7 @@ watch(playerReady, (ready) => {
           aria-labelledby="ranking-title"
           class="flex-shrink-0 m-2 mt-0 p-3 rounded-lg bg-elevated"
         >
-          <h2 id="ranking-title" class="text-base font-bold">Placar da noite</h2>
+          <h2 id="ranking-title" class="text-base font-medium">Placar da noite</h2>
           <TransitionGroup
             tag="ol"
             name="rank"
@@ -567,11 +567,11 @@ watch(playerReady, (ready) => {
               :key="singer.name"
               class="flex items-center gap-3 px-2 py-1.5 rounded-md bg-highlight"
             >
-              <span :class="['w-5 text-center text-base flex-shrink-0', idx === 0 ? 'text-accent font-bold' : 'text-subdued']">
+              <span :class="['w-5 text-center text-base flex-shrink-0', idx === 0 ? 'text-accent font-medium' : 'text-subdued']">
                 {{ idx + 1 }}
               </span>
-              <span class="flex-1 min-w-0 text-base font-bold truncate">{{ singer.name }}</span>
-              <span class="text-sm font-bold text-white flex-shrink-0">
+              <span class="flex-1 min-w-0 text-base font-medium truncate">{{ singer.name }}</span>
+              <span class="text-sm font-medium text-white flex-shrink-0">
                 {{ singer.likesReceived }} {{ singer.likesReceived === 1 ? 'curtida' : 'curtidas' }}
               </span>
             </li>
@@ -594,7 +594,7 @@ watch(playerReady, (ready) => {
             >
             <div v-else class="w-12 h-12 rounded-md bg-muted flex-shrink-0" />
             <div class="min-w-0">
-              <p class="text-base font-bold truncate">{{ currentSong.title }}</p>
+              <p class="text-base font-medium truncate">{{ currentSong.title }}</p>
               <p class="text-sm text-subdued truncate">{{ currentSong.artist }}</p>
             </div>
           </div>
@@ -603,15 +603,15 @@ watch(playerReady, (ready) => {
             <div class="flex items-center gap-4">
               <button
                 :aria-label="isPlaying ? 'Pausar' : 'Tocar'"
-                class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-105
-                       transition-transform duration-fast ease-standard
+                class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:bg-subdued active:scale-95
+                       transition-[background-color,transform] duration-fast ease-standard
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 @click="togglePlay"
               >
                 <AppIcon :name="isPlaying ? 'pause' : 'play'" :size="16" />
               </button>
               <button
-                class="h-8 flex items-center gap-2 px-4 rounded-full bg-highlight hover:bg-hover text-base font-bold
+                class="h-8 flex items-center gap-2 px-4 rounded-full bg-highlight hover:bg-hover text-base font-medium
                        transition-colors duration-fast ease-standard
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 @click="skipToNext"

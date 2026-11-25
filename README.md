@@ -1,4 +1,4 @@
-# Videoké
+# Palquinho
 
 Karaoke de casa: um telão (host, PC/TV via Electron) mostra a música tocando e a fila em tempo real, enquanto os convidados buscam músicas e entram na fila pelo próprio celular — sem instalar nada, só um código de sala.
 
@@ -62,7 +62,9 @@ Para o convidado não precisar digitar o código de novo: abra a sala no navegad
 
 ## Design
 
-`PRODUCT.md` e `DESIGN.md` documentam o contexto estratégico e o sistema visual (paleta neon, tipografia, componentes) do projeto — mantidos via a skill "Impeccable" do Claude Code.
+`PRODUCT.md` e `DESIGN.md` documentam o contexto estratégico e o sistema visual (identidade "Luz de Palco": carvão quente com acento âmbar, tipografia, componentes) do projeto — mantidos via a skill "Impeccable" do Claude Code.
+
+> O nome do produto é Palquinho. O repositório, o pacote npm (`videoke-app`), a variável `VIDEOKE_URL` e o domínio de deploy mantêm "videoke" por compatibilidade; não são renomeados.
 
 ## Sobre o desenvolvimento
 

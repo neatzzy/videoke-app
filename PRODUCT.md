@@ -16,11 +16,11 @@ A karaoke session split across two screens: a big host display that becomes the 
 
 ## Positioning
 
-Turns a laptop plugged into a TV into a real karaoke show — a live now-playing screen and queue, not just a YouTube tab someone's casting.
+The karaoke night for the living room (Palquinho): any YouTube song, requested from a phone and played on the TV, with voting and a night scoreboard ("Placar da noite") that keeps friends competing. Free. Against KaraFun (already does QR and a phone queue), Yokee (YouTube-based) and Fila de Karaokê, the difference is free + any YouTube song + the scoreboard between friends, which is the brand's own ground. Turns a laptop plugged into a TV into a real karaoke show: a live now-playing screen and queue, not just a YouTube tab someone's casting.
 
 ## Brand Personality
 
-Playful house party, not nightclub. The implemented visual system (flat dark jukebox: black and charcoal surfaces with a single green accent, see DESIGN.md) is the foundation, and the voice and feel should read warm and friendly — fun with friends, not moody venue-serious. The dark stage is the show's lighting rig, not a mood the copy or interactions need to match.
+Playful house party, not nightclub. The implemented visual system (Luz de Palco: a flat dark stage, warm charcoal surfaces with a single amber accent, see DESIGN.md) is the foundation, and the voice and feel should read warm and friendly — fun with friends, not moody venue-serious. The dark stage is the show's lighting rig, not a mood the copy or interactions need to match.
 
 ## Operating Context
 
@@ -38,7 +38,7 @@ Generic karaoke apps: cheap bordered list UIs, default Bootstrap-y form styling,
 
 - Show, don't stream: the host screen should read as a live show (now-playing, lyrics, queue as a real interface) — never a bare video embed with UI bolted on.
 - Zero-friction join: the guest phone flow (room code → name → queue) can never stall the party waiting on installs, accounts, or host bottlenecks.
-- Warm stage, not cold venue: keep the dark jukebox look with its single green accent, but let copy, micro-interactions, and pacing feel like friends messing around, not a nightclub console.
+- Warm stage, not cold venue: keep the dark stage look (Luz de Palco) with its single amber accent, but let copy, micro-interactions, and pacing feel like friends messing around, not a nightclub console.
 - Don't reach for enterprise defaults: no card grids, no dashboard chrome — every surface should feel like it belongs to a living-room party, not a tool.
 
 ## Evidence on Hand
@@ -47,4 +47,4 @@ None — no real testimonials, case studies, press, or customer content exist. D
 
 ## Accessibility & Inclusion
 
-Baseline only — no formal WCAG target. Still hold to standard contrast and readability care given the green-on-dark palette (the accent must never be the only carrier of meaning, and it must not compromise legibility of song titles, queue text, or form labels).
+Baseline only — no formal WCAG target. Still hold to standard contrast and readability care given the amber-on-charcoal palette (the accent must never be the only carrier of meaning, and it must not compromise legibility of song titles, queue text, or form labels).
